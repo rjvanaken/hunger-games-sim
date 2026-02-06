@@ -1,10 +1,14 @@
-from GameController import GameController
+from Game import Game
 
 
 def main():
-    con = GameController(21)
-    con.addTributes(con.arena.c_pos)
-    con.displayGrid()
+        # In main or wherever you create the game
+    game = Game(size=21)
+    game.addTributes(game.arena.center)
+    game.displayGrid()
+
+
+
 
 if __name__ == '__main__':
     main()

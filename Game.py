@@ -1,18 +1,19 @@
 from Arena import Arena
 from Tribute import Tribute
 
-class GameController:
+class Game:
     
-    def __init__(self, size, c_pos=None):
-        if c_pos == None:
-            c_pos = ((size // 2) - 1, (size // 2) - 1)
+    def __init__(self, size):
 
-        self.arena = Arena(size, c_pos)
+        self.arena = Arena(size)
         self.tributes = []
 
+
+
+
     def addTributes(self, pos):
-        x = pos[0] - 2
-        y = pos[1] - 1
+        x = pos[0] - 3
+        y = pos[1] - 2
         id = 0
         for i in range(6):
             tribute = Tribute(id, (x, y))
@@ -46,6 +47,7 @@ class GameController:
             print("success")
             print((x, y))
         
+    
 
     def displayGrid(self):
         for i in range(self.arena.size):
