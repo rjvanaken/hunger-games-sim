@@ -3,13 +3,12 @@ from Game import Game
 
 def main():
         # In main or wherever you create the game
-    game = Game(size=10)
-    print(game.arena.center)
+    game = Game(size=50)
     game.addTributes(game.arena.center)
     game.arena.addCornucopia()
+    game.arena.addObstacles()
+    game.arena.addTrees()
     game.displayGrid()
-
-
 
 
 if __name__ == '__main__':

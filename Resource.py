@@ -4,8 +4,7 @@ from enum import Enum
 class Resource:
 
     class Type(Enum):
-        WATER_SOURCE = 0
-        FOOD_SOURCE = 1
+        WATER_SOURCE = 1
         WATER_CONTAINER = 2
         FOOD = 3
         MEDICAL = 4
