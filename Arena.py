@@ -1,13 +1,16 @@
 from Resource import Resource
+import random
 
 class Arena:
     def __init__(self, size):
         self.size = size
         self.center = ((size // 2) - 1, (size // 2) - 1)
         self.next_resource_id = 0
+        self.arena_grid = [[0 for _ in range(size)] for _ in range(size)]  # Start empty
         # x, y are bottom left corner of cornucopia
         
         self.resources = []
+        self.obstacles = []
 
 
 
@@ -19,6 +22,7 @@ class Arena:
         
         # top
         Resource.addResource(self, (rows, cols), Resource.Type(5), self.resources, 10)
+        
         Resource.addResource(self, (rows, cols + 1), Resource.Type(5), self.resources, 10)
         Resource.addResource(self, (rows, cols + 2), Resource.Type(6), self.resources)
 
@@ -67,7 +71,60 @@ class Arena:
         Resource.addResource(self, (rows + 5, cols + 4), Resource.Type(6), self.resources)
         Resource.addResource(self, (rows + 5, cols + 5), Resource.Type(5), self.resources, 10)
         
+
+        for resource in self.resources:
+            self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type
+
         #todo: add more later, need 4 more spots
 
+    def addTrees(self, density=0.3):
+        center_row = self.center[0]
+        center_col = self.center[1]
+        
+        for i in range(self.size):
+            for j in range(self.size):
+                # Skip cornucopia zone
+                if (center_row - 5 <= i <= center_row + 5 and 
+                    center_col - 5 <= j <= center_col + 5):
+                    continue
+                
+                # Skip occupied spaces
+                if (i, j) in self.obstacles:
+                    continue
+                # ... rest of checks
+                
+                if random.random() < density:
+                    self.obstacles.append((i, j))
+
+        for obstacle in self.obstacles:
+            self.arena_grid[obstacle.pos[0]][obstacle.pos[1]] = 8
 
 
+
+    def addObstacles(self):
+        # body of water
+        Resource.addResource(self, (6, 6), Resource.Type(1), self.resources)
+        Resource.addResource(self, (6, 7), Resource.Type(1), self.resources)
+        Resource.addResource(self, (6, 8), Resource.Type(1), self.resources)
+        Resource.addResource(self, (6, 9), Resource.Type(1), self.resources)
+        Resource.addResource(self, (6, 10), Resource.Type(1), self.resources)
+        Resource.addResource(self, (7, 6), Resource.Type(1), self.resources)
+        Resource.addResource(self, (7, 7), Resource.Type(1), self.resources)
+        Resource.addResource(self, (7, 8), Resource.Type(1), self.resources)
+        Resource.addResource(self, (8, 9), Resource.Type(1), self.resources)
+        Resource.addResource(self, (8, 8), Resource.Type(1), self.resources)
+        Resource.addResource(self, (8, 7), Resource.Type(1), self.resources)
+        Resource.addResource(self, (8, 6), Resource.Type(1), self.resources)
+        Resource.addResource(self, (8, 5), Resource.Type(1), self.resources)
+        Resource.addResource(self, (8, 4), Resource.Type(1), self.resources)
+        Resource.addResource(self, (9, 9), Resource.Type(1), self.resources)
+        Resource.addResource(self, (10, 9), Resource.Type(1), self.resources)
+        Resource.addResource(self, (9, 10), Resource.Type(1), self.resources)
+        Resource.addResource(self, (10, 10), Resource.Type(1), self.resources)
+
+
+        for resource in self.resources:
+            self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type
+
+
+        
