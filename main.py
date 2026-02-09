@@ -8,7 +8,6 @@ def main():
     game.addTributes(game.arena.center)
     game.arena.addCornucopia()
     game.displayGrid()
-    print("hi")
 
 
 

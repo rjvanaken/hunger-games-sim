@@ -1,5 +1,6 @@
 from Arena import Arena
 from Tribute import Tribute
+from Resource import Resource
 
 class Game:
     
@@ -44,19 +45,32 @@ class Game:
             id += 1
     
 
+    # TODO do json import and then simplify display function
     def displayGrid(self):
         for i in range(self.arena.size):
             for j in range(self.arena.size):
-                tribute_here = None
+                # Check resources
+                resource_found = False
+                for resource in self.arena.resources:
+                    if resource.pos == (i, j):
+                        print(resource.type.value, end=' ')
+                        resource_found = True
+                        break
+                if resource_found:
+                    continue
+                # Check tributes
+                tribute_found = False
                 for tribute in self.tributes:
                     if tribute.pos == (i, j):
-                        tribute_here = tribute
+                        print(tribute.letter, end=' ')
+                        tribute_found = True
                         break
-                if tribute_here:
-                    print(tribute_here.letter, end=' ')
-                else:
-                    print(".", end=' ')
-            print()
+                if tribute_found:
+                    continue
+                    
+                # Nothing found
+                print('.', end=' ')
+            print()  # New line after each row
 
 
         
