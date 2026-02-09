@@ -1,38 +1,72 @@
-
+from Resource import Resource
 
 class Arena:
     def __init__(self, size):
         self.size = size
-        self.center = ((size // 2), (size // 2))
+        self.center = ((size // 2) - 1, (size // 2) - 1)
+        self.next_resource_id = 0
         # x, y are bottom left corner of cornucopia
-        x = self.center[0] - 2
-        y = self.center[1] - 2
+        
+        self.resources = []
 
-        self.backpacks = [
-            (x + 1, y + 1, 10), (x + 3, y + 1, 10), (x + 4, y + 4, 10),
-            (x + 3, y, 4), (x + 5, y + 3, 4), (x + 1, y + 5, 4),
-        ]
 
-        self.weapons = [
-            (x + 4, y + 1, 20), (x + 3, y + 2, 20), (x + 2, y + 2, 20),
-            (x + 2, y + 3, 20), (x + 4, y + 3, 20),
-            (x, y, 10), (x + 5, y, 10), (x, y + 5, 10), (x + 5, y + 5, 10),
-        ]
 
-        self.medical = [
-            (x + 2, y + 1, 50), (x + 4, y + 2, 50), 
-            (x + 1, y + 3, 50), (x + 3, y + 4, 50),
-        ]
+    def addCornucopia(self):
 
-        self.water_containers = [
-            (x + 2, y, 15), (x + 2, y + 3, 15), (x, y + 3, 15), 
-            (x + 5, y + 2, 15), (x + 2, y + 5, 15),
-        ]
+        rows = self.center[0] - 2
+        cols = self.center[1] - 2
+        
+        
+        # bottom row
+        Resource.addResource(self, (rows, cols + 1), Resource.Type(5), self.resources, 10)
+        Resource.addResource(self, (rows, cols + 2), Resource.Type(6), self.resources)
 
-        self.food = [
-            (x + 1, y, 0), (x + 4, y, 0), (x, y + 1, 0), (x + 5, y + 1, 0),
-            (x, y + 2, 0), (x + 1, y + 2, 0), (x + 3, y + 3, 0),
-            (x, y + 4, 0), (x + 1, y + 4, 0), (x + 2, y + 4, 0), (x + 5, y + 4, 0),
-            (x + 3, y + 5, 0), (x + 4, y + 5, 0),
-        ]
+        Resource.addResource(self, (rows, cols + 4), Resource.Type(5), self.resources, 10)
+
+
+
+        # row 2
+        Resource.addResource(self, (rows - 1, cols), Resource.Type(5), self.resources, 10)
+
+        Resource.addResource(self, (rows - 1, cols + 2), Resource.Type(5), self.resources, 20)
+        Resource.addResource(self, (rows - 1, cols + 3), Resource.Type(7), self.resources)
+
+        Resource.addResource(self, (rows - 1, cols + 5), Resource.Type(6), self.resources)
+
+
+        # row 3
+        Resource.addResource(self, (rows - 2, cols), Resource.Type(6), self.resources)
+        Resource.addResource(self, (rows - 2, cols + 1), Resource.Type(7), self.resources)
+        
+        
+        Resource.addResource(self, (rows - 2, cols + 4), Resource.Type(5), self.resources, 20)
+        
+
+        
+        # row 4
+        Resource.addResource(self, (rows - 3, cols + 2), Resource.Type(5), self.resources, 20)
+
+        Resource.addResource(self, (rows - 3, cols + 4), Resource.Type(7), self.resources)
+        Resource.addResource(self, (rows - 3, cols + 5), Resource.Type(5), self.resources, 10)
+
+
+        # row 5
+        Resource.addResource(self, (rows - 4, cols), Resource.Type(6), self.resources)
+        
+        Resource.addResource(self, (rows - 4, cols + 2), Resource.Type(7), self.resources)
+        Resource.addResource(self, (rows - 4, cols + 3), Resource.Type(5), self.resources, 20)
+        
+        
+
+        # row 6
+        Resource.addResource(self, (rows - 5, cols), Resource.Type(5), self.resources, 10)
+
+        Resource.addResource(self, (rows - 5, cols + 2), Resource.Type(6), self.resources)
+
+        Resource.addResource(self, (rows - 5, cols + 4), Resource.Type(6), self.resources)
+        Resource.addResource(self, (rows - 5, cols + 5), Resource.Type(5), self.resources, 10)
+        
+        #todo: add more later, need 4 more spots
+
+
 

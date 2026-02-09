@@ -10,43 +10,38 @@ class Game:
 
 
 
-
     def addTributes(self, pos):
-        x = pos[0] - 3
-        y = pos[1] - 2
+        center_row = pos[0]
+        center_col = pos[1]
         id = 0
-        for i in range(6):
-            tribute = Tribute(id, (x, y))
-            self.tributes.append(tribute)
-            y += 1
-            id += 1
-
-        x += 1
-        for i in range(6):
-            tribute = Tribute(id, (x, y))
-            self.tributes.append(tribute)
-            x += 1
-            id += 1
-
-        y -= 1
-        for i in range(6):
-            tribute = Tribute(id, (x, y))
-            self.tributes.append(tribute)
-            y -= 1
-            id += 1
-
-        x -= 1
-        for i in range(6):
-            tribute = Tribute(id, (x, y))
-            self.tributes.append(tribute)
-            x -= 1
-            id += 1
-
-        # check success
-        if x == pos[0] - 1 and y == pos[1] - 2:
-            print("success")
-            print((x, y))
         
+        # top row - 6 tributes (skip corners at -4 and +3)
+        row = center_row - 3
+        for col in range(center_col - 2, center_col + 4):
+            tribute = Tribute(id, (row, col))
+            self.tributes.append(tribute)
+            id += 1
+        
+        # right column - 6 tributes (skip corners at -4 and +3)
+        col = center_col + 4
+        for row in range(center_row - 2, center_row + 4):
+            tribute = Tribute(id, (row, col))
+            self.tributes.append(tribute)
+            id += 1
+        
+        # bottom row - 6 tributes (skip corners at +3 and -4)
+        row = center_row + 4
+        for col in range(center_col + 3, center_col - 3, -1):
+            tribute = Tribute(id, (row, col))
+            self.tributes.append(tribute)
+            id += 1
+        
+        # left column - 6 tributes (skip corners at +3 and -4)
+        col = center_col - 3
+        for row in range(center_row + 3, center_row - 3, -1):
+            tribute = Tribute(id, (row, col))
+            self.tributes.append(tribute)
+            id += 1
     
 
     def displayGrid(self):
