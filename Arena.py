@@ -73,9 +73,10 @@ class Arena:
         
 
         for resource in self.resources:
-            self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type
+            self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
 
         #todo: add more later, need 4 more spots
+
 
     def addTrees(self, density=0.3):
         center_row = self.center[0]
@@ -84,24 +85,21 @@ class Arena:
         for i in range(self.size):
             for j in range(self.size):
                 # Skip cornucopia zone
-                if (center_row - 5 <= i <= center_row + 5 and 
-                    center_col - 5 <= j <= center_col + 5):
+                if (center_row - 9 <= i <= center_row + 9 and 
+                    center_col - 9 <= j <= center_col + 9):
                     continue
                 
-                # Skip occupied spaces
-                if (i, j) in self.obstacles:
+                # Skip if already occupied (check the grid)
+                if self.arena_grid[i][j] != 0:
                     continue
-                # ... rest of checks
                 
                 if random.random() < density:
                     self.obstacles.append((i, j))
-
-        for obstacle in self.obstacles:
-            self.arena_grid[obstacle.pos[0]][obstacle.pos[1]] = 8
+                    self.arena_grid[i][j] = 8  # 8 = tree
 
 
 
-    def addObstacles(self):
+    def addSources(self):
         # body of water
         Resource.addResource(self, (6, 6), Resource.Type(1), self.resources)
         Resource.addResource(self, (6, 7), Resource.Type(1), self.resources)
@@ -124,7 +122,7 @@ class Arena:
 
 
         for resource in self.resources:
-            self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type
+            self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
 
 
         

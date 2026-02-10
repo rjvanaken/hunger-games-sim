@@ -21,6 +21,7 @@ class Game:
         for col in range(center_col - 2, center_col + 4):
             tribute = Tribute(id, (row, col))
             self.tributes.append(tribute)
+            self.arena.arena_grid[row][col] = tribute.letter
             id += 1
         
         # right column - 6 tributes (skip corners at -4 and +3)
@@ -28,6 +29,7 @@ class Game:
         for row in range(center_row - 2, center_row + 4):
             tribute = Tribute(id, (row, col))
             self.tributes.append(tribute)
+            self.arena.arena_grid[row][col] = tribute.letter
             id += 1
         
         # bottom row - 6 tributes (skip corners at +3 and -4)
@@ -35,6 +37,7 @@ class Game:
         for col in range(center_col + 3, center_col - 3, -1):
             tribute = Tribute(id, (row, col))
             self.tributes.append(tribute)
+            self.arena.arena_grid[row][col] = tribute.letter
             id += 1
         
         # left column - 6 tributes (skip corners at +3 and -4)
@@ -42,7 +45,9 @@ class Game:
         for row in range(center_row + 3, center_row - 3, -1):
             tribute = Tribute(id, (row, col))
             self.tributes.append(tribute)
+            self.arena.arena_grid[row][col] = tribute.letter
             id += 1
+
     
 
     def displayGrid(self):

@@ -6,8 +6,8 @@ def main():
     game = Game(size=50)
     game.addTributes(game.arena.center)
     game.arena.addCornucopia()
-    game.arena.addObstacles()
-    game.arena.addTrees()
+    game.arena.addSources()
+    game.arena.addTrees(0.15)
     game.displayGrid()
 
 
