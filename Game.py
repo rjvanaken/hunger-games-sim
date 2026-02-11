@@ -47,8 +47,18 @@ class Game:
             self.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
+        
+        
+    # temporary, figure out removal and in general simultenous behavior logic
+    def updateTributesList(self):
+        for tribute in self.tributes:
+            if tribute.isAlive == False:
+                self.tributes.remove(tribute)
 
-    
+
+            
+
+
 
     def displayGrid(self):
         for i in range(self.arena.size):

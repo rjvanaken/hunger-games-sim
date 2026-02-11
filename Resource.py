@@ -20,7 +20,7 @@ class Resource:
         self.type = type
 
 
-    def addResource(self, pos, type, list, value=None):
+    def addResource(self, pos, type, list, value=1):
         resource = Resource(self.next_resource_id, pos, type)
         list.append(resource)
         self.next_resource_id += 1
