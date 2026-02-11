@@ -1,8 +1,8 @@
+import random
+import math
+
 # Constants
-WATER_VALUE = 6
-FOOD_VALUE = 30
-MEDICAL_VALUE = 50
-CANTEEN_VALUE = 15
+from config import BASE_DAMAGE, STRENGTH_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE
 
 class Tribute:
     def __init__(self, id, pos):
@@ -18,10 +18,16 @@ class Tribute:
         self.food = 0
         self.medical = 0
         self.capacity = 2
-        self.strength = 0
+        self.strength = 0 # temporary, add function for generating that
         self.inventory = 0
         self.weapon_value = 0
         self.isAlive = True
+
+        # probability need a max strength and a current strength so 
+        # when health is full they can go back to max
+
+
+        # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
 
         if id % 2 == 0:
             self.gender = 'male'
@@ -34,9 +40,6 @@ class Tribute:
         pass
 
 
-    
-    def createTribute():
-        self.next_tribute_id
 
 
 # GAME ACTIONS
@@ -97,7 +100,7 @@ class Tribute:
             self.food -= 1
             self.inventory -= 1
             if self.hunger + FOOD_VALUE > 100:
-                self.hunger == 100
+                self.hunger = 100
             else:
                 self.hunger += FOOD_VALUE    
 
@@ -106,7 +109,7 @@ class Tribute:
         if self.thirst != 100:
             self.water_supply -= 1
             if self.thirst + WATER_VALUE > 100:
-                self.thirst == 100
+                self.thirst = 100
             else:
                 self.thirst += WATER_VALUE
 
@@ -115,7 +118,7 @@ class Tribute:
             self.medical -= 1
             self.inventory -= 1
             if self.health + MEDICAL_VALUE > 100:
-                self.health == 100
+                self.health = 100
             else:
                 self.health += MEDICAL_VALUE
     
@@ -131,4 +134,21 @@ class Tribute:
     def move(self, pos):
         self.pos = pos
             
+
+
+    def attack(self, tribute):
+        difference = max(tribute.strength, self.strength) - min(tribute.strength, self.strength)
+        if self.strength > tribute.strength:
+            attacker = (50 + difference) / 100
+        else:
+            attacker = (50 - difference) / 100
+
+        if random.random() >= attacker:
+            tribute.health -= (BASE_DAMAGE + int(math.ceil((self.strength * STRENGTH_MULTIPLIER))))
+        else:
+            self.health -= (BASE_DAMAGE + int(math.ceil((tribute.strength * STRENGTH_MULTIPLIER))))
+
+        
+
+
     
