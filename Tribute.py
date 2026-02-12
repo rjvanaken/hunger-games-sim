@@ -18,6 +18,7 @@ class Tribute:
         self.district = (id // 2) + 1
         self.age = self.getRandomAge()
         self.strength = self.getRandomStrength()
+        self.max_strength = self.strength
         self.health = 100
         self.thirst = 100
         self.hunger = 100
@@ -29,6 +30,17 @@ class Tribute:
         self.inventory = 0
         self.weapon_value = 0
         self.isAlive = True
+        
+        @property
+        def health(self):
+            return self._health
+    
+        @health.setter
+        def health(self, value):
+            self._health = value
+            if self._health <= 0:
+                self._health = 0
+                self.isAlive = False
 
 
 
@@ -145,11 +157,6 @@ class Tribute:
                 self.health = 100
             else:
                 self.health += MEDICAL_VALUE
-    
-
-    def setTributeStatus(self):
-        if self.health <= 0:
-            self.isAlive = False
 
     
     # movement function logic is temporary so they can move
