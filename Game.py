@@ -49,15 +49,16 @@ class Game:
             id += 1
         
         
-    # temporary, figure out removal and in general simultenous behavior logic
-    def updateTributesList(self):
+    def clearDeadTributes(self):
+        new_list = []
         for tribute in self.tributes:
-            if tribute.isAlive == False:
-                self.tributes.remove(tribute)
-
-
-            
-
+            if tribute.isAlive:
+                new_list.append(tribute)
+            else:
+                row, col = tribute.pos
+                self.arena.arena_grid[row][col] = 0
+        self.tributes = new_list
+     
 
 
     def displayGrid(self):
