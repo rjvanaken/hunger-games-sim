@@ -45,6 +45,7 @@ def test_tribute_creation_attributes():
     assert T1.inventory == 0
     assert T1.weapon_value == 0
     assert T1.isAlive == True
+    assert T1.max_strength == T1.strength
     
     assert T1.gender == 'male'
     assert T2.gender == 'female'
