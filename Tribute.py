@@ -31,22 +31,16 @@ class Tribute:
         self.weapon_value = 0
         self.isAlive = True
         
-        @property
-        def health(self):
-            return self._health
-    
-        @health.setter
-        def health(self, value):
-            self._health = value
-            if self._health <= 0:
-                self._health = 0
-                self.isAlive = False
+    @property
+    def health(self):
+        return self._health
 
-
-
-        # probability need a max strength and a current strength so 
-        # when health is full they can go back to max
-
+    @health.setter
+    def health(self, value):
+        self._health = value
+        if self._health <= 0:
+            self._health = 0
+            self.isAlive = False
 
         # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
 
