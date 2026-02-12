@@ -13,7 +13,7 @@ class Resource:
         BACKPACK_LARGE = 7
 
 
-    def __init__(self, id, pos, type, value=None):
+    def __init__(self, id, pos, type, value=1):
         self.id = id
         self.value = value
         self.pos = pos

@@ -2,14 +2,22 @@ import random
 import math
 
 # Constants
-from config import BASE_DAMAGE, STRENGTH_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE
+from config import BASE_DAMAGE, STRENGTH_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE, CAREER_BONUS, MALE_BONUS
 
 class Tribute:
     def __init__(self, id, pos):
         self.pos = pos
         self.id = id
+
+        if id % 2 == 0:
+            self.gender = 'male'
+        else:
+            self.gender = 'female'
+
         self.letter = chr(65 + id)
         self.district = (id // 2) + 1
+        self.age = self.getRandomAge()
+        self.strength = self.getRandomStrength()
         self.health = 100
         self.thirst = 100
         self.hunger = 100
@@ -18,7 +26,6 @@ class Tribute:
         self.food = 0
         self.medical = 0
         self.capacity = 2
-        self.strength = 0 # temporary, add function for generating that
         self.inventory = 0
         self.weapon_value = 0
         self.isAlive = True
@@ -29,16 +36,31 @@ class Tribute:
 
         # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
 
-        if id % 2 == 0:
-            self.gender = 'male'
-        else:
-            self.gender = 'female'
         
 
-    def generateStrength():
-        # use randomization based on district to get their strength
-        pass
+    def getRandomStrength(self):
+        STRENGTH_BY_AGE = {
+            12: (10, 15),
+            13: (10, 15),
+            14: (15, 20),
+            15: (15, 20),
+            16: (20, 25),
+            17: (20, 25),
+            18: (25, 30)
+        }
 
+        min, max = STRENGTH_BY_AGE[self.age]
+        strength = random.randint(min, max)
+
+        if self.district == 1 or self.district == 2 or self.district == 4:
+            strength += CAREER_BONUS
+        if self.gender == 'male':
+            strength += MALE_BONUS
+
+        return strength
+    
+    def getRandomAge(self):
+        random.randint(12, 18)
 
 
 
