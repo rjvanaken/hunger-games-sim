@@ -10,8 +10,6 @@ from config import BASE_DAMAGE, STRENGTH_MULTIPLIER, WATER_VALUE, FOOD_VALUE, ME
 from Tribute import Tribute
 from Resource import Resource
 
-BASE_DAMAGE = 10
-STRENGTH_MULTIPLIER = 0.5
 
 # setup
 T2 = Tribute(id=21, pos=(5, 5))
@@ -53,6 +51,12 @@ def test_tribute_creation_attributes():
 
 
 
+def testGetRandomAge():
+    for i in range(50):
+        assert T1.getRandomAge() >= 12
+        assert T1.getRandomAge() <= 18
+
+
 def testPickup():
 
     T1.pickUpResource(R6)
@@ -74,6 +78,7 @@ def testPickup():
     assert T1.medical == 1
     assert T1.inventory == 6
 
+    T1.strength = 0
     T1.pickUpResource(R5)
     assert T1.strength == 10
     assert T1.inventory == 7
@@ -212,6 +217,7 @@ def testAttackSubtractsHealth():
 
 
 def main():
+    testGetRandomAge()
     test_tribute_creation_attributes()
     testPickup()
     testEat()

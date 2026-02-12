@@ -30,6 +30,8 @@ class Tribute:
         self.weapon_value = 0
         self.isAlive = True
 
+
+
         # probability need a max strength and a current strength so 
         # when health is full they can go back to max
 
@@ -50,17 +52,17 @@ class Tribute:
         }
 
         min, max = STRENGTH_BY_AGE[self.age]
-        strength = random.randint(min, max)
+        base_strength = random.randint(min, max)
 
         if self.district == 1 or self.district == 2 or self.district == 4:
-            strength += CAREER_BONUS
+            base_strength += CAREER_BONUS
         if self.gender == 'male':
-            strength += MALE_BONUS
+            base_strength += MALE_BONUS
 
-        return strength
+        return base_strength
     
     def getRandomAge(self):
-        random.randint(12, 18)
+        return random.randint(12, 18)
 
 
 
@@ -94,10 +96,10 @@ class Tribute:
         elif resource.type == 5:
             self.inventory += 1
             if int(resource.value) > self.weapon_value:
-                # update strength to difference when changing best weapon
+                # Update strength by the difference
                 self.strength += (int(resource.value) - self.weapon_value)
-            else:
-                self.weapon_value = int(resource.value)
+                self.weapon_value = int(resource.value)  # Update weapon value too!
+            # If new weapon is worse, don't pick it up (or just don't update anything)
 
         # TODO: confirm and adjust backpack sizes in testing
         elif resource.type == 6:
