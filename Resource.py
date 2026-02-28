@@ -18,6 +18,15 @@ class Resource:
         self.value = value
         self.pos = pos
         self.type = type
+        self.isTaken = False
+
+    @property
+    def pos(self):
+        return self._pos
+
+    @pos.setter
+    def pos(self, value):
+        self._pos = value
 
 
     def addResource(self, pos, type, list, value=1):

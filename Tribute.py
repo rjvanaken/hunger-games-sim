@@ -42,6 +42,20 @@ class Tribute:
             self._health = 0
             self.isAlive = False
 
+        # need to figure out a tribute success heuristic
+        # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
+
+    @property
+    def pos(self):
+        return self._pos
+
+    @pos.setter
+    def pos(self, value):
+        self._pos = value
+        # clear old pos in grid
+        # add new pos to grid
+        # set new self.pos afterwards
+
         # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
 
         

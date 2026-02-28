@@ -77,6 +77,15 @@ class Arena:
 
         #todo: add more later, need 4 more spots
 
+    def updateCornucopiaItems(self):
+        new_list = []
+        for resource in self.resourses:
+            if resource.isTaken:
+                new_list.append(resource)
+            else:
+                row, col = resource.pos
+                self.arena.arena_grid[row][col] = 0
+        self.resources = new_list
 
     def addTrees(self, density=0.3):
         center_row = self.center[0]
