@@ -9,6 +9,8 @@ def main():
     game.arena.addTrees(0.15)
     game.displayGrid()
 
+    game.run()
+
 
 
 

@@ -12,18 +12,17 @@ class HumanPlayer(Player):
         super().__init__(tribute, arena)
 
     def displayMenu(self):
-        print(f"ACTION MENU: Tribute '{self.tribute.letter.upper()}'\n")
-        print('''
-        1: move
-        2: attack
-        3: pick up item
-        4: eat
-        5: drink
-        6: heal
-        7: sleep
-        -----------------------------
-        0: SELECT NEW TRIBUTE
-    ''')
+        print(f"\n\nACTION MENU: Tribute '{self.tribute.letter.upper()}'")
+        print(
+'''
+1: move
+2: attack
+3: pick up item
+4: eat
+5: drink
+6: heal
+7: sleep
+''')
 
     def get_tribute_letter(game, target=False):
         if target == False:
@@ -35,9 +34,9 @@ class HumanPlayer(Player):
 
 
     def take_turn(self):
-        if self.isAsleep:
+        if self.tribute.isAsleep:
             if self.num_sleep_turns == 0 and self.isAsleep == True:
-                self.isAsleep == False
+                self.tribute.isAsleep == False
             # letter = input("Enter a tribute letter (or exit to quit): ").upper()
             # id = ord(letter) - ord(letter)
             # # wait noooooo we don't need to entrer a tribute number anymore

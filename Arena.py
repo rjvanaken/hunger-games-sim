@@ -140,3 +140,14 @@ class Arena:
                 return resource
         return None
         
+
+    def clearDeadTributes(self):
+        new_list = []
+        for tribute in self.tributes:
+            if tribute.isAlive:
+                new_list.append(tribute)
+            else:
+                row, col = tribute.pos
+                self.arena_grid[row][col] = 0
+                self.num_tributes -= 1
+        self.tributes = new_list

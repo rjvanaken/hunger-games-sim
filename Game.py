@@ -22,7 +22,7 @@ class Game:
         row = center_row - 4
         for col in range(center_col - 2, center_col + 4):
             tribute = Tribute(id, (row, col))
-            player = HumanPlayer(self.arena, tribute)
+            player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
             self.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
@@ -32,7 +32,7 @@ class Game:
         col = center_col + 5
         for row in range(center_row - 2, center_row + 4):
             tribute = Tribute(id, (row, col))
-            player = HumanPlayer(self.arena, tribute)
+            player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
             self.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
@@ -42,7 +42,7 @@ class Game:
         row = center_row + 5
         for col in range(center_col + 3, center_col - 3, -1):
             tribute = Tribute(id, (row, col))
-            player = HumanPlayer(self.arena, tribute)
+            player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
             self.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
@@ -52,23 +52,12 @@ class Game:
         col = center_col - 4
         for row in range(center_row + 3, center_row - 3, -1):
             tribute = Tribute(id, (row, col))
-            player = HumanPlayer(self.arena, tribute)
+            player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
             self.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
         
-        
-    def clearDeadTributes(self):
-        new_list = []
-        for tribute in self.tributes:
-            if tribute.isAlive:
-                new_list.append(tribute)
-            else:
-                row, col = tribute.pos
-                self.arena.arena_grid[row][col] = 0
-                self.arena.num_tributes -= 1
-        self.tributes = new_list
 
 
     def displayGrid(self):
@@ -82,3 +71,9 @@ class Game:
                     print(cell_value, end=' ')
             print()  # New line after each row
 
+    def run(self):
+        while len(self.tributes) > 1:
+            for player in self.players:
+                if player.tribute.isAlive:
+                    player.take_turn()
+            self.arena.clearDeadTributes()
