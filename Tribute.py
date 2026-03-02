@@ -30,6 +30,7 @@ class Tribute:
         self.inventory = 0
         self.weapon_value = 0
         self.isAlive = True
+        self.isAsleep = False
         
     @property
     def health(self):
@@ -175,19 +176,24 @@ class Tribute:
             
 
 
-    def attack(self, tribute):
-        difference = max(tribute.strength, self.strength) - min(tribute.strength, self.strength)
-        if self.strength > tribute.strength:
+    def attack(self, target):
+        difference = max(target.strength, self.strength) - min(target.strength, self.strength)
+        if self.strength > target.strength:
             attacker = (50 + difference) / 100
         else:
             attacker = (50 - difference) / 100
 
         if random.random() >= attacker:
-            tribute.health -= (BASE_DAMAGE + int(math.ceil((self.strength * STRENGTH_MULTIPLIER))))
+            target.health -= (BASE_DAMAGE + int(math.ceil((self.strength * STRENGTH_MULTIPLIER))))
         else:
-            self.health -= (BASE_DAMAGE + int(math.ceil((tribute.strength * STRENGTH_MULTIPLIER))))
+            self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * STRENGTH_MULTIPLIER))))
 
+
+    def sleep(self, num_turns):
+        self.isAsleep = True
         
 
+
+    # def act - implement AI tribute logic here - begin games
 
     

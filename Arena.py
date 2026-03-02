@@ -8,6 +8,7 @@ class Arena:
         self.next_resource_id = 0
         self.arena_grid = [[0 for _ in range(size)] for _ in range(size)]  # Start empty
         # x, y are bottom left corner of cornucopia
+        self.num_tributes = 24
         
         self.resources = []
         self.obstacles = []
@@ -133,5 +134,9 @@ class Arena:
         for resource in self.resources:
             self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
 
-
+    def getResourceAt(self, pos):
+        for resource in self.resources:
+            if resource.pos == pos:
+                return resource
+        return None
         
