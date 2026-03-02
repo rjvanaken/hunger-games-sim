@@ -11,9 +11,8 @@ class HumanPlayer(Player):
     def __init__(self, tribute, arena):
         super().__init__(tribute, arena)
 
-    def displayMenu():
-            
-        print("ACTION MENU\n")
+    def displayMenu(self):
+        print(f"ACTION MENU: Tribute '{self.tribute.letter.upper()}'\n")
         print('''
         1: move
         2: attack
