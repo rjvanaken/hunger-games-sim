@@ -1,6 +1,7 @@
 from Arena import Arena
 from Tribute import Tribute
 from Resource import Resource
+from Player import Player, HumanPlayer #, BotPlayer
 
 class Game:
     
@@ -8,6 +9,7 @@ class Game:
 
         self.arena = Arena(size)
         self.tributes = []
+        self.players = []
 
 
 
@@ -20,6 +22,8 @@ class Game:
         row = center_row - 4
         for col in range(center_col - 2, center_col + 4):
             tribute = Tribute(id, (row, col))
+            player = HumanPlayer(self.arena, tribute)
+            self.players.append(player)
             self.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
@@ -28,6 +32,8 @@ class Game:
         col = center_col + 5
         for row in range(center_row - 2, center_row + 4):
             tribute = Tribute(id, (row, col))
+            player = HumanPlayer(self.arena, tribute)
+            self.players.append(player)
             self.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
@@ -36,6 +42,8 @@ class Game:
         row = center_row + 5
         for col in range(center_col + 3, center_col - 3, -1):
             tribute = Tribute(id, (row, col))
+            player = HumanPlayer(self.arena, tribute)
+            self.players.append(player)
             self.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
@@ -44,6 +52,8 @@ class Game:
         col = center_col - 4
         for row in range(center_row + 3, center_row - 3, -1):
             tribute = Tribute(id, (row, col))
+            player = HumanPlayer(self.arena, tribute)
+            self.players.append(player)
             self.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1

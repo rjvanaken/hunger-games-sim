@@ -1,5 +1,4 @@
 from Game import Game
-import manual_gameplay
 
 def main():
         # In main or wherever you create the game
