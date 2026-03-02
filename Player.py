@@ -34,72 +34,55 @@ class HumanPlayer(Player):
 
 
     def take_turn(self):
+        # if asleep, skip turn but decrement sleep counter
         if self.tribute.isAsleep:
-            if self.num_sleep_turns == 0 and self.isAsleep == True:
-                self.tribute.isAsleep == False
-            # letter = input("Enter a tribute letter (or exit to quit): ").upper()
-            # id = ord(letter) - ord(letter)
-            # # wait noooooo we don't need to entrer a tribute number anymore
-            # # because we are rotating turns instead.
-            # # that needs to be completed.
-            # # then this is just a "heres the menu, pick one, end turn"
-            # if letter == 'EXIT':
-            #     exit
-            # if letter == "Y" or letter == "Z":
-            #     print("Invalid letter, try again\n")
-            # elif self.arena.tributes[id].isAlive != False:
-            #     print("Tribute is dead. Pick another\n")
-            # else:
-                # maybe need to do an else here and put another error before it goes into the inner loop for the menu? idk
-        else:
+            self.tribute.num_sleep_turns -= 1
+            if self.tribute.num_sleep_turns == 0:
+                self.tribute.isAsleep = False
+            return
+
+        # keep looping until a valid action succeeds
+        while True:
             self.displayMenu()
             action = input("ENTER CHOICE: ")
-            if action == "1":
-                try:
-                    gameplay_handler.handleMove()
-                except Exception as e:
-                    print(e)
-            
-            if action == "2":
-                id = self.get_tribute_letter(False)
-                try:
-                    # well wait a minute once again how do I get the current and target tribute?
-                    # I know I have that value from the other thing but its rejecting it right now
-                    gameplay_handler.handleAttack(self.tribute, self.arena.tributes[id])
-                except Exception as e:
-                    print(e)
-            
-            if action == "3":
-                if self.arena.arena_grid[self.tribute.pos[0]][self.tribue.pos[1]] != 0:
+            success = False
+
+            try:
+                if action == "1":
+                    success = gameplay_handler.handleMove(self.tribute, self.arena)
+
+                elif action == "2":
+                    target_id = self.get_tribute_letter(target=True)
+                    target = self.arena.tributes[target_id]
+                    success = gameplay_handler.handleAttack(self.tribute, target)
+
+                elif action == "3":
                     resource = self.arena.getResourceAt(self.tribute.pos)
-                    try:
-                        gameplay_handler.handlePickup(self.tribute, resource)
-                    except Exception as e:
-                        print(e)
+                    if resource is None:
+                        print("No resource at your position.")
+                    else:
+                        success = gameplay_handler.handlePickup(self.tribute, resource)
 
-            if action == "4":
-                try:
-                    gameplay_handler.handleEatFood(self.tribute)
-                except Exception as e:
-                    print(e)
-            if action == "5":
-                try:
-                    gameplay_handler.handleDrinkWater(self.tribute)
-                except Exception as e:
-                    print(e)
-            if action == "6":
-                try:
-                    gameplay_handler.handleUseMedial(self.tribute)
-                except Exception as e:
-                    print(e)
+                elif action == "4":
+                    success = gameplay_handler.handleEatFood(self.tribute)
 
-            if action == "7":
-                if self.tribute.isAsleep == False:
-                    try:
-                        gameplay_handler.handleSleep(self.tribute)
-                    except Exception as e:
-                        print(e)  
-            # manual loop?
+                elif action == "5":
+                    success = gameplay_handler.handleDrinkWater(self.tribute)
+
+                elif action == "6":
+                    success = gameplay_handler.handleUseMedical(self.tribute)
+
+                elif action == "7":
+                    success = gameplay_handler.handleSleep(self.tribute)
+
+                else:
+                    print("Invalid choice, try again.")
+
+            except Exception as e:
+                print(f"Action failed: {e}")
+
+            if success:
+                break
 
 
 

@@ -8,7 +8,7 @@ class Game:
     def __init__(self, size):
 
         self.arena = Arena(size)
-        self.tributes = []
+        self.arena.tributes = []
         self.players = []
 
 
@@ -24,7 +24,7 @@ class Game:
             tribute = Tribute(id, (row, col))
             player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
-            self.tributes.append(tribute)
+            self.arena.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
         
@@ -34,7 +34,7 @@ class Game:
             tribute = Tribute(id, (row, col))
             player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
-            self.tributes.append(tribute)
+            self.arena.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
         
@@ -44,7 +44,7 @@ class Game:
             tribute = Tribute(id, (row, col))
             player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
-            self.tributes.append(tribute)
+            self.arena.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
         
@@ -54,7 +54,7 @@ class Game:
             tribute = Tribute(id, (row, col))
             player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
-            self.tributes.append(tribute)
+            self.arena.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
         
@@ -72,7 +72,7 @@ class Game:
             print()  # New line after each row
 
     def run(self):
-        while len(self.tributes) > 1:
+        while len(self.arena.tributes) > 1:
             for player in self.players:
                 if player.tribute.isAlive:
                     player.take_turn()
