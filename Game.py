@@ -57,8 +57,8 @@ class Game:
             else:
                 row, col = tribute.pos
                 self.arena.arena_grid[row][col] = 0
+                self.arena.num_tributes -= 1
         self.tributes = new_list
-     
 
 
     def displayGrid(self):
@@ -72,46 +72,3 @@ class Game:
                     print(cell_value, end=' ')
             print()  # New line after each row
 
-
-
-
-    # # TODO do json import and then simplify display function
-    # def displayGrid(self):
-    #     for i in range(self.arena.size):
-    #         for j in range(self.arena.size):
-    #             # Check resources
-    #             resource_found = False
-    #             for resource in self.arena.resources:
-    #                 if resource.pos == (i, j):
-    #                     print(resource.type.value, end=' ')
-    #                     resource_found = True
-    #                     break
-    #             if resource_found:
-    #                 continue
-    #             # Check obstacles
-    #             obstacle_found = False
-    #             for pos in self.arena.obstacles:
-    #                 if pos == (i, j):
-    #                     print('8', end=' ')
-    #                     obstacle_found = True
-    #                     break
-    #             if obstacle_found:
-    #                 continue
-    #             # Check tributes
-    #             tribute_found = False
-    #             for tribute in self.tributes:
-    #                 if tribute.pos == (i, j):
-    #                     print(tribute.letter, end=' ')
-    #                     tribute_found = True
-    #                     break
-    #             if tribute_found:
-    #                 continue
-                    
-    #             # Nothing found
-    #             print('.', end=' ')
-    #         print()  # New line after each row
-
-
-        
-
-        

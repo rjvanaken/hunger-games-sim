@@ -1,9 +1,19 @@
-def handleMove (game, tribute, row, col):
+def handleMove (game, tribute):
     # only used by manual - AI mode will use pathfinding
-    if game.arena.arena_grid[row, col] == 0:
-        tribute.move(row, col)
+
+    # OR I could make this change with a flag, if manual run the generic move and if not run the algorithm for going to that spot?
+    # unless the AI handles that? Still unsure. Will keep this for now
+
+    row = input ("Enter the destination row: ")
+    col = input ("Enter the destination column: ")
+
+    if row > game.size or col > game.size:
+        if game.arena.arena_grid[row, col] == 0:
+            tribute.move(row, col)
+        else:
+            print ("spot is not free") # temp debug
     else:
-        print ("spot is not free") # temp debug
+        print("Invalid row or column") # temp debug
 
 
 def handleAttack (tribute, target):
@@ -39,3 +49,8 @@ def handlePickup (tribute, resource):
         tribute.pickUpResource(resource)
     else:
         print("No resource to pick up") # temp debug
+
+def handleSleep(tribute):
+    pass
+    # need to figure out how to track the number of turns to be asleep for when marking handle sleep
+    # so then therefore how do I 
