@@ -60,20 +60,10 @@ class Game:
         
 
 
-    def displayGrid(self):
-        for i in range(self.arena.size):
-            for j in range(self.arena.size):
-                cell_value = self.arena.arena_grid[i][j]
-                
-                if cell_value == 0:
-                    print('.', end=' ')
-                else:
-                    print(cell_value, end=' ')
-            print()  # New line after each row
 
     def run(self):
         while len(self.arena.tributes) > 1:
             for player in self.players:
                 if player.tribute.isAlive:
-                    player.take_turn()
+                    player.take_turn(self.arena)
             self.arena.clearDeadTributes()

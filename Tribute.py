@@ -171,8 +171,8 @@ class Tribute:
     # movement function logic is temporary so they can move
     # TODO: update so they navigate in that general direction once tribute agent is working
 
-    def move(self, pos):
-        self.pos = pos
+    def move(self, row, col):
+        self.pos = ((row, col))
             
 
 

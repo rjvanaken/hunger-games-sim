@@ -151,3 +151,22 @@ class Arena:
                 self.arena_grid[row][col] = 0
                 self.num_tributes -= 1
         self.tributes = new_list
+
+    def displayArena(self):
+        for i in range(self.size):
+            for j in range(self.size):
+                cell_value = self.arena_grid[i][j]
+                
+                if cell_value == 0:
+                    print('.', end=' ')
+                else:
+                    print(cell_value, end=' ')
+            print()  # New line after each row
+
+
+    def moveTribute(self, tribute, row, col):
+        old_row = tribute.pos[0]
+        old_col = tribute.pos[1]
+        self.arena_grid[old_row][old_col] = 0
+        tribute.move(row, col)
+        self.arena_grid[row][col] = tribute.letter

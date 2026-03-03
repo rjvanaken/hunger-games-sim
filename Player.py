@@ -33,7 +33,7 @@ class HumanPlayer(Player):
         return id
 
 
-    def take_turn(self):
+    def take_turn(self, arena):
         # if asleep, skip turn but decrement sleep counter
         if self.tribute.isAsleep:
             self.tribute.num_sleep_turns -= 1
@@ -82,8 +82,9 @@ class HumanPlayer(Player):
                 print(f"Action failed: {e}")
 
             if success:
+                arena.displayArena()
                 break
-
+                
 
 
     # class BotPlayer(Player):
