@@ -41,3 +41,13 @@ def testClearDeadTributes():
     assert T3 in game.arena.tributes
     assert game.arena.arena_grid[T1.pos[0]][T1.pos[1]] == 0
     assert game.arena.arena_grid[T2.pos[0]][T2.pos[1]] == 0
+
+
+def main():
+    testTributesAndResources()
+    testClearDeadTributes()
+
+
+
+if __name__ == '__main__':
+    main()  
