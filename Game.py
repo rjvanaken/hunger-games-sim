@@ -1,6 +1,7 @@
 from Arena import Arena
 from Tribute import Tribute
 from Resource import Resource
+from config import TURNS_PER_DAY
 from Player import Player, HumanPlayer #, BotPlayer
 
 class Game:
@@ -8,9 +9,9 @@ class Game:
     def __init__(self, size):
 
         self.arena = Arena(size)
-        self.arena.tributes = []
         self.players = []
-
+        self.turn_count = 0
+        self.day_count = 0
 
 
     def addTributes(self, pos):
@@ -62,8 +63,14 @@ class Game:
 
 
     def run(self):
-        while len(self.arena.tributes) > 1:
-            for player in self.players:
-                if player.tribute.isAlive:
-                    player.take_turn(self.arena)
-            self.arena.clearDeadTributes()
+            while len(self.arena.tributes) > 1:
+                for player in self.players:
+                    if player.tribute.isAlive:
+                        player.take_turn(self.arena)
+                self.arena.clearDeadTributes()
+                self.turn_count += 1
+                # if turn cap has been reached, reset and move to next day
+                if self.turn_count == TURNS_PER_DAY:
+                    self.turn_count = 0
+                    self.day_count += 1
+        
