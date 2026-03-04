@@ -18,10 +18,7 @@ def handleMove (tribute, arena):
 
 
 def handleAttack (tribute, target):
-    if tribute.pos[1] == target.pos[1] - 2 or tribute.pos[1] == target.pos[1] + 2:
-        tribute.attack(target)
-        return True  
-    elif tribute.pos[0] == target.pos[0] - 2 or tribute.pos[0] == target.pos[0] + 2:
+    if (-2 <= tribute.pos[0] - target.pos[0] <= 2) and (-2 <= tribute.pos[1] - target.pos[1] <= 2) :
         tribute.attack(target)
         return True
     else:
