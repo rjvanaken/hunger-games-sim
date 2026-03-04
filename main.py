@@ -7,7 +7,7 @@ def main():
     game.arena.addCornucopia()
     game.arena.addSources()
     game.arena.addTrees(0.15)
-    game.displayGrid()
+    game.arena.displayArena()
 
     game.run()
 

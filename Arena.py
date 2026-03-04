@@ -12,6 +12,7 @@ class Arena:
         
         self.resources = []
         self.obstacles = []
+        self.tributes = []
 
 
 
