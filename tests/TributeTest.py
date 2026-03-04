@@ -183,21 +183,17 @@ def testUseMedical():
     
 
 
-def testSetTributeStatus():
+def testIsAliveProperty():
 
     T1.health = 100
-    T1.setTributeStatus()
     assert T1.isAlive == True
     T1.health = 0
-    T1.setTributeStatus()
     assert T1.isAlive == False
 
 
     T2.health = 100
-    T2.setTributeStatus()
     assert T2.isAlive == True
     T2.health = -5
-    T2.setTributeStatus()
     assert T2.isAlive == False
 
 
@@ -224,7 +220,7 @@ def main():
     testEat()
     testDrink()
     testUseMedical()
-    testSetTributeStatus()
+    testIsAliveProperty()
     testAttackSubtractsHealth()
 
 
