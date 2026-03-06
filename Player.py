@@ -108,6 +108,11 @@ class HumanPlayer(Player):
                 
 
 
+#⭐⭐⭐⭐⭐⭐⭐ REMEMBER: need to add a property trigger for when a segment the tribute is currently in changes in any way, their knowledge of that segment is updated too
+
+
+
+
     # class BotPlayer(Player):
 
 
