@@ -185,9 +185,10 @@ class Tribute:
 
         if random.random() >= attacker:
             target.health -= (BASE_DAMAGE + int(math.ceil((self.strength * STRENGTH_MULTIPLIER))))
+            print("Tribute wins attack, target health decreased")
         else:
             self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * STRENGTH_MULTIPLIER))))
-
+            print("Target wins attack, tribute health decreased")
 
     def sleep(self, num_turns):
         self.isAsleep = True

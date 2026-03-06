@@ -22,6 +22,7 @@ class HumanPlayer(Player):
 5: drink
 6: heal
 7: sleep
+8: skip tribute (debug)
 ''')
 
     def get_tribute_letter(game, target=False):
@@ -75,6 +76,8 @@ class HumanPlayer(Player):
                 elif action == "7":
                     success = gameplay_handler.handleSleep(self.tribute)
 
+                elif action == "8":
+                    success = "skip"
                 else:
                     print("Invalid choice, try again.")
 
@@ -82,7 +85,7 @@ class HumanPlayer(Player):
                 print(f"Action failed: {e}")
 
             if success:
-                arena.displayArena() # temporary - ultimately, will only print at start of each day
+                # arena.displayArena() # temporary - ultimately, will only print at start of each day
                 break
                 
 
