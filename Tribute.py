@@ -31,6 +31,7 @@ class Tribute:
         self.weapon_value = 0
         self.isAlive = True
         self.isAsleep = False
+        self.isWalking = False
         
     @property
     def health(self):

@@ -11,11 +11,25 @@ class HumanPlayer(Player):
     def __init__(self, tribute, arena):
         super().__init__(tribute, arena)
 
+
     def displayMenu(self):
+            print(f"\n\nACTION MENU: Tribute '{self.tribute.letter.upper()}'")
+            print(
+'''
+1: move
+2: attack
+3: pick up item
+4: eat
+5: drink
+6: heal
+7: sleep
+8: skip tribute (debug)
+''')
+
+    def displayMenuNoMove(self):
         print(f"\n\nACTION MENU: Tribute '{self.tribute.letter.upper()}'")
         print(
 '''
-1: move
 2: attack
 3: pick up item
 4: eat
@@ -41,10 +55,14 @@ class HumanPlayer(Player):
             if self.tribute.num_sleep_turns == 0:
                 self.tribute.isAsleep = False
             return
-
+            
         # keep looping until a valid action succeeds
         while True:
-            self.displayMenu()
+            if self.tribute.isWalking:
+                self.displayMenuNoMove()
+            else:
+                self.displayMenu()
+
             action = input("ENTER CHOICE: ")
             success = False
 
