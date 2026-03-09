@@ -32,6 +32,7 @@ class Tribute:
         self.isAlive = True
         self.isAsleep = False
         self.isWalking = False
+        self.max_speed = 0 # calculate
         
     @property
     def health(self):
