@@ -14,6 +14,7 @@ from Resource import Resource
 # setup
 T2 = Tribute(id=21, pos=(5, 5))
 T1 = Tribute(id=2, pos=(5, 5))
+T3 = Tribute(id=10, pos=(10, 10))
 
 R1 = Resource(1, (5, 5), 1)
 R2 = Resource(1, (5, 5), 2, 15)
@@ -196,7 +197,34 @@ def testAttackSubtractsHealth():
     assert T2.health == T2_health - (BASE_DAMAGE + int(math.ceil((T1.strength * STRENGTH_MULTIPLIER))))
     assert T1.health == 100
 
+def TestSingleMove():
+    T3.singleMove('r')
+    T3.singleMove('right')
+    T3.singleMove('RiGht')
+    T3.singleMove('R')
+    T3.singleMove('Rightt')
+    assert T3.pos == ((10, 14))
 
+    T3.singleMove('u')
+    T3.singleMove('up')
+    T3.singleMove('Up')
+    T3.singleMove('U')
+    T3.singleMove('upp')
+    assert T3.pos == ((6, 14))
+
+    T3.singleMove('d')
+    T3.singleMove('down')
+    T3.singleMove('DowN')
+    T3.singleMove('D')
+    T3.singleMove('downn')
+    assert T3.pos == ((10, 14))
+
+    T3.singleMove('l')
+    T3.singleMove('left')
+    T3.singleMove('LeFt')
+    T3.singleMove('L')
+    T3.singleMove('Leftt')
+    assert T3.pos == ((10, 10))
 
 
 
@@ -209,6 +237,7 @@ def main():
     testUseMedical()
     testIsAliveProperty()
     testAttackSubtractsHealth()
+    TestSingleMove()
 
 
 if __name__ == '__main__':
