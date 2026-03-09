@@ -1,0 +1,22 @@
+- add speed for running for running from enemies
+    which impacts exhaustion 
+        which means they may need a stamina stat
+
+- add success for hunting ability to make chances of successful food pickup
+    which means I may need to have 2 food types or instead just make it be a chance that it requires probability and 
+    also a chance it won't need it
+
+
+- build out segments
+
+
+- add decay for water and food per turn
+- add low food and water influence on health
+- add low health impact on strength
+
+
+- adjust arenaknowledge when the segment they are in changes OR when they go from 1 segment to another
+
+for key, value in segments
+- for tribute in arena.tributes:
+    if tribut
