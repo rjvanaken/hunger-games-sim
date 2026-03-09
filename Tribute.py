@@ -32,6 +32,7 @@ class Tribute:
         self.isAlive = True
         self.isAsleep = False
         self.isWalking = False
+        self.max_speed = 0 # calculate
         self.arenaKnowledge = []
         
     @property
@@ -172,6 +173,20 @@ class Tribute:
 
     def move(self, row, col):
         self.pos = ((row, col))
+
+    def singleMove(self, direction):
+        
+        if direction.lower() == 'u' or direction.lower() == 'up':
+            self.pos = ((self.pos[0] - 1, self.pos[1]))
+        if direction.lower() == 'd' or direction.lower() == 'down':
+            self.pos = ((self.pos[0] + 1, self.pos[1]))
+        if direction.lower() == 'l' or direction.lower() == 'left':
+            self.pos = ((self.pos[0], self.pos[1] - 1))
+        if direction.lower() == 'r' or direction.lower() == 'right':
+            self.pos = ((self.pos[0], self.pos[1] + 1))
+        
+    # note: checking the path happens in the validation. This simply does the action. separation of concerns
+
             
 
 
