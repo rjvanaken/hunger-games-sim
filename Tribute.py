@@ -2,7 +2,7 @@ import random
 import math
 
 # Constants
-from config import BASE_DAMAGE, STRENGTH_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE, CAREER_BONUS, MALE_BONUS
+from config import BASE_DAMAGE, STRENGTH_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE, CAREER_BONUS, MALE_BONUS, STRENGTH_DIFF, BASE_SPEED
 
 class Tribute:
     def __init__(self, id, pos):
@@ -19,6 +19,8 @@ class Tribute:
         self.age = self.getRandomAge()
         self.strength = self.getRandomStrength()
         self.max_strength = self.strength
+        self.max_speed = self.getRandomSpeed()
+        self.speed = self.max_speed
         self.health = 100
         self.thirst = 100
         self.hunger = 100
@@ -32,7 +34,6 @@ class Tribute:
         self.isAlive = True
         self.isAsleep = False
         self.isWalking = False
-        self.max_speed = 0 # calculate
         self.arenaKnowledge = []
         
     @property
@@ -66,7 +67,7 @@ class Tribute:
 
     def getRandomStrength(self):
         STRENGTH_BY_AGE = {
-            12: (10, 15),
+            12: (10, 10),
             13: (10, 15),
             14: (15, 20),
             15: (15, 20),
@@ -85,6 +86,11 @@ class Tribute:
 
         return base_strength
     
+
+    def getRandomSpeed(self):
+        return random.randint(BASE_SPEED, BASE_SPEED + 2)
+        
+
     def getRandomAge(self):
         return random.randint(12, 18)
 
