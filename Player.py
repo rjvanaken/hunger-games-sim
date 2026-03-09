@@ -6,8 +6,6 @@ class Player:
         self.tribute = tribute
         self.arena = arena
         tribute.arenaKnowledge = [[0 for _ in range(arena.size)] for _ in range(arena.size)]  # Start empty
-        for resource in arena.resources:
-            tribute.arenaKnowledge = [resource.pos[0]][resource.pos[1]] = resource.type.value
 
 class HumanPlayer(Player):
     def __init__(self, tribute, arena):

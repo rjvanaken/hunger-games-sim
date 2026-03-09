@@ -2,9 +2,11 @@ from Game import Game
 
 def main():
         # In main or wherever you create the game
-    game = Game(size=50)
+    game = Game(size=48)
     game.addTributes(game.arena.center)
     game.arena.addCornucopia()
+    for tribute in game.arena.tributes:
+        tribute.arenaKnowledge = game.arena.arena_grid
     game.arena.addSources()
     game.arena.addTrees(0.15)
     game.arena.displayArena()
