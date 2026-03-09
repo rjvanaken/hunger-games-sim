@@ -2,7 +2,7 @@ import random
 import math
 
 # Constants
-from config import BASE_DAMAGE, DAMAGE_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE, CAREER_BONUS, MALE_BONUS, STRENGTH_BY_AGE, BASE_SPEED, THIRST_WARNING_THRESHOLD, THIRST_DECAY, THIRST_WARNING_PENALTY, THIRST_HEALTH_PENALTY, HUNGER_WARNING_THRESHOLD, HUNGER_DECAY, HUNGER_WARNING_PENALTY, HUNGER_HEALTH_PENALTY
+from config import *
 class Tribute:
     def __init__(self, id, pos):
         self.pos = pos
@@ -16,7 +16,8 @@ class Tribute:
         self.letter = chr(65 + id)
         self.district = (id // 2) + 1
         self.age = self.getRandomAge()
-        self.strength = self.getRandomStrength()
+        self.base_strength = self.getRandomStrength()
+        self.strength = self.base_strength
         self.max_strength = self.strength
         self.max_speed = self.getRandomSpeed()
         self.speed = self.max_speed
@@ -67,14 +68,14 @@ class Tribute:
     def getRandomStrength(self):
 
         min, max = STRENGTH_BY_AGE[self.age]
-        base_strength = random.randint(min, max)
+        raw_strength = random.randint(min, max)
 
         if self.district == 1 or self.district == 2 or self.district == 4:
-            base_strength += CAREER_BONUS
+            raw_strength += CAREER_BONUS
         if self.gender == 'male':
-            base_strength += MALE_BONUS
+            raw_strength += MALE_BONUS
 
-        return base_strength
+        return raw_strength
     
 
     def getRandomSpeed(self):
@@ -101,6 +102,8 @@ class Tribute:
             self.health -= THIRST_HEALTH_PENALTY
         elif self.thirst <= THIRST_WARNING_THRESHOLD:
             self.health -= THIRST_WARNING_PENALTY
+
+        self.strength = self.base_strength * (self.health / 100)
 
 
 

@@ -48,7 +48,8 @@ class HumanPlayer(Player):
         return id
 
 
-    def take_turn(self, arena):
+    def take_turn(self):
+        self.updateStatsBeforeTurn()
         # if asleep, skip turn but decrement sleep counter
         if self.tribute.isAsleep:
             self.tribute.num_sleep_turns -= 1
