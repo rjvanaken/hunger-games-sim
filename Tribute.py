@@ -2,8 +2,7 @@ import random
 import math
 
 # Constants
-from config import BASE_DAMAGE, DAMAGE_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE, CAREER_BONUS, MALE_BONUS, STRENGTH_BY_AGE, BASE_SPEED
-
+from config import BASE_DAMAGE, DAMAGE_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE, CAREER_BONUS, MALE_BONUS, STRENGTH_BY_AGE, BASE_SPEED, THIRST_WARNING_THRESHOLD, THIRST_DECAY, THIRST_WARNING_PENALTY, THIRST_HEALTH_PENALTY, HUNGER_WARNING_THRESHOLD, HUNGER_DECAY, HUNGER_WARNING_PENALTY, HUNGER_HEALTH_PENALTY
 class Tribute:
     def __init__(self, id, pos):
         self.pos = pos
@@ -84,6 +83,24 @@ class Tribute:
 
     def getRandomAge(self):
         return random.randint(12, 18)
+
+
+    def updateStatsBeforeTurn(self):
+        self.hunger -= HUNGER_DECAY
+        self.thirst -= THIRST_DECAY
+        self.hunger = max(0, self.hunger)
+        self.thirst = max(0, self.thirst)
+        # subtract full penalty if under 0, partial if only below threshold
+        if self.hunger <= 0:
+            self.health -= HUNGER_HEALTH_PENALTY
+        elif self.hunger <= HUNGER_WARNING_THRESHOLD:
+            self.health -= HUNGER_WARNING_PENALTY
+        
+        # subtract full penalty if under 0, partial if only below threshold
+        if self.thirst <= 0:
+            self.health -= THIRST_HEALTH_PENALTY
+        elif self.thirst <= THIRST_WARNING_THRESHOLD:
+            self.health -= THIRST_WARNING_PENALTY
 
 
 
