@@ -128,11 +128,6 @@ def testEat():
     assert T1.food == 1
     T1.inventory = 8
 
-    T1.eatFood()
-    assert T1.hunger == 100
-    assert T1.food == 1
-    T1.inventory = 8
-
 
 
 def testDrink():
@@ -150,9 +145,6 @@ def testDrink():
     assert T1.thirst == 100
     assert T1.water_supply == 1
 
-    T1.drinkWater()
-    assert T1.thirst == 100
-    assert T1.water_supply == 1
     
 
 
@@ -170,11 +162,6 @@ def testUseMedical():
     T1.inventory = 9
 
     T1.health = 99
-    T1.useMedical()
-    assert T1.health == 100
-    assert T1.medical == 1
-    T1.inventory = 8
-
     T1.useMedical()
     assert T1.health == 100
     assert T1.medical == 1

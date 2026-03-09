@@ -32,6 +32,7 @@ class Tribute:
         self.isAlive = True
         self.isAsleep = False
         self.isWalking = False
+        self.arenaKnowledge = []
         
     @property
     def health(self):
@@ -142,31 +143,28 @@ class Tribute:
         
 
     def eatFood(self):
-        if self.hunger != 100:
-            self.food -= 1
-            self.inventory -= 1
-            if self.hunger + FOOD_VALUE > 100:
-                self.hunger = 100
-            else:
-                self.hunger += FOOD_VALUE    
+        self.food -= 1
+        self.inventory -= 1
+        if self.hunger + FOOD_VALUE > 100:
+            self.hunger = 100
+        else:
+            self.hunger += FOOD_VALUE    
 
     def drinkWater(self):
         # TODO: confirm and adjust water unit value as needed in testing
-        if self.thirst != 100:
-            self.water_supply -= 1
-            if self.thirst + WATER_VALUE > 100:
-                self.thirst = 100
-            else:
-                self.thirst += WATER_VALUE
+        self.water_supply -= 1
+        if self.thirst + WATER_VALUE > 100:
+            self.thirst = 100
+        else:
+            self.thirst += WATER_VALUE
 
     def useMedical(self):
-        if self.health != 100:
-            self.medical -= 1
-            self.inventory -= 1
-            if self.health + MEDICAL_VALUE > 100:
-                self.health = 100
-            else:
-                self.health += MEDICAL_VALUE
+        self.medical -= 1
+        self.inventory -= 1
+        if self.health + MEDICAL_VALUE > 100:
+            self.health = 100
+        else:
+            self.health += MEDICAL_VALUE
 
     
     # movement function logic is temporary so they can move
