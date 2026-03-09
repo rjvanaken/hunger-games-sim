@@ -26,36 +26,68 @@ def handleAttack (tribute, target):
 
 
 def handleEatFood (tribute):
-    if tribute.food >= 1:
-        tribute.eatFood()
-        return True
-    else:
-        print("no food units left to use") # temp debug
+    if tribute.hunger != 100:
+        if tribute.food >= 1:
+            tribute.eatFood()
+            return True
+        else:
+            print("no food units left to use") # temp debug
+            return False
+    return False
 
 
 def handleDrinkWater (tribute):
-    if tribute.water >= 1:
-        tribute.drinkWater()
-        return True
-    else:
-        print("no water units left to use") # temp debug
+    if tribute.thirst != 100:
+        if tribute.water_supply >= 1:
+            tribute.drinkWater()
+            return True
+        else:
+            print("no water units left to use") # temp debug
+            return False
+    return False
 
 def handleUseMedical (tribute):
-    if tribute.medical >= 1:
-        tribute.useMedical()
-        return True
-    else:
-        print("no medical units left to use") # temp debug
+    if tribute.health != 100:
+        if tribute.medical >= 1:
+            tribute.useMedical()
+            return True
+        else:
+            print("no medical units left to use") # temp debug
+            return False
+    return False
 
 def handlePickup (tribute, resource):
-    if resource.pos == tribute.pos:
+    rp = resource.pos
+    if canPickup(tribute, rp):
         tribute.pickUpResource(resource)
         return True
     else:
-        print("No resource to pick up") # temp debug
+        print("Cannot pick up") # temp debug
+        return False
 
-def handleSleep(tribute):
-    pass
+def canPickup (tribute, resourcePos):
+    success = False
+    tRow = tribute.pos[0]
+    tCol = tribute.pos[1]
+    rRow = resourcePos[0]
+    rCol = resourcePos[1]
+    if tRow == rRow + 1 and tCol == rCol:
+        success = True
+    elif tRow == rRow - 1 and tCol == rCol:
+        success = True
+    elif tRow == rRow and tCol == rCol + 1:
+        success = True
+    elif tRow == rRow and tCol == rCol - 1:
+        success = True
+    
+    return success
+
+# def handleSleep(tribute):
+#     if tribute.isAsleep == False:
+#         tribute.sleep
+#     pass
+
+
     # return True
     # need to figure out how to track the number of turns to be asleep for when marking handle sleep
     # so then therefore how do I 
