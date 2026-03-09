@@ -160,26 +160,17 @@ class Tribute:
     def eatFood(self):
         self.food -= 1
         self.inventory -= 1
-        if self.hunger + FOOD_VALUE > 100:
-            self.hunger = 100
-        else:
-            self.hunger += FOOD_VALUE    
+        self.hunger = min(100, self.hunger + FOOD_VALUE) 
 
     def drinkWater(self):
         # TODO: confirm and adjust water unit value as needed in testing
         self.water_supply -= 1
-        if self.thirst + WATER_VALUE > 100:
-            self.thirst = 100
-        else:
-            self.thirst += WATER_VALUE
+        self.thirst = min(100, self.thirst + WATER_VALUE)
 
     def useMedical(self):
         self.medical -= 1
         self.inventory -= 1
-        if self.health + MEDICAL_VALUE > 100:
-            self.health = 100
-        else:
-            self.health += MEDICAL_VALUE
+        self.health = min(100, self.health + MEDICAL_VALUE)
 
     
     # movement function logic is temporary so they can move
