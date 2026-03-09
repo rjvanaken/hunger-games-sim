@@ -2,7 +2,7 @@ import random
 import math
 
 # Constants
-from config import BASE_DAMAGE, STRENGTH_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE, CAREER_BONUS, MALE_BONUS, STRENGTH_DIFF, BASE_SPEED
+from config import BASE_DAMAGE, DAMAGE_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE, CAREER_BONUS, MALE_BONUS, STRENGTH_BY_AGE, BASE_SPEED
 
 class Tribute:
     def __init__(self, id, pos):
@@ -66,15 +66,6 @@ class Tribute:
         
 
     def getRandomStrength(self):
-        STRENGTH_BY_AGE = {
-            12: (10, 10),
-            13: (10, 15),
-            14: (15, 20),
-            15: (15, 20),
-            16: (20, 25),
-            17: (20, 25),
-            18: (25, 30)
-        }
 
         min, max = STRENGTH_BY_AGE[self.age]
         base_strength = random.randint(min, max)
@@ -204,10 +195,10 @@ class Tribute:
             attacker = (50 - difference) / 100
 
         if random.random() >= attacker:
-            target.health -= (BASE_DAMAGE + int(math.ceil((self.strength * STRENGTH_MULTIPLIER))))
+            target.health -= (BASE_DAMAGE + int(math.ceil((self.strength * DAMAGE_MULTIPLIER))))
             print("Tribute wins attack, target health decreased")
         else:
-            self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * STRENGTH_MULTIPLIER))))
+            self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * DAMAGE_MULTIPLIER))))
             print("Target wins attack, tribute health decreased")
 
     def sleep(self, num_turns):
