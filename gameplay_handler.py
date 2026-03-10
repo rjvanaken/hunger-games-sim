@@ -1,3 +1,6 @@
+import random
+
+
 def handleMove (tribute, arena):
     # only used by manual - AI mode will use pathfinding
 
@@ -57,30 +60,46 @@ def handleUseMedical (tribute):
     return False
 
 def handlePickup (tribute, resource):
+    if resource is None:
+        return True # doesn't mean successful pickup, but tracked as a successful turn
+    requires_skill_check = random.randint(0, 100)
+    if requires_skill_check > 30:
+        # if chance is greater than skill, simply return True, don't pick up
+        if random.randint(1, 100) >= tribute.hunting_skill:
+            return True # doesn't mean successful pickup, but tracked as a successful turn
+    
     rp = resource.pos
     if canPickup(tribute, rp):
         tribute.pickUpResource(resource)
         return True
     else:
-        print("Cannot pick up") # temp debug
+        if tribute.inventory == tribute.capacity:
+            print("no more room in inventory")
+        else:
+            print("Cannot pick up") # temp debug
         return False
 
+
+
 def canPickup (tribute, resourcePos):
-    success = False
-    tRow = tribute.pos[0]
-    tCol = tribute.pos[1]
-    rRow = resourcePos[0]
-    rCol = resourcePos[1]
-    if tRow == rRow + 1 and tCol == rCol:
-        success = True
-    elif tRow == rRow - 1 and tCol == rCol:
-        success = True
-    elif tRow == rRow and tCol == rCol + 1:
-        success = True
-    elif tRow == rRow and tCol == rCol - 1:
-        success = True
-    
-    return success
+    if tribute.inventory < tribute.capacity:
+        success = False
+        tRow = tribute.pos[0]
+        tCol = tribute.pos[1]
+        rRow = resourcePos[0]
+        rCol = resourcePos[1]
+        if tRow == rRow + 1 and tCol == rCol:
+            success = True
+        elif tRow == rRow - 1 and tCol == rCol:
+            success = True
+        elif tRow == rRow and tCol == rCol + 1:
+            success = True
+        elif tRow == rRow and tCol == rCol - 1:
+            success = True
+        
+        return success
+    else:
+        return False
 
 # def handleSleep(tribute):
 #     if tribute.isAsleep == False:
