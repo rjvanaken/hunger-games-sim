@@ -1,5 +1,6 @@
 import random
 import math
+from Resource import Resource
 
 # Constants
 from config import *
@@ -16,6 +17,7 @@ class Tribute:
         self.letter = chr(65 + id)
         self.district = (id // 2) + 1
         self.age = self.getRandomAge()
+        self.hunting_skill = self.getHuntingSkill()
         self.base_strength = self.getRandomStrength()
         self.strength = self.base_strength
         self.max_strength = self.strength
@@ -81,6 +83,9 @@ class Tribute:
     def getRandomSpeed(self):
         return random.randint(BASE_SPEED, BASE_SPEED + 2)
         
+    def getHuntingSkill(self):
+        return random.randint(1, 100)
+        
 
     def getRandomAge(self):
         return random.randint(12, 18)
@@ -112,29 +117,30 @@ class Tribute:
     def pickUpResource(self, resource):
     # need to have all pickups in case they get things from sponsors
     # TODO factor in sponsor logic eventually
-        if self.inventory == self.capacity and resource.type != 1:
+        if self.inventory == self.capacity and resource.type != Resource.Type.WATER_SOURCE:
             return "storage capacity reached. cannot pick up new item"
 
-        elif resource.type == 1:
+        elif resource.type == Resource.Type.WATER_SOURCE:
             self.water_supply = self.max_water
             self.thirst = 100
         
         
-        elif resource.type == 2:
+        elif resource.type == Resource.Type.WATER_CONTAINER:
             self.max_water += CANTEEN_VALUE
             self.inventory += 1
 
-        elif resource.type == 3:
+        elif resource.type == Resource.Type.FOOD:
             for i in range(resource.value):
                 if self.inventory < self.capacity:
                     self.food += int(resource.value)
                     self.inventory += 1
 
-        elif resource.type == 4:
+        elif resource.type == Resource.Type.MEDICAL:
             self.medical += 1
             self.inventory += 1
         
-        elif resource.type == 5:
+        elif resource.type == Resource.Type.WEAPON:
+            print("weapon")
             self.inventory += 1
             if int(resource.value) > self.weapon_value:
                 # Update strength by the difference
@@ -143,13 +149,13 @@ class Tribute:
             # If new weapon is worse, don't pick it up (or just don't update anything)
 
         # TODO: confirm and adjust backpack sizes in testing
-        elif resource.type == 6:
+        elif resource.type == Resource.Type.BACKPACK_SMALL:
             self.capacity += 5
             self.food += 2
             self.max_water += CANTEEN_VALUE
             self.inventory += 3
             
-        elif resource.type == 7:
+        elif resource.type == Resource.Type.BACKPACK_LARGE:
             self.capacity += 10
             self.food += 3
             self.medical += 1
