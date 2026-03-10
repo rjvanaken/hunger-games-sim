@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import sys
 import os
 
@@ -14,13 +15,17 @@ game.arena.addCornucopia()
 game.arena.addSources()
 game.arena.addTrees(0.15)
 
-game.arena.tributes = game.arena.tributes[:5]
 
 T0 = game.arena.tributes[0]
 T1 = game.arena.tributes[1]
 T2 = game.arena.tributes[2]
 T3 = game.arena.tributes[3]
 T4 = game.arena.tributes[4]
+# pickup
+T7 = game.arena.tributes[7] # pickup but inventory > than just 1 bc backpack
+T8 = game.arena.tributes[8] # fail pickup
+T9 = game.arena.tributes[9] # can pickup
+T11 = game.arena.tributes[11] 
 
 
 
@@ -35,14 +40,51 @@ def testHandleAttack():
 
 
 def testHandlePickup():
-    T0.move(T0.pos[0] + 1, T0.pos[1])
-    resourcePos = (T0.pos[0] + 1, T0.pos[1])
-    # WRONG: TODO: need to figure out how to 
-    r = game.arena.getResourceAt((resourcePos))
-    pickup = gh.handlePickup(T4, r)
-    assert pickup == False
-    pickup = gh.handlePickup(T0, r)
-    assert pickup == True
+    T8.hunting_skill = 90
+    T11.hunting_skill = 90
+    T7.singleMove('l') # backpack
+    T8.singleMove('l') # nothing to pick up
+    T9.singleMove('l')
+    T11.singleMove('l')
+    resource7 = (T7.pos[0], T7.pos[1] - 1)
+    resource9 = (T9.pos[0], T9.pos[1] - 1)
+    resource11 = (T11.pos[0], T11.pos[1] - 1)
+    r7 = game.arena.getResourceAt(resource7)
+    r9 = game.arena.getResourceAt(resource9)
+    r11 = game.arena.getResourceAt(resource11)
+    print(r11.type)
+
+    # yes check, failed skill check, returned as success but no item picked up
+    with patch('random.randint', side_effect=[50, 99]):
+        pickup = gh.handlePickup(T7, r7)
+        assert T7.inventory == 0
+        assert pickup == True
+
+    # no check, nothing to pick up, returned as False
+    with patch('random.randint', return_value=20):
+        pickup = gh.handlePickup(T8, r11)
+        assert pickup == False
+        assert T8.inventory == 0
+
+    # yes check, passed skill check, nothing to pick up, returned as False
+    with patch('random.randint', side_effect=[50, 10]):
+        pickup = gh.handlePickup(T8, r11)
+        assert pickup == False
+        assert T8.inventory == 0
+
+    T7.capacity = 12
+    # no check, successful pickup, inventory increased
+    with patch('random.randint', return_value=20):
+        pickup = gh.handlePickup(T7, r7)
+        assert T7.inventory > 0
+        assert pickup == True
+
+
+    # check, passed, successful pickup, inventory increased
+    with patch('random.randint', side_effect=[50, 10]):
+        pickup = gh.handlePickup(T11, r11)
+        assert T11.inventory == 1
+        assert pickup == True
 
     
 
