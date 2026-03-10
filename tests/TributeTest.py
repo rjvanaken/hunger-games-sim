@@ -6,7 +6,7 @@ import math
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
-from config import BASE_DAMAGE, STRENGTH_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE
+from config import BASE_DAMAGE, DAMAGE_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE
 from Tribute import Tribute
 from Resource import Resource
 
@@ -16,13 +16,13 @@ T2 = Tribute(id=21, pos=(5, 5))
 T1 = Tribute(id=2, pos=(5, 5))
 T3 = Tribute(id=10, pos=(10, 10))
 
-R1 = Resource(1, (5, 5), 1)
-R2 = Resource(1, (5, 5), 2, 15)
-R3 = Resource(1, (5, 5), 3, 1)
-R4 = Resource(1, (5, 5), 4)
-R5 = Resource(1, (5, 5), 5, 10)
-R6 = Resource(1, (5, 5), 6)
-R7 = Resource(1, (5, 5), 7)
+R1 = Resource(1, (5, 5), Resource.Type(1))
+R2 = Resource(1, (5, 5), Resource.Type(2), 15)
+R3 = Resource(1, (5, 5), Resource.Type(3), 1)
+R4 = Resource(1, (5, 5), Resource.Type(4))
+R5 = Resource(1, (5, 5), Resource.Type(5), 10)
+R6 = Resource(1, (5, 5), Resource.Type(6))
+R7 = Resource(1, (5, 5), Resource.Type(7))
 
 
 
@@ -194,7 +194,7 @@ def testAttackSubtractsHealth():
     T2_health = T2.health
     random.seed(42)
     T1.attack(T2)
-    assert T2.health == T2_health - (BASE_DAMAGE + int(math.ceil((T1.strength * STRENGTH_MULTIPLIER))))
+    assert T2.health == T2_health - (BASE_DAMAGE + int(math.ceil((T1.strength * DAMAGE_MULTIPLIER))))
     assert T1.health == 100
 
 def TestSingleMove():
