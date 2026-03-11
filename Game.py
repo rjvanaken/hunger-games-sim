@@ -66,7 +66,7 @@ class Game:
             while len(self.arena.tributes) > 1:
                 for player in self.players:
                     if player.tribute.isAlive:
-                        player.take_turn(self.arena)
+                        player.take_turn()
                 self.arena.clearDeadTributes()
                 self.turn_count += 1
                 # if turn cap has been reached, reset and move to next day
