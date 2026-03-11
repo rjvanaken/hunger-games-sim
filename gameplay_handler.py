@@ -1,5 +1,5 @@
 import random
-
+from Resource import Resource
 
 def handleMove (tribute, arena):
     # only used by manual - AI mode will use pathfinding
@@ -59,6 +59,12 @@ def handleUseMedical (tribute):
             return False
     return False
 
+def handleRefillWater(tribute, arena):
+    if tribute.max_water != 0:
+        if checkNeighborsFor(tribute, arena, 1):
+            tribute.refillWater()
+            return True
+
 def handlePickup (tribute, resource):
     if resource is None:
         return True # doesn't mean successful pickup, but tracked as a successful turn
@@ -100,6 +106,29 @@ def canPickup (tribute, resourcePos):
         return success
     else:
         return False
+
+def checkNeighborsFor(tribute, arena, type_num):
+    tRow = tribute.pos[0]
+    tCol = tribute.pos[1]
+    neighbors = [
+        arena.getResourceAt((tRow + 1, tCol)),
+        arena.getResourceAt((tRow - 1, tCol)),
+        arena.getResourceAt((tRow, tCol + 1)),
+        arena.getResourceAt((tRow, tCol - 1))
+    ]
+    
+    for item in neighbors:
+        if item != None and item.type.value == type_num:
+            return True
+        return False
+        
+    
+        
+
+def isCellEmpty(arena, row, col):
+    if arena.arena_grid[row, col] != 0:
+        return False
+    return True
 
 # def handleSleep(tribute):
 #     if tribute.isAsleep == False:

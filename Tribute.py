@@ -119,10 +119,6 @@ class Tribute:
     # TODO factor in sponsor logic eventually
         if self.inventory == self.capacity and resource.type != Resource.Type.WATER_SOURCE:
             return "storage capacity reached. cannot pick up new item"
-
-        elif resource.type == Resource.Type.WATER_SOURCE:
-            self.water_supply = self.max_water
-            self.thirst = 100
         
         
         elif resource.type == Resource.Type.WATER_CONTAINER:
@@ -181,6 +177,9 @@ class Tribute:
         self.inventory -= 1
         self.health = min(100, self.health + MEDICAL_VALUE)
 
+    def refillWater(self):
+        self.water_supply = self.max_water
+        self.thirst = 100
     
     # movement function logic is temporary so they can move
     # TODO: update so they navigate in that general direction once tribute agent is working

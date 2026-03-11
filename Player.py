@@ -23,20 +23,9 @@ class HumanPlayer(Player):
 5: drink
 6: heal
 7: sleep
-8: skip tribute (debug)
-''')
-
-    def displayMenuNoMove(self):
-        print(f"\n\nACTION MENU: Tribute '{self.tribute.letter.upper()}'")
-        print(
-'''
-2: attack
-3: pick up item
-4: eat
-5: drink
-6: heal
-7: sleep
-8: skip tribute (debug)
+8: refill
+9: skip tribute (debug)
+10: print stats (debug)
 ''')
 
     def get_tribute_letter(game, target=False):
@@ -59,10 +48,8 @@ class HumanPlayer(Player):
             
         # keep looping until a valid action succeeds
         while True:
-            if self.tribute.isWalking:
-                self.displayMenuNoMove()
-            else:
-                self.displayMenu()
+
+            self.displayMenu()
 
             action = input("ENTER CHOICE: ")
             success = False
@@ -97,6 +84,9 @@ class HumanPlayer(Player):
                     success = gameplay_handler.handleSleep(self.tribute)
 
                 elif action == "8":
+                    success = gameplay_handler.handleRefillWater(self.tribute, self.arena)
+
+                elif action == "9":
                     success = "skip"
                 else:
                     print("Invalid choice, try again.")
