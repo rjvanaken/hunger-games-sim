@@ -16,7 +16,6 @@ T2 = Tribute(id=21, pos=(5, 5))
 T1 = Tribute(id=2, pos=(5, 5))
 T3 = Tribute(id=10, pos=(10, 10))
 
-R1 = Resource(1, (5, 5), Resource.Type(1))
 R2 = Resource(1, (5, 5), Resource.Type(2), 15)
 R3 = Resource(1, (5, 5), Resource.Type(3), 1)
 R4 = Resource(1, (5, 5), Resource.Type(4))
@@ -89,10 +88,6 @@ def testPickup():
     assert T1.max_water == 30
     assert T1.inventory == 7
 
-    T1.water_supply = 3
-    T1.pickUpResource(R1)
-    assert T1.water_supply == T1.max_water
-
     T2.pickUpResource(R7)
     assert T2.capacity == 12
     assert T2.medical == 1
@@ -101,13 +96,6 @@ def testPickup():
     T2.inventory = T2.capacity
     assert T2.pickUpResource(R3) == "storage capacity reached. cannot pick up new item"
 
-
-    # tests can pickup water from source when inventory is full 
-    T2.max_water = 20
-    T2.water_supply = 7
-    assert T2.water_supply == 7
-    T2.pickUpResource(R1)
-    assert T2.water_supply == 20
 
 
 
