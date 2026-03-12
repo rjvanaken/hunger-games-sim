@@ -122,7 +122,7 @@ def checkNeighborsFor(tribute, arena, type_num):
     for item in neighbors:
         if item != None and item.type.value == type_num:
             return True
-        return False
+    return False
         
     
         
