@@ -193,6 +193,18 @@ def testHandleRefillWater():
     assert gh.handleRefillWater(t, arena2) == False
     # TEST 6: no surroundings
 
+
+
+def testCheckNeighborsFor():
+    arena2 = Arena(20)
+    weapon = Resource(1, (5, 5), Resource.Type(5), 10)
+    small_backpack = Resource(2, (9, 9), Resource.Type(6))
+    arena2.resources.append(weapon)
+    arena2.resources.append(small_backpack)
+    t = Tribute(99, (6, 5))
+    arena2.tributes.append(t)
+    arena2.arena_grid[6][5] = t.letter
+
     
 
 

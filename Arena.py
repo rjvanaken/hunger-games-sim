@@ -166,6 +166,12 @@ class Arena:
 
 
     def moveTribute(self, tribute, row, col):
+        '''
+            Moves the tribute and updates their location in the grid storage
+        '''
+        # needs to be modified to go TOWARD said location instead
+        # of immediately there. The udlr moves will update the grid
+
         old_row = tribute.pos[0]
         old_col = tribute.pos[1]
         self.arena_grid[old_row][old_col] = 0

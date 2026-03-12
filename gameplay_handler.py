@@ -124,13 +124,7 @@ def checkNeighborsFor(tribute, arena, type_num):
             return True
     return False
         
-    
-        
 
-def isCellEmpty(arena, row, col):
-    if arena.arena_grid[row, col] != 0:
-        return False
-    return True
 
 # def handleSleep(tribute):
 #     if tribute.isAsleep == False:
