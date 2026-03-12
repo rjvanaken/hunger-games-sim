@@ -31,7 +31,7 @@ class Tribute:
         self.food = 0
         self.medical = 0
         self.capacity = 2
-        self.inventory = 0
+        self.inventory = []
         self.weapon_value = 0
         self.isAlive = True
         self.isAsleep = False
@@ -117,27 +117,27 @@ class Tribute:
     def pickUpResource(self, resource):
     # need to have all pickups in case they get things from sponsors
     # TODO factor in sponsor logic eventually
-        if self.inventory == self.capacity and resource.type != Resource.Type.WATER_SOURCE:
+        if len(self.inventory) == self.capacity and resource.type != Resource.Type.WATER_SOURCE:
             return "storage capacity reached. cannot pick up new item"
         
         
         elif resource.type == Resource.Type.WATER_CONTAINER:
             self.max_water += CANTEEN_VALUE
-            self.inventory += 1
+            self.inventory.append(resource)
 
         elif resource.type == Resource.Type.FOOD:
             for i in range(resource.value):
                 if self.inventory < self.capacity:
                     self.food += int(resource.value)
-                    self.inventory += 1
+                    self.inventory.append(resource)
 
         elif resource.type == Resource.Type.MEDICAL:
             self.medical += 1
-            self.inventory += 1
+            self.inventory.append(resource)
         
         elif resource.type == Resource.Type.WEAPON:
             print("weapon")
-            self.inventory += 1
+            self.inventory.append(resource)
             if int(resource.value) > self.weapon_value:
                 # Update strength by the difference
                 self.strength += (int(resource.value) - self.weapon_value)
@@ -164,8 +164,12 @@ class Tribute:
 
     def eatFood(self):
         self.food -= 1
-        self.inventory -= 1
+        for item in self.inventory:
+            if item.type == 3:
+                self.inventory.remove(item)
+                break
         self.hunger = min(100, self.hunger + FOOD_VALUE) 
+                
 
     def drinkWater(self):
         # TODO: confirm and adjust water unit value as needed in testing
@@ -174,8 +178,11 @@ class Tribute:
 
     def useMedical(self):
         self.medical -= 1
-        self.inventory -= 1
-        self.health = min(100, self.health + MEDICAL_VALUE)
+        for item in self.inventory:
+            if item.type == 4:
+                self.inventory.remove(item)
+                break
+        self.health = min(100, self.health + MEDICAL_VALUE) 
 
     def refillWater(self):
         self.water_supply = self.max_water
