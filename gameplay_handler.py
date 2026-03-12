@@ -75,7 +75,7 @@ def handlePickup (tribute, arena):
     if resource is None:
         return False
 
-    if resource.type == 3:
+    if resource.type.value == 3:
         if not wasFoodPickedUp(tribute):
             return True # return True and consume turn, just don't pick up anything
     

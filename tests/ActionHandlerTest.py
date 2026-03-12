@@ -53,20 +53,20 @@ def testHandlePickup():
     T9.singleMove('l') # weapon
     T11.singleMove('l')
     T11.singleMove('l') # backpack
-    T7.inventory = 0
-    T8.inventory = 0
-    T11.inventory = 0
+    T7.inventory = []
+    T8.inventory = []
+    T11.inventory = []
     # yes check, failed skill check, item picked up regardless bc not food
     with patch('random.randint', side_effect=[50, 99]):
         pickup = gh.handlePickup(T7, game.arena)
-        assert T7.inventory == 3
+        assert len(T7.inventory) == 3
         assert pickup == True
 
     T7.capacity = 12
     # no check, successful pickup, inventory increased
     with patch('random.randint', return_value=20):
         pickup = gh.handlePickup(T7, game.arena)
-        assert T7.inventory > 0
+        assert len(T7.inventory) > 0
         assert pickup == True
 
 
@@ -87,13 +87,13 @@ def testHandlePickup():
     # check, passed, successful pickup, inventory increased
     with patch('random.randint', side_effect=[50, 10]):
         pickup = gh.handlePickup(t, arena2)
-        assert t.inventory == 1
+        assert len(t.inventory) == 1
         assert pickup == True
 
     # no check, straight to pickup, inventory increased
     with patch('random.randint', return_value=20):
         pickup = gh.handlePickup(t2, arena2)
-        assert t2.inventory == 1
+        assert len(t2.inventory) == 1
         assert pickup == True
 
     t2.singleMove('r')

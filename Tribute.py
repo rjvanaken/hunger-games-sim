@@ -127,7 +127,7 @@ class Tribute:
 
         elif resource.type == Resource.Type.FOOD:
             for i in range(resource.value):
-                if self.inventory < self.capacity:
+                if len(self.inventory) < self.capacity:
                     self.food += int(resource.value)
                     self.inventory.append(resource)
 
@@ -175,7 +175,7 @@ class Tribute:
     def eatFood(self):
         self.food -= 1
         for item in self.inventory:
-            if item.type == 3:
+            if item.type.value == 3:
                 self.inventory.remove(item)
                 break
         self.hunger = min(100, self.hunger + FOOD_VALUE) 
@@ -189,7 +189,7 @@ class Tribute:
     def useMedical(self):
         self.medical -= 1
         for item in self.inventory:
-            if item.type == 4:
+            if item.type.value == 4:
                 self.inventory.remove(item)
                 break
         self.health = min(100, self.health + MEDICAL_VALUE) 

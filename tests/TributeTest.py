@@ -42,7 +42,7 @@ def test_tribute_creation_attributes():
     assert T1.food == 0
     assert T1.medical == 0
     assert T1.capacity == 2
-    assert T1.inventory == 0
+    assert T1.inventory == []
     assert T1.weapon_value == 0
     assert T1.isAlive == True
     assert T1.max_strength == T1.strength
@@ -64,63 +64,59 @@ def testPickup():
     assert T1.capacity == 7
     assert T1.food == 2
     assert T1.max_water == 15
-    assert T1.inventory == 3
+    assert len(T1.inventory) == 3
 
     old = T1.max_water
     T1.pickUpResource(R2)
     assert T1.max_water == old + CANTEEN_VALUE
-    assert T1.inventory == 4
+    assert len(T1.inventory) == 4
 
     T1.pickUpResource(R3)
     assert T1.food == 3
-    assert T1.inventory == 5
+    assert len(T1.inventory) == 5
 
     T1.pickUpResource(R4)
     assert T1.medical == 1
-    assert T1.inventory == 6
+    assert len(T1.inventory) == 6
 
     T1.strength = 0
     T1.pickUpResource(R5)
     assert T1.strength == 10
-    assert T1.inventory == 7
+    assert len(T1.inventory) == 7
 
     T1.pickUpResource(R2)
     assert T1.max_water == 30
-    assert T1.inventory == 7
+    assert len(T1.inventory) == 7
 
     T2.pickUpResource(R7)
     assert T2.capacity == 12
     assert T2.medical == 1
 
 
-    T2.inventory = T2.capacity
+    T2.inventory = []
+    T2.capacity = 0
     assert T2.pickUpResource(R3) == "storage capacity reached. cannot pick up new item"
 
 
 
 
 def testEat():
-    T1.inventory = 10
     T1.food = 3 
     T1.hunger = 10
     
-
     old_hunger = T1.hunger
     T1.eatFood()
     assert T1.hunger == old_hunger + FOOD_VALUE
     assert T1.food == 2
-    T1.inventory = 9
 
     T1.hunger = 99
     T1.eatFood()
     assert T1.hunger == 100
     assert T1.food == 1
-    T1.inventory = 8
 
 
 
 def testDrink():
-    T1.inventory = 10
     T1.water_supply = 3 
     T1.thirst = 20
     
@@ -139,22 +135,18 @@ def testDrink():
 
 
 def testUseMedical():
-    T1.inventory = 10
     T1.medical = 3 
     T1.health = 10
-    
 
     old_health = T1.health
     T1.useMedical()
     assert T1.health == old_health + MEDICAL_VALUE
     assert T1.medical == 2
-    T1.inventory = 9
 
     T1.health = 99
     T1.useMedical()
     assert T1.health == 100
     assert T1.medical == 1
-    T1.inventory = 8
 
 def testRefillWater():
     T1.thirst = 30
