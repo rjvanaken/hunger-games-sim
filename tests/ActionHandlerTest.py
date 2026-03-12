@@ -72,13 +72,13 @@ def testHandlePickup():
 
     # env setup
     arena2 = Arena(20)
-    food = Resource(1, (5, 5), Resource.Type(2))
+    food = Resource(1, (5, 5), Resource.Type(3))
     arena2.resources.append(food)
     t = Tribute(99, (5, 5))
     arena2.tributes.append(t)
     arena2.arena_grid[5][5] = t.letter
 
-    food2 = Resource(1, (8, 8), Resource.Type(2))
+    food2 = Resource(1, (8, 8), Resource.Type(3))
     arena2.resources.append(food2)
     t2 = Tribute(100, (8, 8))
     arena2.tributes.append(t2)
