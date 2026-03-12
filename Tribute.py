@@ -35,6 +35,7 @@ class Tribute:
         self.isAsleep = False
         self.isWalking = False
         self.arenaKnowledge = []
+        self.segment = None
         
     @property
     def health(self):
@@ -63,7 +64,7 @@ class Tribute:
 
         # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
 
-        
+      
 
     def getRandomStrength(self):
 
@@ -107,7 +108,7 @@ class Tribute:
             self.health -= THIRST_WARNING_PENALTY
 
         self.strength = self.base_strength * (self.health / 100)
-
+        
 
     def getFood(self):
         food = 0

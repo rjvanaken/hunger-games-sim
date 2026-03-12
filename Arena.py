@@ -13,6 +13,23 @@ class Arena:
         self.resources = []
         self.obstacles = []
         self.tributes = []
+        self.segments = {}
+
+
+
+        # build out segment coordinates
+        i = 1
+        num_segments = size // 4
+        for row in range(num_segments):
+            for col in range(num_segments):
+                    start_row = row * 4
+                    start_col = col * 4
+                    coords = []
+                    for r in range(start_row, start_row + 4):
+                        for c in range(start_col, start_col + 4):
+                            coords.append((r, c))
+                    self.segments[i] = coords
+                    i += 1
 
 
 
@@ -140,6 +157,11 @@ class Arena:
             if resource.pos == pos:
                 return resource
         return None
+    
+    def getSegmentFromPos(self, pos):
+        for key, value in self.segments.items():
+            if pos in value:
+                return key
         
 
     def clearDeadTributes(self):
@@ -163,6 +185,12 @@ class Arena:
                 else:
                     print(cell_value, end=' ')
             print()  # New line after each row
+
+
+    def updateSegmentData(self, tribute, segment):
+        for (row, col) in self.segments[segment]:
+            tribute.arenaKnowledge[row][col] = self.arena_grid[row][col]
+
 
 
     def moveTribute(self, tribute, row, col):

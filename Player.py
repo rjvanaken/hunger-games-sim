@@ -38,6 +38,11 @@ class HumanPlayer(Player):
 
 
     def take_turn(self):
+        
+        self.tribute.segment = self.arena.getSegmentFromPos(self.tribute.pos)
+        segment = self.tribute.segment
+        self.arena.updateSegmentData(self.tribute, segment)
+
         self.tribute.updateStatsBeforeTurn()
         # if asleep, skip turn but decrement sleep counter
         if self.tribute.isAsleep:
