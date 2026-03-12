@@ -104,19 +104,25 @@ def testHandlePickup():
     pickup = gh.handlePickup(t2, arena2)
     assert pickup == False
 
-    
 
 def testHandleEatFood():
-    T3.food = 2
+    F1 = Resource(1, (5, 5), Resource.Type(3), 1)
+    F2 = Resource(1, (5, 5), Resource.Type(3), 1)
+    
+    T3.inventory = []
+    T3.inventory.append(F2)
+    T3.inventory.append(F1)
+
+    assert T3.getFood() == 2
     T3.hunger = 10
     result = gh.handleEatFood(T3)
     assert result == True
-    T4.food = 1
-    T4.hunger = 10
+    T3.hunger = 10
+    assert T3.getFood() == 1
     result = False
-    result = gh.handleEatFood(T4)
+    result = gh.handleEatFood(T3)
     assert result == True
-    result = gh.handleEatFood(T4)
+    result = gh.handleEatFood(T3)
     assert result == False
 
     result = True
@@ -143,16 +149,22 @@ def testHandleDrinkWater():
 
 
 def testHandleUseMedical():
-    T3.medical = 2
+    M1 = Resource(1, (5, 5), Resource.Type(4))
+    M2 = Resource(1, (5, 5), Resource.Type(4))
+    T3.inventory = []
+    T3.inventory.append(M2)
+    T3.inventory.append(M1)
+
+    assert T3.getMedical() == 2
     T3.health = 10
     result = gh.handleUseMedical(T3)
     assert result == True
     result = False
-    T4.medical = 1
-    T4.health = 10
-    result = gh.handleUseMedical(T4)
+    assert T3.getMedical() == 1
+    T3.health = 10
+    result = gh.handleUseMedical(T3)
     assert result == True
-    result = gh.handleUseMedical(T4)
+    result = gh.handleUseMedical(T3)
     assert result == False
 
     result = True
