@@ -67,47 +67,35 @@ def handleRefillWater(tribute, arena):
                 return True
     return False
 
-def handlePickup (tribute, resource):
+def handlePickup (tribute, arena):
+    if tribute.inventory == tribute.capacity:
+        print("no more room in inventory")
+        return False
+    resource = arena.getResourceAt(tribute.pos)
     if resource is None:
-        return True # doesn't mean successful pickup, but tracked as a successful turn
-    requires_skill_check = random.randint(0, 100)
-    if requires_skill_check > 30:
-        # if chance is greater than skill, simply return True, don't pick up
-        if random.randint(1, 100) >= tribute.hunting_skill:
-            return True # doesn't mean successful pickup, but tracked as a successful turn
-    
-    rp = resource.pos
-    if canPickup(tribute, rp):
-        tribute.pickUpResource(resource)
-        return True
-    else:
-        if tribute.inventory == tribute.capacity:
-            print("no more room in inventory")
-        else:
-            print("Cannot pick up") # temp debug
         return False
 
+    if resource.type == 2:
+        if not wasFoodPickedUp(tribute):
+            return True # return True and consume turn, just don't pick up anything
+    
+    tribute.pickUpResource(resource)
+    return True
 
+def wasFoodPickedUp(tribute):
+    requires_skill_check = random.randint(0, 100)
+    # 70% chance of getting a skill check
+    if requires_skill_check > 30:
+        # if chance is greater than skill, return food check as a fail
+        if random.randint(1, 100) >= tribute.hunting_skill:
+            return False 
+    
+    # either no check or successful pickup check, return true
+    return True
 
 def canPickup (tribute, resourcePos):
-    if tribute.inventory < tribute.capacity:
-        success = False
-        tRow = tribute.pos[0]
-        tCol = tribute.pos[1]
-        rRow = resourcePos[0]
-        rCol = resourcePos[1]
-        if tRow == rRow + 1 and tCol == rCol:
-            success = True
-        elif tRow == rRow - 1 and tCol == rCol:
-            success = True
-        elif tRow == rRow and tCol == rCol + 1:
-            success = True
-        elif tRow == rRow and tCol == rCol - 1:
-            success = True
-        
-        return success
-    else:
-        return False
+    # REWRITE AND UTILIZE FOR ACTION MASKING
+    pass
 
 def checkNeighborsFor(tribute, arena, type_num):
     tRow = tribute.pos[0]

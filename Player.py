@@ -69,7 +69,7 @@ class HumanPlayer(Player):
                     if resource is None:
                         print("No resource at your position.")
                     else:
-                        success = gameplay_handler.handlePickup(self.tribute, resource)
+                        success = gameplay_handler.handlePickup(self.tribute, self.arena)
 
                 elif action == "4":
                     success = gameplay_handler.handleEatFood(self.tribute)

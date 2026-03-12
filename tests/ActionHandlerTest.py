@@ -46,49 +46,68 @@ def testHandleAttack():
 def testHandlePickup():
     T8.hunting_skill = 90
     T11.hunting_skill = 90
+    T7.singleMove('l')
     T7.singleMove('l') # backpack
     T8.singleMove('l') # nothing to pick up
     T9.singleMove('l')
+    T9.singleMove('l') # weapon
     T11.singleMove('l')
-    resource7 = (T7.pos[0], T7.pos[1] - 1)
-    resource9 = (T9.pos[0], T9.pos[1] - 1)
-    resource11 = (T11.pos[0], T11.pos[1] - 1)
-    r7 = game.arena.getResourceAt(resource7)
-    r9 = game.arena.getResourceAt(resource9)
-    r11 = game.arena.getResourceAt(resource11)
-    print(r11.type)
-
-    # yes check, failed skill check, returned as success but no item picked up
+    T11.singleMove('l') # backpack
+    T7.inventory = 0
+    T8.inventory = 0
+    T11.inventory = 0
+    # yes check, failed skill check, item picked up regardless bc not food
     with patch('random.randint', side_effect=[50, 99]):
-        pickup = gh.handlePickup(T7, r7)
-        assert T7.inventory == 0
+        pickup = gh.handlePickup(T7, game.arena)
+        assert T7.inventory == 3
         assert pickup == True
-
-    # no check, nothing to pick up, returned as False
-    with patch('random.randint', return_value=20):
-        pickup = gh.handlePickup(T8, r11)
-        assert pickup == False
-        assert T8.inventory == 0
-
-    # yes check, passed skill check, nothing to pick up, returned as False
-    with patch('random.randint', side_effect=[50, 10]):
-        pickup = gh.handlePickup(T8, r11)
-        assert pickup == False
-        assert T8.inventory == 0
 
     T7.capacity = 12
     # no check, successful pickup, inventory increased
     with patch('random.randint', return_value=20):
-        pickup = gh.handlePickup(T7, r7)
+        pickup = gh.handlePickup(T7, game.arena)
         assert T7.inventory > 0
         assert pickup == True
 
 
+    # env setup
+    arena2 = Arena(20)
+    food = Resource(1, (5, 5), Resource.Type(2))
+    arena2.resources.append(food)
+    t = Tribute(99, (5, 5))
+    arena2.tributes.append(t)
+    arena2.arena_grid[5][5] = t.letter
+
+    food2 = Resource(1, (8, 8), Resource.Type(2))
+    arena2.resources.append(food2)
+    t2 = Tribute(100, (8, 8))
+    arena2.tributes.append(t2)
+    arena2.arena_grid[8][8] = t2.letter
+
     # check, passed, successful pickup, inventory increased
     with patch('random.randint', side_effect=[50, 10]):
-        pickup = gh.handlePickup(T11, r11)
-        assert T11.inventory == 1
+        pickup = gh.handlePickup(t, arena2)
+        assert t.inventory == 1
         assert pickup == True
+
+    # no check, straight to pickup, inventory increased
+    with patch('random.randint', return_value=20):
+        pickup = gh.handlePickup(t2, arena2)
+        assert t2.inventory == 1
+        assert pickup == True
+
+    t2.singleMove('r')
+    
+    # spot is empty, returns False
+    pickup = gh.handlePickup(t2, arena2)
+    assert pickup == False
+
+
+    food3 = Resource(1, (9, 8), Resource.Type(2))
+    arena2.resources.append(food3)
+    # inventory full, returns False
+    pickup = gh.handlePickup(t2, arena2)
+    assert pickup == False
 
     
 
@@ -195,15 +214,6 @@ def testHandleRefillWater():
 
 
 
-def testCheckNeighborsFor():
-    arena2 = Arena(20)
-    weapon = Resource(1, (5, 5), Resource.Type(5), 10)
-    small_backpack = Resource(2, (9, 9), Resource.Type(6))
-    arena2.resources.append(weapon)
-    arena2.resources.append(small_backpack)
-    t = Tribute(99, (6, 5))
-    arena2.tributes.append(t)
-    arena2.arena_grid[6][5] = t.letter
 
     
 
