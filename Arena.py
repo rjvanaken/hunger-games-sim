@@ -177,3 +177,17 @@ class Arena:
         self.arena_grid[old_row][old_col] = 0
         tribute.move(row, col)
         self.arena_grid[row][col] = tribute.letter
+
+
+    def removeResource(self, resource):
+        '''
+        Run after pickup resource. 
+        Removes the resource from the resources list, grid, and 
+        changes id and pos to None
+        '''
+        self.resources.remove(resource)
+        self.arena_grid[resource.pos[0]][resource.pos[1]] = 0
+        resource.pos = None
+        resource.id = None
+
+

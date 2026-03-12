@@ -95,7 +95,7 @@ def testPickup():
 
     T2.inventory = []
     T2.capacity = 0
-    assert T2.pickUpResource(R3) == "storage capacity reached. cannot pick up new item"
+    assert T2.pickUpResource(R3) == False
 
 
 

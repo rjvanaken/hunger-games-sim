@@ -117,35 +117,9 @@ class Tribute:
     def pickUpResource(self, resource):
     # need to have all pickups in case they get things from sponsors
     # TODO factor in sponsor logic eventually
-        if len(self.inventory) == self.capacity and resource.type != Resource.Type.WATER_SOURCE:
-            return "storage capacity reached. cannot pick up new item"
-        
-        
-        elif resource.type == Resource.Type.WATER_CONTAINER:
-            self.max_water += CANTEEN_VALUE
-            self.inventory.append(resource)
 
-        elif resource.type == Resource.Type.FOOD:
-            for i in range(resource.value):
-                if len(self.inventory) < self.capacity:
-                    self.food += int(resource.value)
-                    self.inventory.append(resource)
 
-        elif resource.type == Resource.Type.MEDICAL:
-            self.medical += 1
-            self.inventory.append(resource)
-        
-        elif resource.type == Resource.Type.WEAPON:
-            print("weapon")
-            self.inventory.append(resource)
-            if int(resource.value) > self.weapon_value:
-                # Update strength by the difference
-                self.strength += (int(resource.value) - self.weapon_value)
-                self.weapon_value = int(resource.value)  # Update weapon value too!
-            # If new weapon is worse, don't pick it up (or just don't update anything)
-
-        # TODO: confirm and adjust backpack sizes in testing
-        elif resource.type == Resource.Type.BACKPACK_SMALL:
+        if resource.type == Resource.Type.BACKPACK_SMALL:
             self.capacity += 5
             canteen = Resource(None, None, Resource.Type(2))
             self.inventory.append(canteen)
@@ -154,7 +128,8 @@ class Tribute:
                 self.inventory.append(food)
             self.food += 2
             self.max_water += CANTEEN_VALUE
-            
+            return True
+        
         elif resource.type == Resource.Type.BACKPACK_LARGE:
             self.capacity += 10
             canteen = Resource(None, None, Resource.Type(2))
@@ -167,6 +142,39 @@ class Tribute:
             self.food += 3
             self.medical += 1
             self.max_water += CANTEEN_VALUE
+            return True
+        
+        elif len(self.inventory) == self.capacity and resource.type != Resource.Type.WATER_SOURCE:
+            print("storage capacity reached. cannot pick up new item")
+            return False
+        
+        
+        elif resource.type == Resource.Type.WATER_CONTAINER:
+            self.max_water += CANTEEN_VALUE
+            self.inventory.append(resource)
+            return True
+
+        elif resource.type == Resource.Type.FOOD:
+            self.food += int(resource.value)
+            self.inventory.append(resource)
+            return True
+
+        elif resource.type == Resource.Type.MEDICAL:
+            self.medical += 1
+            self.inventory.append(resource)
+            return True
+        
+        elif resource.type == Resource.Type.WEAPON:
+            print("weapon")
+            self.inventory.append(resource)
+            if int(resource.value) > self.weapon_value:
+                # Update strength by the difference
+                self.strength += (int(resource.value) - self.weapon_value)
+                self.weapon_value = int(resource.value)  # Update weapon value too!
+            # If new weapon is worse, don't pick it up (or just don't update anything)
+            return True
+
+        # TODO: confirm and adjust backpack sizes in testing
 
         else:
             return "debug - item error"

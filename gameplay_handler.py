@@ -79,8 +79,21 @@ def handlePickup (tribute, arena):
         if not wasFoodPickedUp(tribute):
             return True # return True and consume turn, just don't pick up anything
     
-    tribute.pickUpResource(resource)
+    pickup = tribute.pickUpResource(resource)
+    if pickup == True:
+        arena.removeResource(resource)
     return True
+
+def removeResource(self, resource):
+    '''
+    Run after pickup resource. 
+    Removes the resource from the resources list, grid, and 
+    changes id and pos to None
+    '''
+    self.resources.remove(resource)
+    self.arena_grid[resource.pos[0]][resource.pos[1]] = 0
+    resource.pos = None
+    resource.id = None
 
 def wasFoodPickedUp(tribute):
     requires_skill_check = random.randint(0, 100)

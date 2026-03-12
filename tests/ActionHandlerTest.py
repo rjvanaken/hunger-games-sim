@@ -56,18 +56,13 @@ def testHandlePickup():
     T7.inventory = []
     T8.inventory = []
     T11.inventory = []
-    # yes check, failed skill check, item picked up regardless bc not food
+    
+    # item picked up regardless bc not food, no skill check
     with patch('random.randint', side_effect=[50, 99]):
         pickup = gh.handlePickup(T7, game.arena)
         assert len(T7.inventory) == 3
         assert pickup == True
 
-    T7.capacity = 12
-    # no check, successful pickup, inventory increased
-    with patch('random.randint', return_value=20):
-        pickup = gh.handlePickup(T7, game.arena)
-        assert len(T7.inventory) > 0
-        assert pickup == True
 
 
     # env setup

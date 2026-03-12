@@ -34,4 +34,3 @@ class Resource:
         list.append(resource)
         self.next_resource_id += 1
 
-        # how do I pick up backpack and pick it up
