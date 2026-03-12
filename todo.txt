@@ -33,12 +33,3 @@ for key, value in segments
 - unless the tribute has an attribute that is like "new_rewrd" and it's edited on a successful thing
 - so afterwards I just change it to that with that action bc it will only have changed if it were a success 
 
---- ok wait about the pickup thing - need to make it on the same spot and figur eout how to make the water different
--- NOW
--- what if, to avoid a lot of errors, actions are only available if you qualify:
--- would need conditionals to say "if with no food and not hungry (and variations)" then that is not one of the next states
--- is this possible? can I make the states change dynamically like that?
--- this would eliminate the possibility of an AI throwing an error by picking up an item that doesn't exist.
--- is there an item on your current spot and do you have room in inventory? pickup is displayed
--- are you thirsty and do you have water? drink is displayed
--- is there a tribute on your same page 
