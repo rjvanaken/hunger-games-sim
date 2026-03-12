@@ -6,8 +6,12 @@ parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
 from Game import Game
+from Arena import Arena
+from Resource import Resource
+from Tribute import Tribute
 import gameplay_handler as gh
 
+game2 = Game(20)
 
 game = Game(20)
 game.addTributes(game.arena.center)
@@ -143,6 +147,66 @@ def testHandleUseMedical():
 
 
 
+def testHandleRefillWater():
+    # env setup
+    arena2 = Arena(20)
+    water = Resource(1, (5, 5), Resource.Type(1))
+    not_water = Resource(2, (9, 9), Resource.Type(5))
+    arena2.resources.append(water)
+    arena2.resources.append(not_water)
+    t = Tribute(99, (6, 5))
+    arena2.tributes.append(t)
+    arena2.arena_grid[6][5] = t.letter
+    
+    # TEST 1: capacity is at 0 in the beginning, cannot refill
+    result = gh.handleRefillWater(t, arena2)
+    assert result == False
+
+    t.thirst = 30
+    t.max_water = 15
+    t.water_supply = 3
+    # TEST 2: capacity is 15, water not at max
+    result = gh.handleRefillWater(t, arena2)
+    assert result == True
+    
+    result = False
+    t.water_supply = 3
+    t.thirst = 100
+    # TEST 3: thirst does not impact refill
+    result = gh.handleRefillWater(t, arena2)
+    assert result == True
+    
+    assert t.water_supply == 15
+    # TEST 4: water is already filled, no action completed
+    result = gh.handleRefillWater(t, arena2)
+    assert result == False
+
+    t.thirst = 30
+    t.max_water = 15
+    t.water_supply = 3
+    t.move(9, 8)
+
+    # TEST 5: different resource
+    assert gh.handleRefillWater(t, arena2) == False
+
+    t.move(14, 14)
+    assert gh.handleRefillWater(t, arena2) == False
+    # TEST 6: no surroundings
+
+    
+
+
+    
+
+
+    
+
+
+
+    
+
+
+
 # def handleSleep():
 #     pass
 
@@ -152,6 +216,7 @@ def main():
     testHandleEatFood()
     testHandlePickup()
     testHandleUseMedical
+    testHandleRefillWater()
 
 if __name__ == '__main__':
     main() 

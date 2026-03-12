@@ -61,9 +61,11 @@ def handleUseMedical (tribute):
 
 def handleRefillWater(tribute, arena):
     if tribute.max_water != 0:
-        if checkNeighborsFor(tribute, arena, 1):
-            tribute.refillWater()
-            return True
+        if tribute.water_supply < tribute.max_water:
+            if checkNeighborsFor(tribute, arena, 1):
+                tribute.refillWater()
+                return True
+    return False
 
 def handlePickup (tribute, resource):
     if resource is None:

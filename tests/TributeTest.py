@@ -157,11 +157,13 @@ def testUseMedical():
     T1.inventory = 8
 
 def testRefillWater():
+    T1.thirst = 30
     T1.water_supply = 0
     T1.max_water = 24
     assert T1.water_supply == 0
     T1.refillWater()
     assert T1.water_supply == 24
+    assert T1.thirst == 100
 
 def testIsAliveProperty():
 
