@@ -28,8 +28,6 @@ class Tribute:
         self.hunger = 100
         self.water_supply = 0
         self.max_water = 0
-        self.food = 0
-        self.medical = 0
         self.capacity = 2
         self.inventory = []
         self.weapon_value = 0
@@ -111,6 +109,19 @@ class Tribute:
         self.strength = self.base_strength * (self.health / 100)
 
 
+    def getFood(self):
+        food = 0
+        for item in self.inventory:
+            if item.type.value == 3:
+                food += 1
+        return food
+    
+    def getMedical(self):
+        medical = 0
+        for item in self.inventory:
+            if item.type.value == 4:
+                medical += 1
+        return medical
 
 # GAME ACTIONS
 
@@ -126,7 +137,6 @@ class Tribute:
             for i in range(2):
                 food = Resource(None, None, Resource.Type(3))
                 self.inventory.append(food)
-            self.food += 2
             self.max_water += CANTEEN_VALUE
             return True
         
@@ -139,8 +149,6 @@ class Tribute:
             for i in range(3):
                 food = Resource(None, None, Resource.Type(3))
                 self.inventory.append(food)
-            self.food += 3
-            self.medical += 1
             self.max_water += CANTEEN_VALUE
             return True
         
@@ -155,12 +163,10 @@ class Tribute:
             return True
 
         elif resource.type == Resource.Type.FOOD:
-            self.food += int(resource.value)
             self.inventory.append(resource)
             return True
 
         elif resource.type == Resource.Type.MEDICAL:
-            self.medical += 1
             self.inventory.append(resource)
             return True
         
@@ -181,7 +187,6 @@ class Tribute:
         
 
     def eatFood(self):
-        self.food -= 1
         for item in self.inventory:
             if item.type.value == 3:
                 self.inventory.remove(item)
@@ -195,7 +200,6 @@ class Tribute:
         self.thirst = min(100, self.thirst + WATER_VALUE)
 
     def useMedical(self):
-        self.medical -= 1
         for item in self.inventory:
             if item.type.value == 4:
                 self.inventory.remove(item)

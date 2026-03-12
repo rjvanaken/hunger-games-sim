@@ -30,7 +30,7 @@ def handleAttack (tribute, target):
 
 def handleEatFood (tribute):
     if tribute.hunger != 100:
-        if tribute.food >= 1:
+        if tribute.getFood() >= 1:
             tribute.eatFood()
             return True
         else:
@@ -51,7 +51,7 @@ def handleDrinkWater (tribute):
 
 def handleUseMedical (tribute):
     if tribute.health != 100:
-        if tribute.medical >= 1:
+        if tribute.getMedical() >= 1:
             tribute.useMedical()
             return True
         else:
