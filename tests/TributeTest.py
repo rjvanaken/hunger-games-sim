@@ -23,6 +23,12 @@ R5 = Resource(1, (5, 5), Resource.Type(5), 10)
 R6 = Resource(1, (5, 5), Resource.Type(6))
 R7 = Resource(1, (5, 5), Resource.Type(7))
 
+M1 = Resource(1, (5, 5), Resource.Type(4))
+M2 = Resource(1, (5, 5), Resource.Type(4))
+M3 = Resource(1, (5, 5), Resource.Type(4))
+F1 = Resource(1, (5, 5), Resource.Type(3), 1)
+F2 = Resource(1, (5, 5), Resource.Type(3), 1)
+F3 = Resource(1, (5, 5), Resource.Type(3), 1)
 
 
 
@@ -39,8 +45,6 @@ def test_tribute_creation_attributes():
     assert T1.hunger == 100
     assert T1.water_supply == 0
     assert T1.max_water == 0
-    assert T1.food == 0
-    assert T1.medical == 0
     assert T1.capacity == 2
     assert T1.inventory == []
     assert T1.weapon_value == 0
@@ -62,7 +66,7 @@ def testPickup():
 
     T1.pickUpResource(R6)
     assert T1.capacity == 7
-    assert T1.food == 2
+    assert T1.getFood() == 2
     assert T1.max_water == 15
     assert len(T1.inventory) == 3
 
@@ -72,11 +76,11 @@ def testPickup():
     assert len(T1.inventory) == 4
 
     T1.pickUpResource(R3)
-    assert T1.food == 3
+    assert T1.getFood() == 3
     assert len(T1.inventory) == 5
 
     T1.pickUpResource(R4)
-    assert T1.medical == 1
+    assert T1.getMedical() == 1
     assert len(T1.inventory) == 6
 
     T1.strength = 0
@@ -90,7 +94,7 @@ def testPickup():
 
     T2.pickUpResource(R7)
     assert T2.capacity == 12
-    assert T2.medical == 1
+    assert T2.getMedical() == 1
 
 
     T2.inventory = []
@@ -98,21 +102,26 @@ def testPickup():
     assert T2.pickUpResource(R3) == False
 
 
-
-
 def testEat():
-    T1.food = 3 
+
+    T1.inventory = []
+    T1.inventory.append(F2)
+    T1.inventory.append(F1)
+    T1.inventory.append(F3)
+
+    assert T1.getFood() == 3
     T1.hunger = 10
     
     old_hunger = T1.hunger
     T1.eatFood()
     assert T1.hunger == old_hunger + FOOD_VALUE
-    assert T1.food == 2
+    assert T1.getFood() == 2
+    assert F2 not in T1.inventory
 
     T1.hunger = 99
     T1.eatFood()
     assert T1.hunger == 100
-    assert T1.food == 1
+    assert T1.getFood() == 1
 
 
 
@@ -135,18 +144,25 @@ def testDrink():
 
 
 def testUseMedical():
-    T1.medical = 3 
+    T1.inventory.append(M1)
+    T1.inventory.append(M2)
+    T1.inventory.append(M3)
+
+    assert T1.getMedical() == 3 
     T1.health = 10
 
     old_health = T1.health
+
     T1.useMedical()
     assert T1.health == old_health + MEDICAL_VALUE
-    assert T1.medical == 2
+    assert T1.getMedical() == 2
+    assert M1 not in T1.inventory
 
     T1.health = 99
     T1.useMedical()
     assert T1.health == 100
-    assert T1.medical == 1
+    assert T1.getMedical() == 1
+
 
 def testRefillWater():
     T1.thirst = 30
