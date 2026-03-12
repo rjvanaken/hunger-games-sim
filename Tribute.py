@@ -147,16 +147,26 @@ class Tribute:
         # TODO: confirm and adjust backpack sizes in testing
         elif resource.type == Resource.Type.BACKPACK_SMALL:
             self.capacity += 5
+            canteen = Resource(None, None, Resource.Type(2))
+            self.inventory.append(canteen)
+            for i in range(2):
+                food = Resource(None, None, Resource.Type(3))
+                self.inventory.append(food)
             self.food += 2
             self.max_water += CANTEEN_VALUE
-            self.inventory += 3
             
         elif resource.type == Resource.Type.BACKPACK_LARGE:
             self.capacity += 10
+            canteen = Resource(None, None, Resource.Type(2))
+            medical = Resource(None, None, Resource.Type(4))
+            self.inventory.append(canteen)
+            self.inventory.append(medical)
+            for i in range(3):
+                food = Resource(None, None, Resource.Type(3))
+                self.inventory.append(food)
             self.food += 3
             self.medical += 1
             self.max_water += CANTEEN_VALUE
-            self.inventory += 5
 
         else:
             return "debug - item error"
