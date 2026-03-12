@@ -68,14 +68,14 @@ def handleRefillWater(tribute, arena):
     return False
 
 def handlePickup (tribute, arena):
-    if tribute.inventory == tribute.capacity:
+    if len(tribute.inventory) == tribute.capacity:
         print("no more room in inventory")
         return False
     resource = arena.getResourceAt(tribute.pos)
     if resource is None:
         return False
 
-    if resource.type == 2:
+    if resource.type == 3:
         if not wasFoodPickedUp(tribute):
             return True # return True and consume turn, just don't pick up anything
     
