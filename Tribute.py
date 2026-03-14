@@ -218,19 +218,25 @@ class Tribute:
         self.pos = ((row, col))
 
     def singleMove(self, direction):
-        
-        if direction.lower() == 'u' or direction.lower() == 'up':
-            self.pos = ((self.pos[0] - 1, self.pos[1]))
-        if direction.lower() == 'd' or direction.lower() == 'down':
-            self.pos = ((self.pos[0] + 1, self.pos[1]))
-        if direction.lower() == 'l' or direction.lower() == 'left':
-            self.pos = ((self.pos[0], self.pos[1] - 1))
-        if direction.lower() == 'r' or direction.lower() == 'right':
-            self.pos = ((self.pos[0], self.pos[1] + 1))
-        
-    # note: checking the path happens in the validation. This simply does the action. separation of concerns
+        # handle logic is here instead simply because otherwise we would be checking this twice
 
-            
+        if direction.lower() == 'u':
+            new_pos = ((self.pos[0] - 1, self.pos[1]))
+        elif direction.lower() == 'd':
+            new_pos = ((self.pos[0] + 1, self.pos[1]))
+        elif direction.lower() == 'l':
+            new_pos = ((self.pos[0], self.pos[1] - 1))
+        elif direction.lower() == 'r':
+            new_pos = ((self.pos[0], self.pos[1] + 1))
+
+        if self.canMoveTo(new_pos):
+            self.pos = new_pos
+
+        
+
+    def canMoveTo(self, pos):
+        if self.arenaKnowledge[pos[0][1]] not in [8, 1, 9]:
+            return True
 
 
     def attack(self, target):

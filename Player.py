@@ -16,7 +16,8 @@ class HumanPlayer(Player):
             print(f"\n\nACTION MENU: Tribute '{self.tribute.letter.upper()}'")
             print(
 '''
-1: move
+0: quickmove
+1: singleMove ('u', 'd', 'l', 'r')
 2: attack
 3: pick up item
 4: eat
@@ -60,9 +61,13 @@ class HumanPlayer(Player):
             success = False
 
             try:
-                if action == "1":
-                    
+
+                if action == "0":
                     success = gameplay_handler.handleMove(self.tribute, self.arena)
+
+                elif action == "1":
+                    direction = input("Please enter direction ('up', 'down', 'left', 'right'): ")
+                    success = gameplay_handler.handleSingleMove(direction)
 
                 elif action == "2":
                     target_id = self.get_tribute_letter(target=True)

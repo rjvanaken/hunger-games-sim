@@ -19,6 +19,15 @@ def handleMove (tribute, arena):
     else:
         print("Invalid row or column") # temp debug
 
+def handleSingleMove (tribute, direction):
+    if direction.lower() == 'u' or direction.lower() == 'up':
+        tribute.singleMove('u')
+    elif direction.lower() == 'd' or direction.lower() == 'down':
+        tribute.singleMove('d')
+    elif direction.lower() == 'l' or direction.lower() == 'left':
+        tribute.singleMove('l')
+    elif direction.lower() == 'r' or direction.lower() == 'right':
+        tribute.singleMove('r')
 
 def handleAttack (tribute, target):
     if (-2 <= tribute.pos[0] - target.pos[0] <= 2) and (-2 <= tribute.pos[1] - target.pos[1] <= 2) :
