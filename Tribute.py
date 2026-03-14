@@ -220,13 +220,13 @@ class Tribute:
     def singleMove(self, direction):
         # handle logic is here instead simply because otherwise we would be checking this twice
 
-        if direction.lower() == 'u':
-            new_pos = ((self.pos[0] - 1, self.pos[1]))
-        elif direction.lower() == 'd':
+        if direction.lower() == 'u' or direction.lower() == 'up':
+            new_pos = ((self.pos[0] - 1, self.pos[1])) 
+        elif direction.lower() == 'd' or direction.lower() == 'down':
             new_pos = ((self.pos[0] + 1, self.pos[1]))
-        elif direction.lower() == 'l':
+        elif direction.lower() == 'l' or direction.lower() == 'left':
             new_pos = ((self.pos[0], self.pos[1] - 1))
-        elif direction.lower() == 'r':
+        elif direction.lower() == 'r' or direction.lower() == 'right':
             new_pos = ((self.pos[0], self.pos[1] + 1))
 
         if self.canMoveTo(new_pos):
@@ -235,7 +235,7 @@ class Tribute:
         
 
     def canMoveTo(self, pos):
-        if self.arenaKnowledge[pos[0][1]] not in [8, 1, 9]:
+        if int(self.arenaKnowledge[pos[0]][pos[1]]) not in [8, 1]:
             return True
 
 

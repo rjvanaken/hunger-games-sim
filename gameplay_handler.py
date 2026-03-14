@@ -28,6 +28,8 @@ def handleSingleMove (tribute, direction):
         tribute.singleMove('l')
     elif direction.lower() == 'r' or direction.lower() == 'right':
         tribute.singleMove('r')
+    
+    return True
 
 def handleAttack (tribute, target):
     if (-2 <= tribute.pos[0] - target.pos[0] <= 2) and (-2 <= tribute.pos[1] - target.pos[1] <= 2) :
