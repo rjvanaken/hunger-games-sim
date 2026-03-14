@@ -67,3 +67,5 @@ def setupTestArena():
 
     for resource in game.arena.resources:
         game.arena.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
+
+    return game, A, B

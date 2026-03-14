@@ -10,6 +10,7 @@ from Arena import Arena
 from Resource import Resource
 from Tribute import Tribute
 import gameplay_handler as gh
+import test_helper as th
 
 game2 = Game(20)
 
@@ -216,11 +217,14 @@ def testHandleRefillWater():
     assert gh.handleRefillWater(t, arena2) == False
 
     t.move(14, 14)
-    assert gh.handleRefillWater(t, arena2) == False
     # TEST 6: no surroundings
+    assert gh.handleRefillWater(t, arena2) == False
 
 
-
+def testHandleSingleMove():
+    game, A, B = th.setupTestArena()
+    pass
+    # to add from survival test when done
 
     
 

@@ -2,7 +2,8 @@ import Tribute
 import test_helper as th
 
 
-th.setupTestArena()
+
 
 def SurvivalTest():
+    game, A, B = th.setupTestArena()
     pass
