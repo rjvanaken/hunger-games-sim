@@ -9,7 +9,9 @@ sys.path.insert(0, parent_dir)
 from config import BASE_DAMAGE, DAMAGE_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE
 from Tribute import Tribute
 from Resource import Resource
+from Arena import Arena
 
+arena = Arena(48)
 
 # setup
 T2 = Tribute(id=21, pos=(5, 5))
@@ -30,7 +32,8 @@ F1 = Resource(1, (5, 5), Resource.Type(3), 1)
 F2 = Resource(1, (5, 5), Resource.Type(3), 1)
 F3 = Resource(1, (5, 5), Resource.Type(3), 1)
 
-
+for tribute in [T1, T2, T3]:
+    arena.tributes.append(tribute)
 
 def test_tribute_creation_attributes():
     
@@ -199,7 +202,12 @@ def testAttackSubtractsHealth():
     assert T2.health == T2_health - (BASE_DAMAGE + int(math.ceil((T1.strength * DAMAGE_MULTIPLIER))))
     assert T1.health == 100
 
+
+
 def TestSingleMove():
+
+    T3.arenaKnowledge = arena.arena_grid
+
     T3.singleMove('r')
     T3.singleMove('right')
     T3.singleMove('RiGht')

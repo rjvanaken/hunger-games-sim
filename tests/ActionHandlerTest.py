@@ -30,7 +30,10 @@ T4 = game.arena.tributes[4]
 T7 = game.arena.tributes[7] # pickup but inventory > than just 1 bc backpack
 T8 = game.arena.tributes[8] # fail pickup
 T9 = game.arena.tributes[9] # can pickup
-T11 = game.arena.tributes[11] 
+T11 = game.arena.tributes[11]
+
+for tribute in [T7, T8, T9, T11]:
+    tribute.arenaKnowledge = game.arena.arena_grid
 
 
 
@@ -79,6 +82,7 @@ def testHandlePickup():
     t2 = Tribute(100, (8, 8))
     arena2.tributes.append(t2)
     arena2.arena_grid[8][8] = t2.letter
+    t2.arenaKnowledge = arena2.arena_grid
 
     # check, passed, successful pickup, inventory increased
     with patch('random.randint', side_effect=[50, 10]):
@@ -92,7 +96,8 @@ def testHandlePickup():
         assert len(t2.inventory) == 1
         assert pickup == True
 
-    t2.singleMove('r')
+    # t2.singleMove('r')
+    t2.move(t2.pos[0], t2.pos[1] + 1)
     
     # spot is empty, returns False
     pickup = gh.handlePickup(t2, arena2)
@@ -223,7 +228,11 @@ def testHandleRefillWater():
 
 def testHandleSingleMove():
     game, A, B = th.setupTestArena()
-    pass
+    A_row = A.tribute.pos[0]
+    A_col = A.tribute.pos[1]
+    result = gh.handleSingleMove(A.tribute, 'left')
+    assert result == True
+    assert A.tribute.pos == (A_row, A_col - 1)
     # to add from survival test when done
 
     
@@ -250,6 +259,7 @@ def main():
     testHandlePickup()
     testHandleUseMedical
     testHandleRefillWater()
+    testHandleSingleMove()
 
 if __name__ == '__main__':
     main() 
