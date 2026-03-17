@@ -85,7 +85,7 @@ class HumanPlayer(Player):
                     success = gameplay_handler.handleEatFood(self.tribute)
 
                 elif action == "5":
-                    success = gameplay_handler.handleDrinkWater(self.tribute)
+                    success = gameplay_handler.handleDrinkWater(self.tribute, self.arena)
 
                 elif action == "6":
                     success = gameplay_handler.handleUseMedical(self.tribute)

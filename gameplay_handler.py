@@ -50,10 +50,15 @@ def handleEatFood (tribute):
     return False
 
 
-def handleDrinkWater (tribute):
+def handleDrinkWater (tribute, arena):
     if tribute.thirst != 100:
         if tribute.water_supply >= 1:
             tribute.drinkWater()
+            return True
+        # allow drink water if at water source, and fully max water
+        elif checkNeighborsFor(tribute, arena, 1) == True:
+            tribute.thirst = 100
+            ("near water")
             return True
         else:
             print("no water units left to use") # temp debug
@@ -135,7 +140,37 @@ def checkNeighborsFor(tribute, arena, type_num):
         if item != None and item.type.value == type_num:
             return True
     return False
-        
+
+
+
+def walkMask():
+    # are there obstacles in every spot near them?
+    pass
+
+
+def drinkMask():
+    # is thirst at 100 or do you not have any water
+    pass
+
+def eatMask():
+    # is hunger at 100 or do you not have any food
+    pass
+
+def healMask():
+    # is health at 100 or do you not have any medical items?
+    pass
+
+def attackMask():
+    # is there another alive tribute on your current cell?
+    pass
+
+def pickupMask():
+    # is there no object in the current cell?
+    pass
+
+def refillMask():
+    # is there no water near you or do you not have a canteen?
+    pass
 
 
 # def handleSleep(tribute):
