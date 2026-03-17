@@ -1,6 +1,8 @@
 from Resource import Resource
 import random
 
+from config import WEAK_WEAPON, STRONG_WEAPON
+
 class Arena:
     def __init__(self, size):
         self.size = size
@@ -40,19 +42,19 @@ class Arena:
         
         
         # top
-        Resource.addResource(self, (rows, cols), Resource.Type(5), self.resources, 10)
+        Resource.addResource(self, (rows, cols), Resource.Type(5), self.resources, WEAK_WEAPON)
         
-        Resource.addResource(self, (rows, cols + 1), Resource.Type(5), self.resources, 10)
+        Resource.addResource(self, (rows, cols + 1), Resource.Type(5), self.resources, WEAK_WEAPON)
         Resource.addResource(self, (rows, cols + 2), Resource.Type(6), self.resources)
 
-        Resource.addResource(self, (rows, cols + 4), Resource.Type(5), self.resources, 10)
+        Resource.addResource(self, (rows, cols + 4), Resource.Type(5), self.resources, WEAK_WEAPON)
 
 
 
         # row 2
-        Resource.addResource(self, (rows + 1, cols), Resource.Type(5), self.resources, 10)
+        Resource.addResource(self, (rows + 1, cols), Resource.Type(5), self.resources, WEAK_WEAPON)
 
-        Resource.addResource(self, (rows + 1, cols + 2), Resource.Type(5), self.resources, 20)
+        Resource.addResource(self, (rows + 1, cols + 2), Resource.Type(5), self.resources, STRONG_WEAPON)
         Resource.addResource(self, (rows + 1, cols + 3), Resource.Type(7), self.resources)
 
         Resource.addResource(self, (rows + 1, cols + 5), Resource.Type(6), self.resources)
@@ -63,32 +65,32 @@ class Arena:
         Resource.addResource(self, (rows + 2, cols + 1), Resource.Type(7), self.resources)
         
         
-        Resource.addResource(self, (rows + 2, cols + 4), Resource.Type(5), self.resources, 20)
+        Resource.addResource(self, (rows + 2, cols + 4), Resource.Type(5), self.resources, STRONG_WEAPON)
         
 
         
         # row 4
-        Resource.addResource(self, (rows + 3, cols + 2), Resource.Type(5), self.resources, 20)
+        Resource.addResource(self, (rows + 3, cols + 2), Resource.Type(5), self.resources, STRONG_WEAPON)
 
         Resource.addResource(self, (rows + 3, cols + 4), Resource.Type(7), self.resources)
-        Resource.addResource(self, (rows + 3, cols + 5), Resource.Type(5), self.resources, 10)
+        Resource.addResource(self, (rows + 3, cols + 5), Resource.Type(5), self.resources, WEAK_WEAPON)
 
 
         # row 5
         Resource.addResource(self, (rows + 4, cols), Resource.Type(6), self.resources)
         
         Resource.addResource(self, (rows + 4, cols + 2), Resource.Type(7), self.resources)
-        Resource.addResource(self, (rows + 4, cols + 3), Resource.Type(5), self.resources, 20)
+        Resource.addResource(self, (rows + 4, cols + 3), Resource.Type(5), self.resources, STRONG_WEAPON)
         
         
 
         # row 6
-        Resource.addResource(self, (rows + 5, cols), Resource.Type(5), self.resources, 10)
+        Resource.addResource(self, (rows + 5, cols), Resource.Type(5), self.resources, WEAK_WEAPON)
 
         Resource.addResource(self, (rows + 5, cols + 2), Resource.Type(6), self.resources)
 
         Resource.addResource(self, (rows + 5, cols + 4), Resource.Type(6), self.resources)
-        Resource.addResource(self, (rows + 5, cols + 5), Resource.Type(5), self.resources, 10)
+        Resource.addResource(self, (rows + 5, cols + 5), Resource.Type(5), self.resources, WEAK_WEAPON)
         
 
         for resource in self.resources:
