@@ -172,13 +172,15 @@ class Tribute:
             return True
         
         elif resource.type == Resource.Type.WEAPON:
-            print("weapon")
-            self.inventory.append(resource)
-            if int(resource.value) > self.weapon_value:
-                # Update strength by the difference
-                self.strength += (int(resource.value) - self.weapon_value)
-                self.weapon_value = int(resource.value)  # Update weapon value too!
-            # If new weapon is worse, don't pick it up (or just don't update anything)
+            for item in self.inventory:
+                if item.type == Resource.Type.WEAPON:
+                    if item.value < resource.value:
+                        self.inventory.append(resource)
+                        self.inventory.remove(item)
+                        self.strength = self.base_strength + resource.value
+                        self.weapon_value = resource.value
+                        break
+            # return true either way, checking item still counts for turn
             return True
 
         # TODO: confirm and adjust backpack sizes in testing
