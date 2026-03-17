@@ -132,26 +132,34 @@ class Tribute:
 
 
         if resource.type == Resource.Type.BACKPACK_SMALL:
-            self.capacity += 5
-            canteen = Resource(None, None, Resource.Type(2))
-            self.inventory.append(canteen)
-            for i in range(2):
-                food = Resource(None, None, Resource.Type(3))
-                self.inventory.append(food)
-            self.max_water += CANTEEN_VALUE
-            return True
+            if self.capacity <= 2:
+                self.capacity += SMALL_CAPACITY
+                canteen = Resource(None, None, Resource.Type(2))
+                self.inventory.append(canteen)
+                for i in range(SMALL_BACKPACK_FOOD):
+                    food = Resource(None, None, Resource.Type(3))
+                    self.inventory.append(food)
+                for i in range(SMALL_BACKPACK_MED):
+                    medical = Resource(None, None, Resource.Type(4))
+                    self.inventory.append(medical)
+                self.max_water += CANTEEN_VALUE
+                return True
+            return False
         
         elif resource.type == Resource.Type.BACKPACK_LARGE:
-            self.capacity += 10
-            canteen = Resource(None, None, Resource.Type(2))
-            medical = Resource(None, None, Resource.Type(4))
-            self.inventory.append(canteen)
-            self.inventory.append(medical)
-            for i in range(3):
-                food = Resource(None, None, Resource.Type(3))
-                self.inventory.append(food)
-            self.max_water += CANTEEN_VALUE
-            return True
+            if self.capacity <= 2:
+                self.capacity += LARGE_CAPACITY
+                canteen = Resource(None, None, Resource.Type(2))
+                self.inventory.append(canteen)
+                for i in range(LARGE_BACKPACK_MED):
+                    medical = Resource(None, None, Resource.Type(4))
+                    self.inventory.append(medical)
+                for i in range(LARGE_BACKPACK_FOOD):
+                    food = Resource(None, None, Resource.Type(3))
+                    self.inventory.append(food)
+                self.max_water += CANTEEN_VALUE
+                return True
+            return False
         
         elif len(self.inventory) == self.capacity and resource.type != Resource.Type.WATER_SOURCE:
             print("storage capacity reached. cannot pick up new item")
@@ -172,24 +180,12 @@ class Tribute:
             return True
         
         elif resource.type == Resource.Type.WEAPON:
-            has_weapon = False
-            for item in self.inventory:
-                if item.type == Resource.Type.WEAPON:
-                    if item.value < resource.value:
-                        self.inventory.append(resource)
-                        self.inventory.remove(item)
-                        self.strength = self.base_strength + resource.value
-                        self.weapon_value = resource.value
-                        has_weapon = True
-                        break
-            if not has_weapon:
+            if self.countInInventory(Resource.Type.WEAPON.value) == 0:
                 self.inventory.append(resource)
                 self.weapon_value = resource.value
                 self.strength = self.base_strength + resource.value
-                
-
-            # return true either way, checking item still counts for turn
-            return True
+                return True
+            return False
 
         else:
             return "debug - item error"
@@ -265,6 +261,8 @@ class Tribute:
         self.isAsleep = True
         
 
+    def countInInventory(self, resource_type):
+        return len([item for item in self.inventory if item.type.value == resource_type])
 
     # def act - implement AI tribute logic here - begin games
 
