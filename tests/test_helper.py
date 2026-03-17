@@ -15,12 +15,12 @@ from Game import Game
 def setupTestArena():
 
     game = Game(24)
-    tA = Tribute(0, (3, 3))
-    tB = Tribute(1, (18, 20))
-    game.arena.tributes.append(tA)
-    game.arena.tributes.append(tB)
-    A = HumanPlayer(tA, game.arena)
-    B = HumanPlayer(tB, game.arena)
+    A = Tribute(0, (3, 3))
+    B = Tribute(1, (16, 20))
+    game.arena.tributes.extend ([A, B])
+    p1 = HumanPlayer(A, game.arena)
+    p2 = HumanPlayer(B, game.arena)
+    game.players.extend ([p1, p2])
 
     # --- TREES ---
     trees = [(2, 5), (7, 2), (12, 2), (0, 11), (23, 4)]
@@ -75,4 +75,7 @@ def setupTestArena():
     for resource in game.arena.resources:
         game.arena.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
 
-    return game, A, B
+    return game
+
+
+# def setupMidGameArena():

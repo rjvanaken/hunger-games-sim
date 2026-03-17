@@ -10,7 +10,7 @@ from Arena import Arena
 from Resource import Resource
 from Tribute import Tribute
 import gameplay_handler as gh
-import test_helper as th
+import tests.test_helper as th
 
 game2 = Game(20)
 
