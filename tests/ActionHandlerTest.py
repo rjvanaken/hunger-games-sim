@@ -31,6 +31,9 @@ T7 = game.arena.tributes[7] # pickup but inventory > than just 1 bc backpack
 T8 = game.arena.tributes[8] # fail pickup
 T9 = game.arena.tributes[9] # can pickup
 T11 = game.arena.tributes[11]
+T12 = game.arena.tributes[12]
+T13 = game.arena.tributes[13]
+T14 = game.arena.tributes[14]
 
 for tribute in [T7, T8, T9, T11]:
     tribute.arenaKnowledge = game.arena.arena_grid
@@ -137,21 +140,39 @@ def testHandleEatFood():
 
 
 def testHandleDrinkWater():
-    T3.thirst = 10
-    T3.water_supply = 2
-    result = gh.handleDrinkWater(T3)
+
+    # NEED TO RE-WRITE THIS WHOLE TEST WITH AN ARENA TO CONFIRM DRINK WATER
+    arena4 = Arena(24)
+    T12.pos = (10, 10)
+    T13.pos = (10, 15)
+    T14.pos = (15, 10)
+    arena4.tributes.extend([T12, T13, T14])
+
+
+    T12.thirst = 10
+    T12.water_supply = 2
+    result = gh.handleDrinkWater(T12, arena4)
     assert result == True
-    T4.thirst = 10
-    T4.water_supply = 1
+    T13.thirst = 10
+    T13.water_supply = 1
     result = False
-    result = gh.handleDrinkWater(T4)
+    result = gh.handleDrinkWater(T13, arena4)
     assert result == True
-    result = gh.handleDrinkWater(T4)
+    result = gh.handleDrinkWater(T13, arena4)
     assert result == False
     
     result = True
-    result = gh.handleDrinkWater(T0)
+    result = gh.handleDrinkWater(T14, arena4)
     assert result == False
+
+    T12.water_supply = 0
+    T12.max_water = 0
+    assert result == False
+    water = Resource(1, (T12.pos[0], T12.pos[1] + 1), Resource.Type(1))
+    arena4.resources.append(water)
+    T12.thirst = 50
+    result = gh.handleDrinkWater(T12, arena4)
+    assert result == True
 
 
 def testHandleUseMedical():
@@ -227,7 +248,9 @@ def testHandleRefillWater():
 
 
 def testHandleSingleMove():
-    game, A, B = th.setupTestArena()
+    game = th.setupTestArena()
+    A = game.players[0]
+    B  = game.players[1]
     A_row = A.tribute.pos[0]
     A_col = A.tribute.pos[1]
     result = gh.handleSingleMove(A.tribute, 'left')
