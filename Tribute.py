@@ -172,6 +172,7 @@ class Tribute:
             return True
         
         elif resource.type == Resource.Type.WEAPON:
+            has_weapon = False
             for item in self.inventory:
                 if item.type == Resource.Type.WEAPON:
                     if item.value < resource.value:
@@ -179,11 +180,16 @@ class Tribute:
                         self.inventory.remove(item)
                         self.strength = self.base_strength + resource.value
                         self.weapon_value = resource.value
+                        has_weapon = True
                         break
+            if not has_weapon:
+                self.inventory.append(resource)
+                self.weapon_value = resource.value
+                self.strength = self.base_strength + resource.value
+                
+
             # return true either way, checking item still counts for turn
             return True
-
-        # TODO: confirm and adjust backpack sizes in testing
 
         else:
             return "debug - item error"
