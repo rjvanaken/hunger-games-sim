@@ -98,7 +98,8 @@ def handlePickup (tribute, arena):
     pickup = tribute.pickUpResource(resource)
     if pickup == True:
         arena.removeResource(resource)
-    return True
+        return True
+    return False
 
 def removeResource(self, resource):
     '''
