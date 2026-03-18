@@ -22,7 +22,6 @@ def testManualGame():
     for tribute in game.arena.tributes:
         tribute.arenaKnowledge = game.arena.arena_grid
 
-
     # ROUND 1
     A.tribute.updateStatsBeforeTurn()
     gh.handleSingleMove(A.tribute, 'left', game.arena)
@@ -278,7 +277,13 @@ def testManualGame():
 
     # ROUND 43:
     A.tribute.updateStatsBeforeTurn()
-    gh.handleAttack(tribute, game.arena)
+    gh.handleAttack(A.tribute, game.arena)
+    print(A.tribute.strength)
+    print(B.tribute.strength)
+
+
+    
+    assert True == False
 
 
 

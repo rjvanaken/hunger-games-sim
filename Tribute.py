@@ -107,7 +107,7 @@ class Tribute:
         elif self.thirst <= THIRST_WARNING_THRESHOLD:
             self.health -= THIRST_WARNING_PENALTY
 
-        self.strength = self.base_strength * (self.health / 100)
+        self.strength = (self.base_strength + self.weapon_value) * (self.health / 100)
         
 
     def getFood(self):
