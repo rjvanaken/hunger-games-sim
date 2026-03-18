@@ -12,6 +12,7 @@ class Game:
         self.players = []
         self.turn_count = 0
         self.day_count = 0
+        self.drama = 0
 
 
     def addTributes(self, pos):
@@ -64,13 +65,32 @@ class Game:
 
     def run(self):
             while len(self.arena.tributes) > 1:
+                self.turn_count += 1
+                print(f"=== DAY {self.day_count + 1} ===")
                 for player in self.players:
                     if player.tribute.isAlive:
+                        print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
                         player.take_turn()
                 self.arena.clearDeadTributes()
-                self.turn_count += 1
                 # if turn cap has been reached, reset and move to next day
                 if self.turn_count == TURNS_PER_DAY:
                     self.turn_count = 0
                     self.day_count += 1
-        
+            print("THE GAMES ARE OVER! Congratulations to our victor!")
+
+            self.printGameResults()
+
+    def printGameResults(self):
+        winner = self.arena.tributes[0]
+        print("──────────────────────────────")
+        print(" VICTOR")
+        print("──────────────────────────────")
+        print(f"  Name:        Tribute {winner.letter}")
+        print(f"  District:    {winner.district}")
+        print(f"  Gender:      {winner.gender.capitalize()}")
+        print("──────────────────────────────")
+        print(" GAME STATS")
+        print("──────────────────────────────")
+        print(f"  Days:        {self.day_count}")
+        print(f"  Drama Score: {self.drama}")
+        print("──────────────────────────────")
