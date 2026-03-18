@@ -21,15 +21,18 @@ def handleMove (tribute, arena):
 
 def handleSingleMove (tribute, direction):
     if direction.lower() == 'u' or direction.lower() == 'up':
-        tribute.singleMove('u')
+       move = tribute.singleMove('u')
     elif direction.lower() == 'd' or direction.lower() == 'down':
-        tribute.singleMove('d')
+        move = tribute.singleMove('d')
     elif direction.lower() == 'l' or direction.lower() == 'left':
-        tribute.singleMove('l')
+        move = tribute.singleMove('l')
     elif direction.lower() == 'r' or direction.lower() == 'right':
-        tribute.singleMove('r')
+        move = tribute.singleMove('r')
     
-    return True
+    if move == True:
+        return True
+    else:
+        return False
 
 def handleAttack (tribute, target):
     if (-2 <= tribute.pos[0] - target.pos[0] <= 2) and (-2 <= tribute.pos[1] - target.pos[1] <= 2) :
@@ -52,14 +55,14 @@ def handleEatFood (tribute):
 
 def handleDrinkWater (tribute, arena):
     if tribute.thirst != 100:
-        if tribute.water_supply >= 1:
-            tribute.drinkWater()
-            return True
-        # allow drink water if at water source, and fully max water
-        elif checkNeighborsFor(tribute, arena, 1) == True:
+        if checkNeighborsFor(tribute, arena, 1) == True:
             tribute.thirst = 100
             ("near water")
             return True
+        elif tribute.water_supply >= 1:
+            tribute.drinkWater()
+            return True
+        # allow drink water if at water source, and fully max water
         else:
             print("no water units left to use") # temp debug
             return False

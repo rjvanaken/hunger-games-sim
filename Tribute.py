@@ -213,7 +213,6 @@ class Tribute:
 
     def refillWater(self):
         self.water_supply = self.max_water
-        self.thirst = 100
     
     # movement function logic is temporary so they can move
     # TODO: update so they navigate in that general direction once tribute agent is working
@@ -235,12 +234,16 @@ class Tribute:
 
         if self.canMoveTo(new_pos):
             self.pos = new_pos
+            return True
+        else:
+            return False
 
         
 
     def canMoveTo(self, pos):
         if int(self.arenaKnowledge[pos[0]][pos[1]]) not in [8, 1]:
             return True
+        return False
 
 
     def attack(self, target):

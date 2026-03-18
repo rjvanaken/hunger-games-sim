@@ -1,4 +1,5 @@
 from Game import Game
+import tests.test_helper as th
 
 def main():
         # In main or wherever you create the game
@@ -12,6 +13,16 @@ def main():
     game.arena.displayArena()
 
     game.run()
+
+# def main():
+        
+#     game = th.setupTestArena()
+#     for tribute in game.arena.tributes:
+#         tribute.arenaKnowledge = game.arena.arena_grid
+#     game.arena.displayArena()
+
+
+#     game.run()
 
 
 

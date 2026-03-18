@@ -105,7 +105,7 @@ class HumanPlayer(Player):
                 print(f"Action failed: {e}")
 
             if success:
-                # arena.displayArena() # temporary - ultimately, will only print at start of each day
+                self.arena.displayArena() # temporary - ultimately, will only print at start of each day
                 break
                 
 
