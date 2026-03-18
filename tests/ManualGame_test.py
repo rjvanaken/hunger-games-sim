@@ -271,19 +271,51 @@ def testManualGame():
         gh.handleSingleMove(B.tribute, 'up', game.arena)
     
 
-    # modifications
-    A.tribute.health = 20
-    B.tribute.health = 20
 
-    # ROUND 43:
-    A.tribute.updateStatsBeforeTurn()
-    gh.handleAttack(A.tribute, game.arena)
-    print(A.tribute.strength)
-    print(B.tribute.strength)
+    # ROUNDS 
+
+        A.tribute.updateStatsBeforeTurn()
+        with patch('random.random', side_effect=[80]):
+            gh.handleAttack(A.tribute, game.arena)
+
+        B.tribute.updateStatsBeforeTurn()
+        with patch('random.random', side_effect=[80]):
+            gh.handleAttack(B.tribute, game.arena)
+
+        A.tribute.updateStatsBeforeTurn()
+        with patch('random.random', side_effect=[80]):
+            gh.handleAttack(A.tribute, game.arena)
+
+        B.tribute.updateStatsBeforeTurn()
+        with patch('random.random', side_effect=[80]):
+            gh.handleAttack(B.tribute, game.arena)
 
 
-    
-    assert True == False
+        A.tribute.updateStatsBeforeTurn()
+        with patch('random.random', side_effect=[80]):
+            gh.handleAttack(A.tribute, game.arena)
+
+        B.tribute.updateStatsBeforeTurn()
+        with patch('random.random', side_effect=[80]):
+            gh.handleAttack(B.tribute, game.arena)
+
+        A.tribute.updateStatsBeforeTurn()
+        with patch('random.random', side_effect=[80]):
+            gh.handleAttack(A.tribute, game.arena)
+
+    print(A.tribute.health)
+    print(B.tribute.health)
+
+    game.arena.clearDeadTributes()
+    assert A.tribute in game.arena.tributes
+    assert A.tribute.isAlive == True
+    assert B.tribute.isAlive == False
+
+    assert len(game.arena.tributes) == 1
+
+    game.printGameResults()
+    assert A.tribute.isAlive == True
+
 
 
 
