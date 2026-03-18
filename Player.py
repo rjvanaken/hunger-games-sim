@@ -16,18 +16,21 @@ class HumanPlayer(Player):
             print(f"\n\nACTION MENU: Tribute '{self.tribute.letter.upper()}'")
             print(
 '''
-0: quickmove
-1: singleMove ('u', 'd', 'l', 'r')
-2: attack
-3: pick up item
-4: eat
-5: drink
-6: heal
-7: sleep
-8: refill
-9: skip tribute (debug)
-10: print stats (debug)
-''')
+0: move up
+1: move down
+2: move left
+3: move right
+4: attack
+5: pick up item
+6: eat
+7: drink
+8: heal
+9: sleep
+10: refill
+11: skip tribute (debug)
+12: quickmove (debug)
+'''
+)
 
     def get_tribute_letter(game, target=False):
         if target == False:
@@ -63,41 +66,49 @@ class HumanPlayer(Player):
             try:
 
                 if action == "0":
-                    success = gameplay_handler.handleMove(self.tribute, self.arena)
+                    success = gameplay_handler.handleSingleMove(self.tribute, 'up')
 
                 elif action == "1":
-                    direction = input("Please enter direction ('up', 'down', 'left', 'right'): ")
-                    success = gameplay_handler.handleSingleMove(direction)
-
+                    success = gameplay_handler.handleSingleMove(self.tribute, 'down')
+                    
                 elif action == "2":
+                    success = gameplay_handler.handleSingleMove(self.tribute, 'left')
+
+                elif action == "3":
+                    success = gameplay_handler.handleSingleMove(self.tribute, 'right')
+
+                elif action == "4":
                     target_id = self.get_tribute_letter(target=True)
                     target = self.arena.tributes[target_id]
                     success = gameplay_handler.handleAttack(self.tribute, target)
 
-                elif action == "3":
+                elif action == "5":
                     resource = self.arena.getResourceAt(self.tribute.pos)
                     if resource is None:
                         print("No resource at your position.")
                     else:
                         success = gameplay_handler.handlePickup(self.tribute, self.arena)
 
-                elif action == "4":
+                elif action == "6":
                     success = gameplay_handler.handleEatFood(self.tribute)
 
-                elif action == "5":
+                elif action == "7":
                     success = gameplay_handler.handleDrinkWater(self.tribute, self.arena)
 
-                elif action == "6":
+                elif action == "8":
                     success = gameplay_handler.handleUseMedical(self.tribute)
 
-                elif action == "7":
+                elif action == "9":
                     success = gameplay_handler.handleSleep(self.tribute)
 
-                elif action == "8":
+                elif action == "10":
                     success = gameplay_handler.handleRefillWater(self.tribute, self.arena)
 
-                elif action == "9":
-                    success = "skip"
+                elif action == "11":
+                    success = "skip" # debug
+
+                elif action == "12":
+                    success = gameplay_handler.handleMove(self.tribute, self.arena) #debug
                 else:
                     print("Invalid choice, try again.")
 
