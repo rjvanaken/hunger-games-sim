@@ -11,7 +11,7 @@ from config import *
 
 
 
-def testSurvival():
+def testManualGame():
 
     game = th.setupTestArena()
     A = game.players[0]
@@ -271,7 +271,7 @@ Backpack small (7): (18, 21)
 
 
 def main():
-    testSurvival()
+    testManualGame()
 
 
 
