@@ -1,6 +1,7 @@
 import random
 import math
 from Resource import Resource
+import gameplay_handler as gh
 
 # Constants
 from config import *
@@ -199,7 +200,6 @@ class Tribute:
                 
 
     def drinkWater(self):
-        # TODO: confirm and adjust water unit value as needed in testing
         self.water_supply -= 1
         self.thirst = min(100, self.thirst + WATER_VALUE)
 
@@ -213,13 +213,11 @@ class Tribute:
     def refillWater(self):
         self.water_supply = self.max_water
     
-    # movement function logic is temporary so they can move
-    # TODO: update so they navigate in that general direction once tribute agent is working
-
+    # debug quickmove
     def move(self, row, col):
         self.pos = ((row, col))
 
-    def singleMove(self, direction):
+    def singleMove(self, direction, arena):
         # handle logic is here instead simply because otherwise we would be checking this twice
 
         if direction.lower() == 'u' or direction.lower() == 'up':
@@ -232,7 +230,9 @@ class Tribute:
             new_pos = ((self.pos[0], self.pos[1] + 1))
 
         if self.canMoveTo(new_pos):
+            old_pos = self.pos
             self.pos = new_pos
+            arena.restoreOldCellData(self, old_pos)
             return True
         else:
             return False

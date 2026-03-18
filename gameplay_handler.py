@@ -20,15 +20,15 @@ def handleMove (tribute, arena):
     else:
         print("Invalid row or column") # temp debug
 
-def handleSingleMove (tribute, direction):
+def handleSingleMove (tribute, direction, arena):
     if direction.lower() == 'u' or direction.lower() == 'up':
-       move = tribute.singleMove('u')
+       move = tribute.singleMove('u', arena)
     elif direction.lower() == 'd' or direction.lower() == 'down':
-        move = tribute.singleMove('d')
+        move = tribute.singleMove('d', arena)
     elif direction.lower() == 'l' or direction.lower() == 'left':
-        move = tribute.singleMove('l')
+        move = tribute.singleMove('l', arena)
     elif direction.lower() == 'r' or direction.lower() == 'right':
-        move = tribute.singleMove('r')
+        move = tribute.singleMove('r', arena)
     
     if move == True:
         return True

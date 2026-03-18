@@ -169,11 +169,12 @@ class Arena:
     def clearDeadTributes(self):
         new_list = []
         for tribute in self.tributes:
+            pos = tribute.pos 
             if tribute.isAlive:
                 new_list.append(tribute)
             else:
-                row, col = tribute.pos
-                self.arena_grid[row][col] = 0
+                self.restoreOldCellData(tribute, pos)
+                tribute.pos = None
                 self.num_tributes -= 1
         self.tributes = new_list
 
@@ -219,5 +220,13 @@ class Arena:
         self.arena_grid[resource.pos[0]][resource.pos[1]] = 0
         resource.pos = None
         resource.id = None
+
+
+    def restoreOldCellData(self, tribute, pos):
+        resource = self.getResourceAt(pos)
+        # restore old cell - if it had a resource put it back, otherwise 0
+        self.arena_grid[pos[0]][pos[1]] = resource.type.value if resource else 0
+        if tribute.isAlive:
+            self.arena_grid[tribute.pos[0]][tribute.pos[1]] = tribute.letter
 
 
