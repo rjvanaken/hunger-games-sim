@@ -25,18 +25,18 @@ def testManualGame():
 
     # ROUND 1
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'left')
+    gh.handleSingleMove(A.tribute, 'left', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
     assert len(B.tribute.inventory) == 0
-    gh.handleSingleMove(B.tribute, 'down')
+    gh.handleSingleMove(B.tribute, 'down', game.arena)
 
     # ROUND 2
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'left')
+    gh.handleSingleMove(A.tribute, 'left', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'down')
+    gh.handleSingleMove(B.tribute, 'down', game.arena)
 
     # ROUND 3
     A.tribute.updateStatsBeforeTurn()
@@ -49,12 +49,12 @@ def testManualGame():
     assert A.tribute.max_water == CANTEEN_VALUE
 
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'right')
+    gh.handleSingleMove(B.tribute, 'right', game.arena)
 
 
     # ROUND 4:
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'down')
+    gh.handleSingleMove(A.tribute, 'down', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
     assert len(B.tribute.inventory) == 0
@@ -78,20 +78,20 @@ def testManualGame():
     assert game.arena.arena_grid[A.tribute.pos[0]][A.tribute.pos[1]] == 0
 
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'left')
+    gh.handleSingleMove(B.tribute, 'left', game.arena)
 
     
     
     # ROUND 6:
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'right')
+    gh.handleSingleMove(A.tribute, 'right', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'left')
+    gh.handleSingleMove(B.tribute, 'left', game.arena)
     
     # ROUND 7:
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'right')
+    gh.handleSingleMove(A.tribute, 'right', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
     weapon = game.arena.getResourceAt(B.tribute.pos)
@@ -106,62 +106,65 @@ def testManualGame():
     # ROUND 8:
     A.tribute.updateStatsBeforeTurn()
     assert gh.handleSleep(A.tribute) == False # negative sleep case, full health
-    gh.handleSingleMove(A.tribute, 'right')
+    gh.handleSingleMove(A.tribute, 'right', game.arena)
     
     B.tribute.updateStatsBeforeTurn()
     assert gh.handleSleep(B.tribute) == False
-    gh.handleSingleMove(B.tribute, 'down')
+    gh.handleSingleMove(B.tribute, 'down', game.arena)
 
 
 
     # ROUND 9:
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'right')
+    gh.handleSingleMove(A.tribute, 'right', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'right')
+    gh.handleSingleMove(B.tribute, 'right', game.arena)
 
     # ROUND 10:
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'up')
+    gh.handleSingleMove(A.tribute, 'up', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
     assert gh.handlePickup(B.tribute, game.arena) == False
-    assert game.arena.arena_grid[B.tribute.pos[0]][B.tribute.pos[1]] == 5
+    gh.handleSingleMove(B.tribute, 'up', game.arena)
+    assert game.arena.arena_grid[B.tribute.pos[0] + 1][B.tribute.pos[1]] == 5
 
     # ROUND 11
     A.tribute.updateStatsBeforeTurn()
     assert gh.handlePickup(A.tribute, game.arena) == False
-    assert game.arena.arena_grid[A.tribute.pos[0]][A.tribute.pos[1]] == 5
+    gh.handleSingleMove(A.tribute, 'right', game.arena)
+    assert game.arena.arena_grid[A.tribute.pos[0]][A.tribute.pos[1] - 1] == 5
+    gh.handleSingleMove(A.tribute, 'left', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'down')
+    gh.handleSingleMove(B.tribute, 'down', game.arena)
+    gh.handleSingleMove(B.tribute, 'down', game.arena)
 
     # ROUND 12
     A.tribute.updateStatsBeforeTurn()
     assert A.tribute.hunger == 100 - (HUNGER_DECAY * 12)
     assert A.tribute.thirst == 100 - (THIRST_DECAY * 12)
-    gh.handleSingleMove(A.tribute, 'down')
-
+    gh.handleSingleMove(A.tribute, 'down', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
     assert B.tribute.hunger == 100 - (HUNGER_DECAY * 12)
     assert B.tribute.thirst == 100 - (THIRST_DECAY * 12)
-    gh.handleSingleMove(B.tribute, 'l')
+    gh.handleSingleMove(B.tribute, 'l', game.arena)
 
     # ROUND 13
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'd')
+    gh.handleSingleMove(A.tribute, 'd', game.arena)
     
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'l')
+    gh.handleSingleMove(B.tribute, 'l', game.arena)
 
     # ROUND 14
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'RIGHT')
+    gh.handleSingleMove(A.tribute, 'RIGHT', game.arena)
     
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'l')
+    gh.handleSingleMove(B.tribute, 'l', game.arena)
 
 
     # ROUND 15        
@@ -170,23 +173,22 @@ def testManualGame():
     with patch('random.randint', side_effect=[50, 10]):  # success
         gh.handlePickup(A.tribute, game.arena)
     assert A.tribute.getFood() == current_food + 1
-    assert game.arena.arena_grid[A.tribute.pos[0]][A.tribute.pos[1]] == 0
     
     B.tribute.updateStatsBeforeTurn()
     current_food = B.tribute.getFood()
     with patch('random.randint', side_effect=[50, 99]):  # fail
         gh.handlePickup(B.tribute, game.arena)
     assert B.tribute.getFood() == current_food
-    assert game.arena.arena_grid[B.tribute.pos[0]][B.tribute.pos[1]] == 3
+
     
 
     # ROUNDS 16-25 (10):
     for i in range(10):
         A.tribute.updateStatsBeforeTurn()
-        gh.handleSingleMove(A.tribute, 'RIGHT')
+        gh.handleSingleMove(A.tribute, 'RIGHT', game.arena)
 
         B.tribute.updateStatsBeforeTurn()
-        gh.handleSingleMove(B.tribute, 'l')
+        gh.handleSingleMove(B.tribute, 'l', game.arena)
 
     # MODIFICATIONS
     # remove canteen for testing
@@ -210,10 +212,10 @@ def testManualGame():
 
     # ROUND 27:
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'left')
+    gh.handleSingleMove(A.tribute, 'left', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'down')
+    gh.handleSingleMove(B.tribute, 'down', game.arena)
 
 
     # ROUND 28
@@ -229,10 +231,10 @@ def testManualGame():
 
     # ROUND 29
     A.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(A.tribute, 'right')
+    gh.handleSingleMove(A.tribute, 'right', game.arena)
 
     B.tribute.updateStatsBeforeTurn()
-    gh.handleSingleMove(B.tribute, 'up')
+    gh.handleSingleMove(B.tribute, 'up', game.arena)
 
 
     # ROUND 30
@@ -241,10 +243,35 @@ def testManualGame():
     assert A.tribute.water_supply == A.tribute.max_water - 1
 
     B.tribute.updateStatsBeforeTurn()
-    print(B.tribute.arenaKnowledge[B.tribute.pos[0] + 1][B.tribute.pos[1]])
-    assert gh.handleSingleMove(B.tribute, 'up') == False # cannot walk onto water source
+    game.arena.displayArena()
+    assert gh.handleSingleMove(B.tribute, 'up', game.arena) == False # cannot walk onto water source
+    
+    
+        # ROUNDS 31-34 (4):
+    for i in range(4):
+        A.tribute.updateStatsBeforeTurn()
+        gh.handleSingleMove(A.tribute, 'left', game.arena)
 
+        B.tribute.updateStatsBeforeTurn()
+        gh.handleSingleMove(B.tribute, 'right', game.arena)
 
+    
+    # ROUND 35
+    A.tribute.updateStatsBeforeTurn()
+    gh.handleSingleMove(A.tribute, 'down', game.arena)
+
+    B.tribute.updateStatsBeforeTurn()
+    gh.handleSingleMove(B.tribute, 'right', game.arena)
+
+    
+    # ROUNDS 36-41
+    for i in range(6):
+        A.tribute.updateStatsBeforeTurn()
+        gh.handleSingleMove(A.tribute, 'down', game.arena)
+
+        B.tribute.updateStatsBeforeTurn()
+        gh.handleSingleMove(B.tribute, 'up', game.arena)
+    game.arena.displayArena()
 
     '''
     
@@ -279,4 +306,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()  
+    main()

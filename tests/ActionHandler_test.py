@@ -53,13 +53,13 @@ def testHandleAttack():
 def testHandlePickup():
     T8.hunting_skill = 90
     T11.hunting_skill = 90
-    T7.singleMove('l')
-    T7.singleMove('l') # backpack
-    T8.singleMove('l') # nothing to pick up
-    T9.singleMove('l')
-    T9.singleMove('l') # weapon
-    T11.singleMove('l')
-    T11.singleMove('l') # backpack
+    T7.singleMove('l', game.arena)
+    T7.singleMove('l', game.arena) # backpack
+    T8.singleMove('l', game.arena) # nothing to pick up
+    T9.singleMove('l', game.arena)
+    T9.singleMove('l', game.arena) # weapon
+    T11.singleMove('l', game.arena)
+    T11.singleMove('l', game.arena) # backpack
     T7.inventory = []
     T8.inventory = []
     T11.inventory = []
@@ -99,7 +99,6 @@ def testHandlePickup():
         assert len(t2.inventory) == 1
         assert pickup == True
 
-    # t2.singleMove('r')
     t2.move(t2.pos[0], t2.pos[1] + 1)
     
     # spot is empty, returns False
@@ -253,7 +252,7 @@ def testHandleSingleMove():
     B  = game.players[1]
     A_row = A.tribute.pos[0]
     A_col = A.tribute.pos[1]
-    result = gh.handleSingleMove(A.tribute, 'left')
+    result = gh.handleSingleMove(A.tribute, 'left', game.arena)
     assert result == True
     assert A.tribute.pos == (A_row, A_col - 1)
     # to add from survival test when done

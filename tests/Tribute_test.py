@@ -209,35 +209,35 @@ def testAttackSubtractsHealth():
 
 
 def TestSingleMove():
-
+    
     T3.arenaKnowledge = arena.arena_grid
 
-    T3.singleMove('r')
-    T3.singleMove('right')
-    T3.singleMove('RiGht')
-    T3.singleMove('R')
-    T3.singleMove('Rightt')
+    T3.singleMove('r', arena)
+    T3.singleMove('right', arena)
+    T3.singleMove('RiGht', arena)
+    T3.singleMove('R', arena)
+    T3.singleMove('Rightt', arena)
     assert T3.pos == ((10, 14))
 
-    T3.singleMove('u')
-    T3.singleMove('up')
-    T3.singleMove('Up')
-    T3.singleMove('U')
-    T3.singleMove('upp')
+    T3.singleMove('u', arena)
+    T3.singleMove('up', arena)
+    T3.singleMove('Up', arena)
+    T3.singleMove('U', arena)
+    T3.singleMove('upp', arena)
     assert T3.pos == ((6, 14))
 
-    T3.singleMove('d')
-    T3.singleMove('down')
-    T3.singleMove('DowN')
-    T3.singleMove('D')
-    T3.singleMove('downn')
+    T3.singleMove('d', arena)
+    T3.singleMove('down', arena)
+    T3.singleMove('DowN', arena)
+    T3.singleMove('D', arena)
+    T3.singleMove('downn', arena)
     assert T3.pos == ((10, 14))
 
-    T3.singleMove('l')
-    T3.singleMove('left')
-    T3.singleMove('LeFt')
-    T3.singleMove('L')
-    T3.singleMove('Leftt')
+    T3.singleMove('l', arena)
+    T3.singleMove('left', arena)
+    T3.singleMove('LeFt', arena)
+    T3.singleMove('L', arena)
+    T3.singleMove('Leftt', arena)
     assert T3.pos == ((10, 10))
 
 
