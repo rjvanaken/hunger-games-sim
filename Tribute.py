@@ -267,6 +267,14 @@ class Tribute:
 
     def countInInventory(self, resource_type):
         return len([item for item in self.inventory if item.type.value == resource_type])
+    
+
+    def updateKnowledge(self, arena, radius=2):
+        row, col = self.pos
+        for r in range(row - radius, row + radius + 1):
+            for c in range(col - radius, col + radius + 1):
+                if 0 <= r < arena.size and 0 <= c < arena.size:
+                    self.arenaKnowledge[r][c] = arena.arena_grid[r][c]
 
     # def act - implement AI tribute logic here - begin games
 
