@@ -40,7 +40,6 @@ def testClearDeadTributes():
     assert T1 not in game.arena.tributes
     assert T2 not in game.arena.tributes
     assert T3 in game.arena.tributes
-    game.arena.displayArena()
     assert game.arena.arena_grid[T1_pos[0]][T1_pos[1]] == 0
     assert game.arena.arena_grid[T2_pos[0]][T2_pos[1]] == 0
 

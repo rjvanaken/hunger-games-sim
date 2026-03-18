@@ -229,4 +229,12 @@ class Arena:
         if tribute.isAlive:
             self.arena_grid[tribute.pos[0]][tribute.pos[1]] = tribute.letter
 
+    def getTarget(self, tribute):
+        target = None
+        for t in self.tributes:
+            if t.pos == tribute.pos and tribute != t:
+                target = t
+                break
 
+        return target
+    

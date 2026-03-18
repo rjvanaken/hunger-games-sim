@@ -243,7 +243,6 @@ def testManualGame():
     assert A.tribute.water_supply == A.tribute.max_water - 1
 
     B.tribute.updateStatsBeforeTurn()
-    game.arena.displayArena()
     assert gh.handleSingleMove(B.tribute, 'up', game.arena) == False # cannot walk onto water source
     
     
@@ -264,14 +263,25 @@ def testManualGame():
     gh.handleSingleMove(B.tribute, 'right', game.arena)
 
     
-    # ROUNDS 36-41
-    for i in range(6):
+    # ROUNDS 36-42
+    for i in range(7):
         A.tribute.updateStatsBeforeTurn()
         gh.handleSingleMove(A.tribute, 'down', game.arena)
 
         B.tribute.updateStatsBeforeTurn()
         gh.handleSingleMove(B.tribute, 'up', game.arena)
-    game.arena.displayArena()
+    
+
+    # modifications
+    A.tribute.health = 20
+    B.tribute.health = 20
+
+    # ROUND 43:
+    A.tribute.updateStatsBeforeTurn()
+    gh.handleAttack(tribute, game.arena)
+
+
+
 
     '''
     

@@ -35,7 +35,8 @@ def handleSingleMove (tribute, direction, arena):
     else:
         return False
 
-def handleAttack (tribute, target):
+def handleAttack (tribute, arena):
+    target = arena.getTarget(tribute)
     if (-2 <= tribute.pos[0] - target.pos[0] <= 2) and (-2 <= tribute.pos[1] - target.pos[1] <= 2) :
         tribute.attack(target)
         return True

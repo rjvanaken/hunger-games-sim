@@ -78,9 +78,7 @@ class HumanPlayer(Player):
                     success = gameplay_handler.handleSingleMove(self.tribute, 'right')
 
                 elif action == "4":
-                    target_id = self.get_tribute_letter(target=True)
-                    target = self.arena.tributes[target_id]
-                    success = gameplay_handler.handleAttack(self.tribute, target)
+                    success = gameplay_handler.handleAttack(self.tribute, self.arena)
 
                 elif action == "5":
                     resource = self.arena.getResourceAt(self.tribute.pos)
