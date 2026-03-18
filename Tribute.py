@@ -240,9 +240,13 @@ class Tribute:
         
 
     def canMoveTo(self, pos):
-        if int(self.arenaKnowledge[pos[0]][pos[1]]) not in [8, 1]:
+        cell = self.arenaKnowledge[pos[0]][pos[1]]
+        if isinstance(cell, str):
+            return True  # tribute on cell, walkable
+        if int(cell) not in [8, 1]:
             return True
         return False
+        
 
 
     def attack(self, target):
@@ -277,5 +281,3 @@ class Tribute:
                     self.arenaKnowledge[r][c] = arena.arena_grid[r][c]
 
     # def act - implement AI tribute logic here - begin games
-
-    
