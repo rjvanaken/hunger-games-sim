@@ -156,43 +156,79 @@ def checkNeighborsFor(tribute, arena, type_num):
 
 
 
-def pickupMask (tribute, resourcePos):
-    # REWRITE AND UTILIZE FOR ACTION MASKING
-    pass
 
-def walkMask():
-    # are there obstacles in every spot near them? actually this seems impossible...
-    # instead, block the directions?
-    # ALSO do I need to instead make 4 separate actions instead of inputting direction?
-    pass
+    # ACTION MASKS
 
+    
+def moveMask(tribute, direction):
+    # is the space free from obstacles or water sources?
+    posR = tribute.pos[0]
+    posC = tribute.pos[1]
+    if direction.lower() == 'u' or direction.lower() == 'up':
+       if tribute.canMoveTo((posR - 1, posC)):
+           return True
+    elif direction.lower() == 'd' or direction.lower() == 'down':
+       if tribute.canMoveTo((posR + 1, posC)):
+           return True
+    elif direction.lower() == 'l' or direction.lower() == 'left':
+       if tribute.canMoveTo((posR, posC - 1)):
+           return True
+    elif direction.lower() == 'r' or direction.lower() == 'right':
+       if tribute.canMoveTo((posR, posC + 1)):
+           return True
+    return False
 
-def drinkMask():
-    # is thirst at 100 or do you not have any water
-    pass
+def drinkMask(tribute, arena):
+    # is thirst under 100 and do you have water (or by water source)
+    if tribute.thirst != 100 and (tribute.water_supply > 0 or checkNeighborsFor(tribute, arena, 1)):
+        return True
+    return False
 
-def eatMask():
-    # is hunger at 100 or do you not have any food
-    pass
+def eatMask(tribute):
+    # is hunger under 100 and do you have food
+    if tribute.hunger != 100 and tribute.getFood() > 0:
+        return True
+    return False
 
-def healMask():
-    # is health at 100 or do you not have any medical items?
-    pass
+def healMask(tribute):
+    # is health under 100 and do you have medical
+    if tribute.health != 100 and tribute.getMedical() > 0:
+        return True
+    return False
 
-def attackMask():
-    # is there another alive tribute on your current cell?
-    pass
+def attackMask(arena, tribute):
+    # is there a tribute on the same cell as you?
+    canAttack = False
+    for target in arena.tributes:
+        if target.pos == tribute.pos and tribute != target:
+            canAttack = True
+            break
+    if canAttack:
+        return True
+    return False
 
-def pickupMask():
-    # is there no object in the current cell?
-    pass
+def pickupMask(tribute, arena):
+    canPickup = False
+    for resource in arena.resources:
+        if resource.pos == tribute.pos:
+            canPickup = True
+            break
+    if canPickup:
+        return True
+    return False
+    
 
-def refillMask():
+def refillMask(tribute, arena):
     # is there no water near you or do you not have a canteen?
-    pass
+    if tribute.water_supply < tribute.max_water and checkNeighborsFor(tribute, arena, 1) and tribute.countInInventory(2) > 0:
+        return True
+    return False
 
-
-
+def sleepMask(tribute):
+    # is tribute tired enough to sleep
+    if tribute.health <= 100 - SLEEP_VALUE:
+        return True
+    return False
 
 
     # return True
