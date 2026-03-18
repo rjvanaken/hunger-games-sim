@@ -13,6 +13,7 @@ from config import *
 
 def testManualGame():
 
+    # add 3rd tribute to game, set health to low, assert dead, assert not in list, etc.
     game = th.setupTestArena()
     A = game.players[0]
     B = game.players[1]
@@ -104,9 +105,11 @@ def testManualGame():
 
     # ROUND 8:
     A.tribute.updateStatsBeforeTurn()
+    assert gh.handleSleep(A.tribute) == False # negative sleep case, full health
     gh.handleSingleMove(A.tribute, 'right')
     
     B.tribute.updateStatsBeforeTurn()
+    assert gh.handleSleep(B.tribute) == False
     gh.handleSingleMove(B.tribute, 'down')
 
 

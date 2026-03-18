@@ -33,7 +33,6 @@ class Tribute:
         self.weapon_value = 0
         self.isAlive = True
         self.isAsleep = False
-        self.isWalking = False
         self.arenaKnowledge = []
         self.segment = None
         
@@ -260,8 +259,10 @@ class Tribute:
             self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * DAMAGE_MULTIPLIER))))
             print("Target wins attack, tribute health decreased")
 
-    def sleep(self, num_turns):
-        self.isAsleep = True
+    def sleep(self):
+        # handler handles the "tired enough" case
+        self.health += SLEEP_VALUE
+            
         
 
     def countInInventory(self, resource_type):

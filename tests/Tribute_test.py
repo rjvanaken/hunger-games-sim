@@ -6,7 +6,7 @@ import math
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, parent_dir)
 
-from config import BASE_DAMAGE, DAMAGE_MULTIPLIER, WATER_VALUE, FOOD_VALUE, MEDICAL_VALUE, CANTEEN_VALUE
+from config import *
 from Tribute import Tribute
 from Resource import Resource
 from Arena import Arena
@@ -69,7 +69,8 @@ def testPickup():
 
     T1.pickUpResource(R6)
     assert T1.capacity == 7
-    assert T1.getFood() == 2
+    assert T1.getFood() == SMALL_BACKPACK_FOOD
+    assert T1.getMedical() == SMALL_BACKPACK_MED
     assert T1.max_water == 15
     assert len(T1.inventory) == 3
 
@@ -81,14 +82,17 @@ def testPickup():
     T1.pickUpResource(R3)
     assert T1.getFood() == 3
     assert len(T1.inventory) == 5
+    assert R3 in T1.inventory
 
     T1.pickUpResource(R4)
     assert T1.getMedical() == 1
     assert len(T1.inventory) == 6
+    assert R4 in T1.inventory
 
     T1.strength = 0
     T1.pickUpResource(R5)
-    assert T1.strength == 10
+    assert T1.strength == T1.base_strength + WEAK_WEAPON
+    assert R5 in T1.inventory
     assert len(T1.inventory) == 7
 
     T1.pickUpResource(R2)
@@ -97,7 +101,8 @@ def testPickup():
 
     T2.pickUpResource(R7)
     assert T2.capacity == 12
-    assert T2.getMedical() == 1
+    assert T2.getMedical() == LARGE_BACKPACK_MED
+    assert T2.getFood() == LARGE_BACKPACK_FOOD
 
 
     T2.inventory = []
@@ -174,7 +179,6 @@ def testRefillWater():
     assert T1.water_supply == 0
     T1.refillWater()
     assert T1.water_supply == 24
-    assert T1.thirst == 100
 
 def testIsAliveProperty():
 

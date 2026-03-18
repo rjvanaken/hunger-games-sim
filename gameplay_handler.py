@@ -1,5 +1,6 @@
 import random
 from Resource import Resource
+from config import SLEEP_VALUE
 
 def handleMove (tribute, arena):
     # only used by manual - AI mode will use pathfinding
@@ -104,6 +105,17 @@ def handlePickup (tribute, arena):
         return True
     return False
 
+
+def handleSleep(tribute):
+    if tribute.health <= 100 - SLEEP_VALUE:
+        tribute.sleep()
+        return True
+    else:
+        print("You are not tired")
+        return False
+
+
+
 def removeResource(self, resource):
     '''
     Run after pickup resource. 
@@ -126,9 +138,6 @@ def wasFoodPickedUp(tribute):
     # either no check or successful pickup check, return true
     return True
 
-def canPickup (tribute, resourcePos):
-    # REWRITE AND UTILIZE FOR ACTION MASKING
-    pass
 
 def checkNeighborsFor(tribute, arena, type_num):
     tRow = tribute.pos[0]
@@ -147,8 +156,14 @@ def checkNeighborsFor(tribute, arena, type_num):
 
 
 
+def pickupMask (tribute, resourcePos):
+    # REWRITE AND UTILIZE FOR ACTION MASKING
+    pass
+
 def walkMask():
-    # are there obstacles in every spot near them?
+    # are there obstacles in every spot near them? actually this seems impossible...
+    # instead, block the directions?
+    # ALSO do I need to instead make 4 separate actions instead of inputting direction?
     pass
 
 
@@ -177,10 +192,7 @@ def refillMask():
     pass
 
 
-# def handleSleep(tribute):
-#     if tribute.isAsleep == False:
-#         tribute.sleep
-#     pass
+
 
 
     # return True
