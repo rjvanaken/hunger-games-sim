@@ -36,6 +36,7 @@ class Tribute:
         self.isAsleep = False
         self.arenaKnowledge = []
         self.segment = None
+        self.num_kills
         
     @property
     def health(self):
@@ -262,6 +263,9 @@ class Tribute:
         else:
             self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * DAMAGE_MULTIPLIER))))
             print("Target wins attack, tribute health decreased")
+        
+        if not target.isAlive:
+            self.num_kills += 1
 
     def sleep(self):
         # handler handles the "tired enough" case

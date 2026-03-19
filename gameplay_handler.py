@@ -43,8 +43,8 @@ def handleAttack (tribute, arena):
         tribute.attack(target)
         return True
     else:
-        return False
         print("cannot attack, too far away") # temp debug
+        return False
 
 
 def handleEatFood (tribute):
@@ -95,21 +95,21 @@ def handlePickup(tribute, arena):
     resource = arena.getResourceAt(tribute.pos)
     if resource is None:
         print("No resource at your position.")
-        return False
+        return 0
 
     if len(tribute.inventory) == tribute.capacity:
         print("no more room in inventory")
-        return False
+        return 0
 
     if resource.type.value == 3:
         if not wasFoodPickedUp(tribute):
-            return True
+            return 2
 
     pickup = tribute.pickUpResource(resource)
     if pickup == True:
         arena.removeResource(resource)
-        return True
-    return False
+        return 1
+    return 0
 
 
 def handleSleep(tribute):
