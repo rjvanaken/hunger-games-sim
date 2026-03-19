@@ -1,4 +1,6 @@
 import gameplay_handler
+from stable_baselines3 import PPO
+import numpy as np
 
 class Player:
 
@@ -119,54 +121,15 @@ class HumanPlayer(Player):
                 
 
 
-#⭐⭐⭐⭐⭐⭐⭐ REMEMBER: need to add a property trigger for when a segment the tribute is currently in changes in any way, their knowledge of that segment is updated too
 
 
 
+class BotPlayer(Player):
+    def __init__(self, tribute, arena, model_path):
+        super().__init__(tribute, arena)
+        self.model = PPO.load(model_path)
 
-    # class BotPlayer(Player):
-
-
-
-    # player needs to have the arena instance
-
-    # game creates tributes and stores it, creates and arena, and the player takes a given tribute
-    # and the arena 
-
-    # this calls the functions from the handler which runs the verification on the functions. This is just
-    # the menu validation. Only 2 functions. Display menu and the ones to handle it. And the loop? Or is the loop in 
-    # main with run_manual? ugh
-
-
-
-    # PLAYER OBJECT ASSIGNED TRIBUTE
-    ## if human
-    ## take turns - either human takes turn or 
-    ## also a gamemaker type 
-    ### human tribute
-    ### robot tribute
-    ### human gamemaker
-    ### robot gamemaker
-
-
-    ## player is parent class
-    ## it has enum for the 4 types
-    # or no? PLAYER has 
-
-    # contain a tribute and combine human or bot interaction with game logic
-
-    # parent class PLAYER has do turn action
-    # game loop runs through the game and does the loop
-
-    # game loop doesnt know its a bot list vs human list jisgt that its player
-    # override is needed to target its subclass not its player class
-
-
-
-
-
-
-
+        self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10}
 
 
 

@@ -91,18 +91,20 @@ def handleRefillWater(tribute, arena):
                 return True
     return False
 
-def handlePickup (tribute, arena):
-    if len(tribute.inventory) == tribute.capacity:
-        print("no more room in inventory")
-        return False
+def handlePickup(tribute, arena):
     resource = arena.getResourceAt(tribute.pos)
     if resource is None:
+        print("No resource at your position.")
+        return False
+
+    if len(tribute.inventory) == tribute.capacity:
+        print("no more room in inventory")
         return False
 
     if resource.type.value == 3:
         if not wasFoodPickedUp(tribute):
-            return True # return True and consume turn, just don't pick up anything
-    
+            return True
+
     pickup = tribute.pickUpResource(resource)
     if pickup == True:
         arena.removeResource(resource)
@@ -182,24 +184,6 @@ def moveMask(tribute, direction):
            return True
     return False
 
-def drinkMask(tribute, arena):
-    # is thirst under 100 and do you have water (or by water source)
-    if tribute.thirst != 100 and (tribute.water_supply > 0 or checkNeighborsFor(tribute, arena, 1)):
-        return True
-    return False
-
-def eatMask(tribute):
-    # is hunger under 100 and do you have food
-    if tribute.hunger != 100 and tribute.getFood() > 0:
-        return True
-    return False
-
-def healMask(tribute):
-    # is health under 100 and do you have medical
-    if tribute.health != 100 and tribute.getMedical() > 0:
-        return True
-    return False
-
 def attackMask(arena, tribute):
     # is there a tribute on the same cell as you?
     canAttack = False
@@ -220,11 +204,23 @@ def pickupMask(tribute, arena):
     if canPickup:
         return True
     return False
-    
 
-def refillMask(tribute, arena):
-    # is there no water near you or do you not have a canteen?
-    if tribute.water_supply < tribute.max_water and checkNeighborsFor(tribute, arena, 1) and tribute.countInInventory(2) > 0:
+def eatMask(tribute):
+    # is hunger under 100 and do you have food
+    if tribute.hunger != 100 and tribute.getFood() > 0:
+        return True
+    return False
+
+def drinkMask(tribute, arena):
+    # is thirst under 100 and do you have water (or by water source)
+    if tribute.thirst != 100 and (tribute.water_supply > 0 or checkNeighborsFor(tribute, arena, 1)):
+        return True
+    return False
+
+
+def healMask(tribute):
+    # is health under 100 and do you have medical
+    if tribute.health != 100 and tribute.getMedical() > 0:
         return True
     return False
 
@@ -233,6 +229,14 @@ def sleepMask(tribute):
     if tribute.health <= 100 - SLEEP_VALUE:
         return True
     return False
+    
+
+def refillMask(tribute, arena):
+    # is there no water near you or do you not have a canteen?
+    if tribute.water_supply < tribute.max_water and checkNeighborsFor(tribute, arena, 1) and tribute.countInInventory(2) > 0:
+        return True
+    return False
+
 
 
     # return True
