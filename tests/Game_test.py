@@ -23,7 +23,7 @@ def testAddTributes():
     num_males = 0
     num_females = 0
 
-    game.addTributes(game.arena.center)
+    game.addTributes(game.arena.center, False)
     assert len(game.arena.tributes) == 24
 
     for tribute in game.arena.tributes:

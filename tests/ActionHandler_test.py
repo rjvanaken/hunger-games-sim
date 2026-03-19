@@ -15,7 +15,7 @@ import tests.test_helper as th
 game2 = Game(20)
 
 game = Game(20)
-game.addTributes(game.arena.center)
+game.addTributes(game.arena.center, False)
 game.arena.addCornucopia()
 game.arena.addSources()
 game.arena.addTrees(0.15)
