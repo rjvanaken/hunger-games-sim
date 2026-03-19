@@ -2,14 +2,23 @@ from Tribute import Tribute
 from Player import HumanPlayer
 from Resource import Resource
 from Game import Game
+import random
 
 WALL = 10  # inner wall boundary — effective arena is rows/cols 10–38
 
+_episode_count = 0
 def setupTrainingArena():
+    global _episode_count
+    _episode_count += 1
+
+    if _episode_count % 10 == 0:
+        A = Tribute(0, (22, 21))
+        B = Tribute(1, (22, 23))
+    else:
+        A = Tribute(0, (20 + random.randint(-4, 4), 20 + random.randint(-4, 4)))
+        B = Tribute(1, (24 + random.randint(-4, 4), 24 + random.randint(-4, 4)))
 
     game = Game(48, True, True)
-    A = Tribute(0, (20, 20))
-    B = Tribute(1, (24, 24))
     game.arena.tributes.extend([A, B])
     p1 = HumanPlayer(A, game.arena)
     p2 = HumanPlayer(B, game.arena)
