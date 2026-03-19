@@ -1,29 +1,4 @@
-- add speed for running for running from enemies
-    which impacts exhaustion 
-        which means they may need a stamina stat
 
-DONE: add success for hunting ability to make chances of successful food pickup
-    which means I may need to have 2 food types or instead just make it be a chance that it requires probability and 
-    also a chance it won't need it
-
-
-- build out segments
-
-
-- decide if I want an exhaustion attribute
-
-
-- adjust arenaknowledge when the segment they are in changes OR when they go from 1 segment to another
-
-for key, value in segments
-- for tribute in arena.tributes:
-    if tribut
-
-
-
-- ultimately may need to change it so you have to be on the same slot in order to fight and pickup food
-- a source like water isn't not crossable
-- or might just make water an exception. have water be in a next slot
 
 
 - with the RL and the rewards, how do we get only a successful action to edit the reward if 
@@ -33,3 +8,7 @@ for key, value in segments
 - unless the tribute has an attribute that is like "new_rewrd" and it's edited on a successful thing
 - so afterwards I just change it to that with that action bc it will only have changed if it were a success 
 
+REMINDERS / BRAIN DUMP
+- they should know how many are left at the end of the day
+- list of locations for other tributes last locations
+- remember what I was gonna do for pursuit. Ask chat
