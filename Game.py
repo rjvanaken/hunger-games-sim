@@ -2,11 +2,14 @@ from Arena import Arena
 from Tribute import Tribute
 from Resource import Resource
 from config import TURNS_PER_DAY
-from Player import Player, HumanPlayer #, BotPlayer
+from Player import Player, HumanPlayer, BotPlayer
+import gymnasium as gym
+from gymnasium import spaces
+import numpy as np
 
-class Game:
+class Game():
     
-    def __init__(self, size):
+    def __init__(self, size, robot=False):    
 
         self.arena = Arena(size)
         self.players = []
@@ -14,8 +17,10 @@ class Game:
         self.day_count = 0
         self.drama = 0
 
+        self.setupArena(robot)
 
-    def addTributes(self, pos):
+
+    def addTributes(self, pos, robot=False):
         center_row = pos[0]
         center_col = pos[1]
         id = 0
@@ -24,7 +29,11 @@ class Game:
         row = center_row - 4
         for col in range(center_col - 2, center_col + 4):
             tribute = Tribute(id, (row, col))
-            player = HumanPlayer(tribute, self.arena)
+            if robot:
+                player = BotPlayer(tribute, self.arena)
+            else:
+                player = HumanPlayer(tribute, self.arena)
+
             self.players.append(player)
             self.arena.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
@@ -34,7 +43,10 @@ class Game:
         col = center_col + 5
         for row in range(center_row - 2, center_row + 4):
             tribute = Tribute(id, (row, col))
-            player = HumanPlayer(tribute, self.arena)
+            if robot:
+                player = BotPlayer(tribute, self.arena)
+            else:
+                player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
             self.arena.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
@@ -44,7 +56,10 @@ class Game:
         row = center_row + 5
         for col in range(center_col + 3, center_col - 3, -1):
             tribute = Tribute(id, (row, col))
-            player = HumanPlayer(tribute, self.arena)
+            if robot:
+                player = BotPlayer(tribute, self.arena)
+            else:
+                player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
             self.arena.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
@@ -54,13 +69,23 @@ class Game:
         col = center_col - 4
         for row in range(center_row + 3, center_row - 3, -1):
             tribute = Tribute(id, (row, col))
-            player = HumanPlayer(tribute, self.arena)
+            if robot:
+                player = BotPlayer(tribute, self.arena)
+            else:
+                player = HumanPlayer(tribute, self.arena)
             self.players.append(player)
             self.arena.tributes.append(tribute)
             self.arena.arena_grid[row][col] = tribute.letter
             id += 1
         
-
+    def setupArena(self, robot=False):
+        self.addTributes(self.arena.center, robot)
+        self.arena.addCornucopia()
+        for tribute in self.arena.tributes:
+            tribute.arenaKnowledge = self.arena.arena_grid
+        self.arena.addSources()
+        self.arena.addTrees(0.15)
+        self.arena.displayArena()
 
 
     def run(self):
