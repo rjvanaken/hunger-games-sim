@@ -9,7 +9,7 @@ import numpy as np
 
 class Game():
     
-    def __init__(self, size, robot=False):    
+    def __init__(self, size, robot=False, train=False):    
 
         self.arena = Arena(size)
         self.players = []
@@ -17,7 +17,8 @@ class Game():
         self.day_count = 0
         self.drama = 0
 
-        self.setupArena(robot)
+        if not train:
+            self.setupArena(robot)
 
 
     def addTributes(self, pos, robot=False):

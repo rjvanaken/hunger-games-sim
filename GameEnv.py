@@ -8,13 +8,14 @@ import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
 import gameplay_handler
+import train_helper as th
 
 class GameEnv(gym.Env):
     
     def __init__(self, size):    
         super().__init__()
             
-        self.game = Game(48, False)
+        self.game = th.setupTrainingArena()
         self.arena = self.game.arena
         self.tribute = None
         self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10}
@@ -109,7 +110,7 @@ class GameEnv(gym.Env):
 
 
     def reset(self, **kwargs):
-        self.game.setupArena()
+        self.game = th.setupTrainingArena()
         self.arena = self.game.arena
         for tribute in self.arena.tributes:
             tribute.arenaKnowledge = self.arena.arena_grid
@@ -244,3 +245,5 @@ class GameEnv(gym.Env):
 
         
         return obs, reward, terminated, False, {}
+    
+
