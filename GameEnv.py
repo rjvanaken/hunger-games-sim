@@ -111,9 +111,10 @@ class GameEnv(gym.Env):
 
     def reset(self, **kwargs):
         self.game = th.setupTrainingArena()
+        # self.arena.displayArena()
         self.arena = self.game.arena
-        for tribute in self.arena.tributes:
-            tribute.arenaKnowledge = self.arena.arena_grid
+        # for tribute in self.arena.tributes:
+        #     tribute.arenaKnowledge = self.arena.arena_grid
         self.current_tribute_index = 0
         self.tribute = self.arena.tributes[self.current_tribute_index]
 
@@ -128,7 +129,6 @@ class GameEnv(gym.Env):
             "known_water_col": 0,
         }
 
-        print(obs)
         return obs, {}
 
     def step(self, action):
@@ -155,20 +155,25 @@ class GameEnv(gym.Env):
         # not done at all, placeholders
         if action == 0:
             gameplay_handler.handleSingleMove(self.tribute, 'up', self.arena)
+            # print(f"Tribute {self.tribute.letter} moved up")
 
         elif action == 1:
             gameplay_handler.handleSingleMove(self.tribute, 'down', self.arena)
+            # print(f"Tribute {self.tribute.letter} moved down")
             
         elif action == 2:
             gameplay_handler.handleSingleMove(self.tribute, 'left', self.arena)
+            # print(f"Tribute {self.tribute.letter} moved left")
 
         elif action == 3:
             gameplay_handler.handleSingleMove(self.tribute, 'right', self.arena)
+            # print(f"Tribute {self.tribute.letter} moved right")
 
         elif action == 4:
             health_before = self.tribute.health
             kills_before = self.tribute.num_kills
             gameplay_handler.handleAttack(self.tribute, self.arena)
+            print(f"Tribute {self.tribute.letter} attacked tribute")
             if self.tribute.num_kills > kills_before:
                 reward += 500 # got a kill
             if self.tribute.health < health_before:
@@ -180,35 +185,39 @@ class GameEnv(gym.Env):
             capacity_before = self.tribute.capacity
             weapon_before = self.tribute.weapon_value
             result = gameplay_handler.handlePickup(self.tribute, self.arena)
+            print(f"Tribute {self.tribute.letter} picked up an item")
             if result == 1:
-                reward += 20
+                reward += 50
                 if self.tribute.capacity > capacity_before:
-                    reward += 10 # additional 10 for picking up backpack
+                    reward += 20 # additional 10 for picking up backpack
                 if self.tribute.weapon_value > weapon_before:
-                    reward += 10 # additional 10 for picking up weapon
+                    reward += 20 # additional 10 for picking up weapon
                     if self.tribute.weapon_value > WEAK_WEAPON:
-                        reward += 5 # additional 5 for weapon being strong
-            elif result == 2:
-                reward -= 5
+                        reward += 10 # additional 5 for weapon being strong
 
         elif action == 6:
             gameplay_handler.handleEatFood(self.tribute)
-            reward += 5
+            print(f"Tribute {self.tribute.letter} ate food")
+            reward += 30
 
         elif action == 7:
             gameplay_handler.handleDrinkWater(self.tribute, self.arena)
-            reward += 5
+            print(f"Tribute {self.tribute.letter} drank water")
+            reward += 30
         elif action == 8:
             gameplay_handler.handleUseMedical(self.tribute)
+            print(f"Tribute {self.tribute.letter} used medical")
             reward += 20
 
         elif action == 9:
             gameplay_handler.handleSleep(self.tribute)
+            print(f"Tribute {self.tribute.letter} slept")
             reward += 10
 
         elif action == 10:
             gameplay_handler.handleRefillWater(self.tribute, self.arena)
-            reward += 20
+            print(f"Tribute {self.tribute.letter} refilled their canteen")
+            reward += 50
 
         if self.tribute.hunger <= HUNGER_WARNING_THRESHOLD:
             reward -= 10
@@ -218,13 +227,19 @@ class GameEnv(gym.Env):
             reward -= 10
 
         if not self.tribute.isAlive:
+            print(f"Tribute {self.tribute.letter} died")
             reward -= 500
-            terminated = True
 
         if len(self.arena.tributes) == 1:
             reward += 2000
+            print(f"Tribute {self.tribute.letter} wins!!")
+            terminated = True
 
         self.cleanUpAfterTurn()
+
+        if terminated:
+            self.arena.displayArena()
+            return obs, reward, terminated, False, {}
 
         # move to next tribute
         self.current_tribute_index += 1
@@ -242,6 +257,7 @@ class GameEnv(gym.Env):
             "known_water_row": self.getKnownWater(self.tribute)[0],
             "known_water_col": self.getKnownWater(self.tribute)[1],
         }
+
 
         
         return obs, reward, terminated, False, {}
