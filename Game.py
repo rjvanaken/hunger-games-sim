@@ -79,6 +79,8 @@ class Game():
             id += 1
         
     def setupArena(self, robot=False):
+        self.arena = Arena(self.arena.size)
+        self.arena.tributes = [] 
         self.addTributes(self.arena.center, robot)
         self.arena.addCornucopia()
         for tribute in self.arena.tributes:

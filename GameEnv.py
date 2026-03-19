@@ -14,8 +14,8 @@ class GameEnv(gym.Env):
     def __init__(self, size):    
         super().__init__()
             
-        self.arena = Arena(size)
         self.game = Game(48, False)
+        self.arena = self.game.arena
         self.tribute = None
         self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10}
         self.valid_actions = set()
@@ -23,15 +23,17 @@ class GameEnv(gym.Env):
 
         VIEW_RADIUS = 2  # 5x5 window
 
+        self.action_space = spaces.Discrete(11)
+
         self.observation_space = spaces.Dict({
             "local_view": spaces.Box(low=0, high=10, shape=(5, 5), dtype=np.int32),
-            "known_water_row": spaces.Discrete(30),
-            "known_water_col": spaces.Discrete(30),
+            "known_water_row": spaces.Discrete(49),
+            "known_water_col": spaces.Discrete(49),
             "health": spaces.Discrete(101),
             "hunger": spaces.Discrete(101),
             "thirst": spaces.Discrete(101),
-            "row": spaces.Discrete(30),
-            "col": spaces.Discrete(30),
+            "row": spaces.Discrete(49),
+            "col": spaces.Discrete(49),
 })
 
     def setupActionMap(self, tribute, arena):
@@ -87,7 +89,7 @@ class GameEnv(gym.Env):
             for c in range(len(tribute.arenaKnowledge[r])):
                 if tribute.arenaKnowledge[r][c] == 1: 
                     return r, c
-        return -1, -1  # none yet
+        return 0, 0  # none yet
     
 
     def setValuesBeforeTurn(self):
@@ -106,10 +108,13 @@ class GameEnv(gym.Env):
             self.game.day_count += 1
 
 
-    def reset(self):
+    def reset(self, **kwargs):
         self.game.setupArena()
+        self.arena = self.game.arena
+        for tribute in self.arena.tributes:
+            tribute.arenaKnowledge = self.arena.arena_grid
         self.current_tribute_index = 0
-        self.tribute = self.game.tributes[self.current_tribute_index]
+        self.tribute = self.arena.tributes[self.current_tribute_index]
 
         obs = {
             "local_view": self.getLocalView(self.tribute),
@@ -122,6 +127,7 @@ class GameEnv(gym.Env):
             "known_water_col": 0,
         }
 
+        print(obs)
         return obs, {}
 
     def step(self, action):
@@ -147,16 +153,16 @@ class GameEnv(gym.Env):
         
         # not done at all, placeholders
         if action == 0:
-            gameplay_handler.handleSingleMove(self.tribute, 'up')
+            gameplay_handler.handleSingleMove(self.tribute, 'up', self.arena)
 
         elif action == 1:
-            gameplay_handler.handleSingleMove(self.tribute, 'down')
+            gameplay_handler.handleSingleMove(self.tribute, 'down', self.arena)
             
         elif action == 2:
-            gameplay_handler.handleSingleMove(self.tribute, 'left')
+            gameplay_handler.handleSingleMove(self.tribute, 'left', self.arena)
 
         elif action == 3:
-            gameplay_handler.handleSingleMove(self.tribute, 'right')
+            gameplay_handler.handleSingleMove(self.tribute, 'right', self.arena)
 
         elif action == 4:
             health_before = self.tribute.health
@@ -210,7 +216,7 @@ class GameEnv(gym.Env):
         if self.tribute.health <= 40:
             reward -= 10
 
-        if not self.tribute.isAlive():
+        if not self.tribute.isAlive:
             reward -= 500
             terminated = True
 
@@ -221,9 +227,9 @@ class GameEnv(gym.Env):
 
         # move to next tribute
         self.current_tribute_index += 1
-        if self.current_tribute_index >= len(self.game.tributes):
+        if self.current_tribute_index >= len(self.arena.tributes):
             self.current_tribute_index = 0
-        self.tribute = self.game.tributes[self.current_tribute_index]
+        self.tribute = self.arena.tributes[self.current_tribute_index]
 
         obs = {
             "local_view": self.getLocalView(self.tribute),

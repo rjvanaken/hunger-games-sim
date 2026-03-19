@@ -36,7 +36,7 @@ class Tribute:
         self.isAsleep = False
         self.arenaKnowledge = []
         self.segment = None
-        self.num_kills
+        self.num_kills = 0
         
     @property
     def health(self):
@@ -241,6 +241,8 @@ class Tribute:
         
 
     def canMoveTo(self, pos):
+        if pos[0] < 0 or pos[0] >= len(self.arenaKnowledge) or pos[1] < 0 or pos[1] >= len(self.arenaKnowledge[0]):
+                return False
         cell = self.arenaKnowledge[pos[0]][pos[1]]
         if isinstance(cell, str):
             return True  # tribute on cell, walkable
