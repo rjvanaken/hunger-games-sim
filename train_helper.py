@@ -1,48 +1,57 @@
 from Tribute import Tribute
 from Player import HumanPlayer
-from Tribute import Tribute
 from Resource import Resource
 from Game import Game
 
+WALL = 10  # inner wall boundary — effective arena is rows/cols 10–38
 
 def setupTrainingArena():
 
     game = Game(48, True, True)
-    A = Tribute(0, (4, 4))
-    B = Tribute(1, (40, 42))
+    A = Tribute(0, (20, 20))
+    B = Tribute(1, (24, 24))
     game.arena.tributes.extend([A, B])
     p1 = HumanPlayer(A, game.arena)
     p2 = HumanPlayer(B, game.arena)
     game.players.extend([p1, p2])
 
+    # --- INNER WALL (shrinks effective arena to rows/cols 10-38) ---
+    inner_wall = (
+        [(WALL, c) for c in range(WALL, 48 - WALL)] +      # top inner wall
+        [(48 - WALL - 1, c) for c in range(WALL, 48 - WALL)] +  # bottom inner wall
+        [(r, WALL) for r in range(WALL, 48 - WALL)] +      # left inner wall
+        [(r, 48 - WALL - 1) for r in range(WALL, 48 - WALL)]    # right inner wall
+    )
 
-
-    # --- TREES / OBSTACLES (20 total) ---
-    trees = [
-        (2,  8),  (3,  20), (5,  35), (6,  14),
-        (9,  2),  (11, 28), (13, 42), (15, 10),
-        (18, 22), (20, 38), (22, 5),  (24, 17),
-        (27, 32), (29, 8),  (31, 44), (33, 20),
-        (36, 12), (38, 36), (42, 26), (45, 6),
+    # --- INTERIOR TREES (shifted into center zone) ---
+    interior_trees = [
+        (12, 14), (12, 24), (13, 32),
+        (16, 12), (16, 30), (18, 20),
+        (22, 13), (22, 35), (25, 18),
+        (28, 14), (28, 28), (30, 22),
+        (32, 16), (32, 32), (34, 12),
+        (15, 22), (20, 35), (26, 12),
+        (29, 35), (33, 25),
     ]
-    for pos in trees:
+
+    for pos in inner_wall + interior_trees:
         game.arena.obstacles.append(pos)
 
-    # --- WATER SOURCES (type 1) - 4x4 clusters, 3 total ---
+    # --- WATER SOURCES (type 1) - 4x4 clusters, all in center zone ---
     water_positions = []
 
-    # cluster 1: lower-left area, upper left at (32, 6)
-    for r in range(32, 36):
-        for c in range(6, 10):
+    # cluster 1: lower-left of center, upper left at (30, 13)
+    for r in range(30, 34):
+        for c in range(13, 17):
             water_positions.append((r, c))
 
-    # cluster 2: upper-right area, upper left at (4, 36)
-    for r in range(4, 8):
-        for c in range(36, 40):
+    # cluster 2: upper-right of center, upper left at (13, 31)
+    for r in range(13, 17):
+        for c in range(31, 35):
             water_positions.append((r, c))
 
-    # cluster 3: center area, upper left at (20, 22)
-    for r in range(20, 24):
+    # cluster 3: mid-center, upper left at (21, 22)
+    for r in range(21, 25):
         for c in range(22, 26):
             water_positions.append((r, c))
 
@@ -52,13 +61,12 @@ def setupTrainingArena():
 
     # --- FOOD SOURCES (type 3) ---
     single_food = [
-        (3,  12), (7,  28), (10, 6),  (14, 38),
-        (17, 15), (25, 40), (30, 10), (35, 30),
-        (40, 8),  (44, 34),
+        (13, 15), (14, 28), (17, 13), (19, 33),
+        (23, 14), (26, 33), (31, 18), (33, 30),
     ]
 
     food_clusters = [
-        (8,  10), (16, 30), (28, 18), (37, 40)  # upper-left of each 2x2
+        (15, 20), (20, 30), (27, 15), (30, 28)  # upper-left of each 2x2
     ]
     cluster_food = [(r + dr, c + dc) for r, c in food_clusters for dr in range(2) for dc in range(2)]
 
@@ -68,18 +76,18 @@ def setupTrainingArena():
 
     # --- WEAPONS (type 5) ---
     weapons = [
-        (5,  6,  10), (6,  2,  20),
-        (30, 44, 10), (31, 42, 20),
-        (22, 12, 15),
+        (14, 18, 10), (15, 14, 20),
+        (31, 30, 10), (32, 28, 20),
+        (22, 22, 15),  # center weapon
     ]
     for r, c, val in weapons:
         game.arena.resources.append(Resource(game.arena.next_resource_id, (r, c), Resource.Type(5), val))
         game.arena.next_resource_id += 1
 
     # --- BACKPACKS ---
-    game.arena.resources.append(Resource(game.arena.next_resource_id, (4, 2),   Resource.Type(7)))  # large, near A
+    game.arena.resources.append(Resource(game.arena.next_resource_id, (19, 19), Resource.Type(7)))  # large, near A
     game.arena.next_resource_id += 1
-    game.arena.resources.append(Resource(game.arena.next_resource_id, (42, 44), Resource.Type(6)))  # small, near B
+    game.arena.resources.append(Resource(game.arena.next_resource_id, (25, 25), Resource.Type(6)))  # small, near B
     game.arena.next_resource_id += 1
 
     # --- UPDATE GRID ---
@@ -91,7 +99,5 @@ def setupTrainingArena():
 
     for resource in game.arena.resources:
         game.arena.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
-        
-    game.arena.displayArena()
 
     return game
