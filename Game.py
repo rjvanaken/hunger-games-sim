@@ -104,6 +104,7 @@ class Game():
                         print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
                         player.take_turn()
                 self.arena.clearDeadTributes()
+                self.arena.displayArena()
                 # if turn cap has been reached, reset and move to next day
                 if self.turn_count == TURNS_PER_DAY:
                     self.turn_count = 0
