@@ -16,11 +16,15 @@ if __name__ == "__main__":
         model.learn(total_timesteps=2000000)
         model.save("hunger_games_model")
         
+    elif mode == "--robot":
+        # load model into Robot, run Game
+        game = Game(size=48, robot=True, train=False, test=False)
+        game.run()
+
     elif mode == "--play":
         # load model into Robot, run Game
         game = Game(size=48)
         game.run()
-
 
 
 # def main():
