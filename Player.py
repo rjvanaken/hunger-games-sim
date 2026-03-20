@@ -1,4 +1,4 @@
-import gameplay_handler
+import gameplay_handler as gh
 from stable_baselines3 import PPO
 import numpy as np
 
@@ -68,47 +68,47 @@ class HumanPlayer(Player):
             try:
 
                 if action == "0":
-                    success = gameplay_handler.handleSingleMove(self.tribute, 'up')
+                    success = gh.handleSingleMove(self.tribute, 'up')
 
                 elif action == "1":
-                    success = gameplay_handler.handleSingleMove(self.tribute, 'down')
+                    success = gh.handleSingleMove(self.tribute, 'down')
                     
                 elif action == "2":
-                    success = gameplay_handler.handleSingleMove(self.tribute, 'left')
+                    success = gh.handleSingleMove(self.tribute, 'left')
 
                 elif action == "3":
-                    success = gameplay_handler.handleSingleMove(self.tribute, 'right')
+                    success = gh.handleSingleMove(self.tribute, 'right')
 
                 elif action == "4":
-                    success = gameplay_handler.handleAttack(self.tribute, self.arena)
+                    success = gh.handleAttack(self.tribute, self.arena)
 
                 elif action == "5":
                     resource = self.arena.getResourceAt(self.tribute.pos)
                     if resource is None:
                         print("No resource at your position.")
                     else:
-                        success = gameplay_handler.handlePickup(self.tribute, self.arena)
+                        success = gh.handlePickup(self.tribute, self.arena)
 
                 elif action == "6":
-                    success = gameplay_handler.handleEatFood(self.tribute)
+                    success = gh.handleEatFood(self.tribute)
 
                 elif action == "7":
-                    success = gameplay_handler.handleDrinkWater(self.tribute, self.arena)
+                    success = gh.handleDrinkWater(self.tribute, self.arena)
 
                 elif action == "8":
-                    success = gameplay_handler.handleUseMedical(self.tribute)
+                    success = gh.handleUseMedical(self.tribute)
 
                 elif action == "9":
-                    success = gameplay_handler.handleSleep(self.tribute)
+                    success = gh.handleSleep(self.tribute)
 
                 elif action == "10":
-                    success = gameplay_handler.handleRefillWater(self.tribute, self.arena)
+                    success = gh.handleRefillWater(self.tribute, self.arena)
 
                 elif action == "11":
                     success = "skip" # debug
 
                 elif action == "12":
-                    success = gameplay_handler.handleMove(self.tribute, self.arena) #debug
+                    success = gh.handleMove(self.tribute, self.arena) #debug
                 else:
                     print("Invalid choice, try again.")
 
@@ -125,17 +125,82 @@ class HumanPlayer(Player):
 
 
 class BotPlayer(Player):
-    def __init__(self, tribute, arena, model_path):
+    def __init__(self, tribute, arena, model_path="hunger_games_model"):
         super().__init__(tribute, arena)
         self.model = PPO.load(model_path)
+        self.valid_actions = set()
 
-        self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10}
+    def take_turn(self):
 
+        while True:
+                
+            self.valid_actions = gh.setupActionMap(self.tribute, self.arena)
+            
+            obs = {
+                "local_view": gh.getLocalView(self.tribute, self.arena),
+                "health": self.tribute.health,
+                "hunger": self.tribute.hunger,
+                "thirst": self.tribute.thirst,
+                "row": self.tribute.pos[0],
+                "col": self.tribute.pos[1],
+                "known_water_row": gh.getKnownWater(self.tribute)[0],
+                "known_water_col": gh.getKnownWater(self.tribute)[1],
+            }
 
+            action, _ = self.model.predict(obs)
+            action = int(action)
+            success = False
 
+            if action not in self.valid_actions:
+                continue
 
+            else:
 
+                if action == 0:
+                    success = gh.handleSingleMove(self.tribute, 'up', self.arena)
+                    print(f"Tribute {self.tribute.letter} moved up")
 
-    # this calls the functions from the handler which runs the verification on the functions. This is just
-    # the menu validation. Only 2 functions. Display menu and the ones to handle it. And the loop? Or is the loop in 
-    # main wi
+                elif action == 1:
+                    success = gh.handleSingleMove(self.tribute, 'down', self.arena)
+                    print(f"Tribute {self.tribute.letter} moved down")
+
+                elif action == 2:
+                    success = gh.handleSingleMove(self.tribute, 'left', self.arena)
+                    print(f"Tribute {self.tribute.letter} moved left")
+
+                elif action == 3:
+                    success = gh.handleSingleMove(self.tribute, 'right', self.arena)
+                    print(f"Tribute {self.tribute.letter} moved right")
+
+                elif action == 4:
+                    success = gh.handleAttack(self.tribute, self.arena)
+                    print(f"Tribute {self.tribute.letter} attacked tribute")
+
+                elif action == 5:
+                    success = gh.handlePickup(self.tribute, self.arena)
+                    print(f"Tribute {self.tribute.letter} picked up an item")
+
+                elif action == 6:
+                    success = gh.handleEatFood(self.tribute)
+                    print(f"Tribute {self.tribute.letter} ate food")
+
+                elif action == 7:
+                    success = gh.handleDrinkWater(self.tribute, self.arena)
+                    print(f"Tribute {self.tribute.letter} drank water")
+
+                elif action == 8:
+                    success = gh.handleUseMedical(self.tribute)
+                    print(f"Tribute {self.tribute.letter} used medical")
+
+                elif action == 9:
+                    success = gh.handleSleep(self.tribute)
+                    print(f"Tribute {self.tribute.letter} slept")
+
+                elif action == 10:
+                    success = gh.handleRefillWater(self.tribute, self.arena)
+                    print(f"Tribute {self.tribute.letter} refilled their canteen")
+
+            if success:
+                # self.arena.displayArena() # temporary - ultimately, will only print at start of each day
+                break
+
