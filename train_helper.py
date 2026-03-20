@@ -12,8 +12,8 @@ def setupTrainingArena():
     _episode_count += 1
 
     if _episode_count % 10 == 0:
-        A = Tribute(0, (22, 21))
-        B = Tribute(1, (22, 23))
+        A = Tribute(0, (22, 22))
+        B = Tribute(1, (22, 22))
     else:
         A = Tribute(0, (20 + random.randint(-4, 4), 20 + random.randint(-4, 4)))
         B = Tribute(1, (24 + random.randint(-4, 4), 24 + random.randint(-4, 4)))
