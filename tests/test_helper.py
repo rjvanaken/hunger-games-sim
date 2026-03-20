@@ -14,7 +14,7 @@ from Game import Game
 
 def setupTestArena():
 
-    game = Game(24)
+    game = Game(24, False, False, True)
     A = Tribute(0, (3, 3))
     B = Tribute(1, (16, 20))
     game.arena.tributes.extend ([A, B])

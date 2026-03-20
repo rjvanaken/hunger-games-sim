@@ -98,8 +98,9 @@ def handlePickup(tribute, arena):
         return 0
 
     if len(tribute.inventory) == tribute.capacity:
-        print("no more room in inventory")
-        return 0
+        if resource.type.value != 6 and resource.type.value != 7:
+            print("no more room in inventory")
+            return 0
 
     if resource.type.value == 3:
         if not wasFoodPickedUp(tribute):
@@ -201,6 +202,8 @@ def pickupMask(tribute, arena):
         if resource.pos == tribute.pos:
             canPickup = True
             break
+        elif resource.type.value == 6 or resource.type.value == 7:
+            canPickup = True
     if canPickup:
         return True
     return False

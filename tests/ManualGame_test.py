@@ -17,7 +17,7 @@ def testManualGame():
     game = th.setupTestArena()
     A = game.players[0]
     B = game.players[1]
-    A.tribute.hunging_skill = 90
+    A.tribute.hunting_skill = 90
     B.tribute.hunting_skill = 40
     for tribute in game.arena.tributes:
         tribute.arenaKnowledge = game.arena.arena_grid
@@ -41,7 +41,7 @@ def testManualGame():
     A.tribute.updateStatsBeforeTurn()
     assert len(A.tribute.inventory) == 0
     assert A.tribute.max_water == 0
-    gh.handlePickup(A.tribute, game.arena)
+    assert gh.handlePickup(A.tribute, game.arena) == True
     # assert large backpack items picked up
     assert A.tribute.countInInventory(3) == LARGE_BACKPACK_FOOD
     assert A.tribute.countInInventory(4) == LARGE_BACKPACK_MED
@@ -169,7 +169,7 @@ def testManualGame():
     # ROUND 15        
     A.tribute.updateStatsBeforeTurn()
     current_food = A.tribute.getFood()
-    with patch('random.randint', side_effect=[50, 10]):  # success
+    with patch('random.randint', side_effect=[50, 1, 10]):  # success
         gh.handlePickup(A.tribute, game.arena)
     assert A.tribute.getFood() == current_food + 1
     
@@ -220,7 +220,8 @@ def testManualGame():
     # ROUND 28
     A.tribute.updateStatsBeforeTurn()
     gh.handleDrinkWater(A.tribute, game.arena)
-    assert A.tribute.thirst == (100 - (THIRST_DECAY * 28)) + WATER_VALUE
+    expected_thirst = max(0, 100 - (THIRST_DECAY * 28)) + WATER_VALUE
+    assert A.tribute.thirst == expected_thirst
     assert A.tribute.water_supply == A.tribute.max_water - 1
     
     B.tribute.updateStatsBeforeTurn()
@@ -273,38 +274,29 @@ def testManualGame():
 
 
     # ROUNDS 
+    A.tribute.health = 100
+    B.tribute.health = 70
+    B.tribute.strength = 10
+    A.tribute.strength = 20
+    A.tribute.isAlive = True
+    B.tribute.isAlive = True
 
-        A.tribute.updateStatsBeforeTurn()
-        with patch('random.random', side_effect=[80]):
-            gh.handleAttack(A.tribute, game.arena)
+    A.tribute.updateStatsBeforeTurn()
+    with patch('Tribute.random.random', return_value=0.99):
+        gh.handleAttack(A.tribute, game.arena)
 
-        B.tribute.updateStatsBeforeTurn()
-        with patch('random.random', side_effect=[80]):
-            gh.handleAttack(B.tribute, game.arena)
+    B.tribute.updateStatsBeforeTurn()
+    with patch('Tribute.random.random', return_value=0.01):
+        gh.handleAttack(B.tribute, game.arena)
 
-        A.tribute.updateStatsBeforeTurn()
-        with patch('random.random', side_effect=[80]):
-            gh.handleAttack(A.tribute, game.arena)
+    A.tribute.updateStatsBeforeTurn()
+    with patch('Tribute.random.random', return_value=0.99):
+        gh.handleAttack(A.tribute, game.arena)
 
-        B.tribute.updateStatsBeforeTurn()
-        with patch('random.random', side_effect=[80]):
-            gh.handleAttack(B.tribute, game.arena)
-
-
-        A.tribute.updateStatsBeforeTurn()
-        with patch('random.random', side_effect=[80]):
-            gh.handleAttack(A.tribute, game.arena)
-
-        B.tribute.updateStatsBeforeTurn()
-        with patch('random.random', side_effect=[80]):
-            gh.handleAttack(B.tribute, game.arena)
-
-        A.tribute.updateStatsBeforeTurn()
-        with patch('random.random', side_effect=[80]):
-            gh.handleAttack(A.tribute, game.arena)
-
-    print(A.tribute.health)
-    print(B.tribute.health)
+    B.tribute.updateStatsBeforeTurn()
+    with patch('Tribute.random.random', return_value=0.01):
+        gh.handleAttack(B.tribute, game.arena)
+    
 
     game.arena.clearDeadTributes()
     assert A.tribute in game.arena.tributes

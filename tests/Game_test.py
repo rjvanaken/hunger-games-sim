@@ -15,16 +15,10 @@ game = Game(30)
 
 def testGameSetup():
     assert game.arena.size == 30
-    assert game.arena.tributes == []
-
-
-def testAddTributes():
+    assert len(game.arena.tributes) == 24
     
     num_males = 0
     num_females = 0
-
-    game.addTributes(game.arena.center, False)
-    assert len(game.arena.tributes) == 24
 
     for tribute in game.arena.tributes:
         if tribute.gender == 'male':
@@ -55,7 +49,6 @@ def testAddTributes():
 
 def main():
     testGameSetup()
-    testAddTributes()
 
 
 
