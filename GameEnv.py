@@ -207,7 +207,7 @@ class GameEnv(gym.Env):
         elif action == 8:
             gameplay_handler.handleUseMedical(self.tribute)
             print(f"Tribute {self.tribute.letter} used medical")
-            reward += 20
+            reward += 30
 
         elif action == 9:
             gameplay_handler.handleSleep(self.tribute)
@@ -238,7 +238,10 @@ class GameEnv(gym.Env):
         self.cleanUpAfterTurn()
 
         if terminated:
-            self.arena.displayArena()
+            # self.arena.displayArena()
+            print("____________________")
+            print("GAME OVER")
+            print("____________________\n\n")
             return obs, reward, terminated, False, {}
 
         # move to next tribute

@@ -9,7 +9,7 @@ import numpy as np
 
 class Game():
     
-    def __init__(self, size, robot=False, train=False):    
+    def __init__(self, size, robot=False, train=False, test=False):    
 
         self.arena = Arena(size)
         self.players = []
@@ -17,7 +17,10 @@ class Game():
         self.day_count = 0
         self.drama = 0
 
-        if not train:
+        if test:
+            pass
+
+        elif not train and not test:
             self.setupArena(robot)
 
 
@@ -81,7 +84,8 @@ class Game():
         
     def setupArena(self, robot=False):
         self.arena = Arena(self.arena.size)
-        self.arena.tributes = [] 
+        self.arena.tributes = []
+
         self.addTributes(self.arena.center, robot)
         self.arena.addCornucopia()
         for tribute in self.arena.tributes:
