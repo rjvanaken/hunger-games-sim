@@ -1,6 +1,7 @@
 import random
 from Resource import Resource
-from config import SLEEP_VALUE
+from config import SLEEP_VALUE, TURNS_PER_DAY
+import numpy as np
 
 def handleMove (tribute, arena):
     # only used by manual - AI mode will use pathfinding
@@ -197,14 +198,12 @@ def attackMask(arena, tribute):
     return False
 
 def pickupMask(tribute, arena):
-    canPickup = False
-    for resource in arena.resources:
-        if resource.pos == tribute.pos:
-            canPickup = True
-            break
-        elif resource.type.value == 6 or resource.type.value == 7:
-            canPickup = True
-    if canPickup:
+    resource = arena.getResourceAt(tribute.pos)
+    if resource is None:
+        return False
+    if len(tribute.inventory) < tribute.capacity:
+        return True
+    if resource.type.value == 6 or resource.type.value == 7:
         return True
     return False
 
@@ -245,3 +244,78 @@ def refillMask(tribute, arena):
     # return True
     # need to figure out how to track the number of turns to be asleep for when marking handle sleep
     # so then therefore how do I 
+
+
+
+    # ROBOT PLAY FUNCTIONS
+
+def getLocalView(tribute, arena, radius=2):
+    size = radius * 2 + 1
+    view = np.zeros((size, size), dtype=np.int32)
+
+    for dr in range(-radius, radius + 1):
+        for dc in range(-radius, radius + 1):
+            r = tribute.pos[0] + dr
+            c = tribute.pos[1] + dc
+            row_i = dr + radius
+            col_i = dc + radius
+            
+            if 0 <= r < arena.size and 0 <= c < arena.size:
+                cell = arena.arena_grid[r][c]
+                if isinstance(cell, str):  # tribute letter
+                    view[row_i][col_i] = 10  # TRIBUTE
+                else:
+                    view[row_i][col_i] = cell # number already there
+            else:
+                view[row_i][col_i] = 8  # out of bounds is an obstacle
+
+    return view
+
+def getKnownWater(tribute):
+    for r in range(len(tribute.arenaKnowledge)):
+        for c in range(len(tribute.arenaKnowledge[r])):
+            if tribute.arenaKnowledge[r][c] == 1: 
+                return r, c
+    return 0, 0  # none yet
+
+def setValuesBeforeTurn(tribute, arena):
+    tribute.segment = arena.getSegmentFromPos(tribute.pos)
+    segment = tribute.segment
+    arena.updateSegmentData(tribute, segment)
+    tribute.updateStatsBeforeTurn()
+    tribute.updateKnowledge(arena)
+
+def cleanUpAfterTurn(game, arena):
+    # reset values
+    arena.clearDeadTributes()
+    game.turn_count += 1
+    if game.turn_count == TURNS_PER_DAY:
+        game.turn_count = 0
+        game.day_count += 1
+
+def setupActionMap(tribute, arena):
+    valid_actions = set()
+    if moveMask(tribute, 'up'):
+        valid_actions.add(0)
+    if moveMask(tribute, 'down'):
+        valid_actions.add(1)
+    if moveMask(tribute, 'left'):
+        valid_actions.add(2)
+    if moveMask(tribute, 'right'):
+        valid_actions.add(3)
+    if attackMask(arena, tribute):
+        valid_actions.add(4)
+    if pickupMask(tribute, arena):
+        valid_actions.add(5)
+    if eatMask(tribute):
+        valid_actions.add(6)
+    if drinkMask(tribute, arena):
+        valid_actions.add(7)
+    if healMask(tribute):
+        valid_actions.add(8)
+    if sleepMask(tribute):
+        valid_actions.add(9)
+    if refillMask(tribute, arena):
+        valid_actions.add(10)
+    
+    return valid_actions

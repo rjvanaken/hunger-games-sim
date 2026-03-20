@@ -7,7 +7,7 @@ from Player import Player, HumanPlayer, BotPlayer
 import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
-import gameplay_handler
+import gameplay_handler as gh
 import train_helper as th
 
 class GameEnv(gym.Env):
@@ -36,77 +36,8 @@ class GameEnv(gym.Env):
             "row": spaces.Discrete(49),
             "col": spaces.Discrete(49),
 })
-
-    def setupActionMap(self, tribute, arena):
-        self.valid_actions = set()
-        if gameplay_handler.moveMask(tribute, 'up'):
-            self.valid_actions.add(0)
-        if gameplay_handler.moveMask(tribute, 'down'):
-            self.valid_actions.add(1)
-        if gameplay_handler.moveMask(tribute, 'left'):
-            self.valid_actions.add(2)
-        if gameplay_handler.moveMask(tribute, 'right'):
-            self.valid_actions.add(3)
-        if gameplay_handler.attackMask(arena, tribute):
-            self.valid_actions.add(4)
-        if gameplay_handler.pickupMask(tribute, arena):
-            self.valid_actions.add(5)
-        if gameplay_handler.eatMask(tribute):
-            self.valid_actions.add(6)
-        if gameplay_handler.drinkMask(tribute, arena):
-            self.valid_actions.add(7)
-        if gameplay_handler.healMask(tribute):
-            self.valid_actions.add(8)
-        if gameplay_handler.sleepMask(tribute):
-            self.valid_actions.add(9)
-        if gameplay_handler.refillMask(tribute, arena):
-            self.valid_actions.add(10)
             
 
-    def getLocalView(self, tribute, radius=2):
-        size = radius * 2 + 1
-        view = np.zeros((size, size), dtype=np.int32)
-        
-        for dr in range(-radius, radius + 1):
-            for dc in range(-radius, radius + 1):
-                r = tribute.pos[0] + dr
-                c = tribute.pos[1] + dc
-                row_i = dr + radius
-                col_i = dc + radius
-                
-                if 0 <= r < self.arena.size and 0 <= c < self.arena.size:
-                    cell = self.arena.arena_grid[r][c]
-                    if isinstance(cell, str):  # tribute letter
-                        view[row_i][col_i] = 10  # TRIBUTE
-                    else:
-                        view[row_i][col_i] = cell # number already there
-                else:
-                    view[row_i][col_i] = 8  # out of bounds is an obstacle
-        
-        return view
-    
-    def getKnownWater(self, tribute):
-        for r in range(len(tribute.arenaKnowledge)):
-            for c in range(len(tribute.arenaKnowledge[r])):
-                if tribute.arenaKnowledge[r][c] == 1: 
-                    return r, c
-        return 0, 0  # none yet
-    
-
-    def setValuesBeforeTurn(self):
-        self.tribute.segment = self.arena.getSegmentFromPos(self.tribute.pos)
-        segment = self.tribute.segment
-        self.arena.updateSegmentData(self.tribute, segment)
-        self.tribute.updateStatsBeforeTurn()
-        self.tribute.updateKnowledge(self.arena)
-
-    def cleanUpAfterTurn(self):
-        # reset values
-        self.arena.clearDeadTributes()
-        self.game.turn_count += 1
-        if self.game.turn_count == TURNS_PER_DAY:
-            self.game.turn_count = 0
-            self.game.day_count += 1
 
 
     def reset(self, **kwargs):
@@ -119,7 +50,7 @@ class GameEnv(gym.Env):
         self.tribute = self.arena.tributes[self.current_tribute_index]
 
         obs = {
-            "local_view": self.getLocalView(self.tribute),
+            "local_view": gh.getLocalView(self.tribute, self.arena),
             "health": self.tribute.health,
             "hunger": self.tribute.hunger,
             "thirst": self.tribute.thirst,
@@ -134,45 +65,57 @@ class GameEnv(gym.Env):
     def step(self, action):
         reward = 0
         terminated = False
-        self.setupActionMap(self.tribute, self.arena)
+        self.valid_actions = gh.setupActionMap(self.tribute, self.arena)
         
-        self.setValuesBeforeTurn()
+        gh.setValuesBeforeTurn(self.tribute, self.arena)
+
 
         obs = {
-            "local_view": self.getLocalView(self.tribute),
+            "local_view": gh.getLocalView(self.tribute, self.arena),
             "health": self.tribute.health,
             "hunger": self.tribute.hunger,
             "thirst": self.tribute.thirst,
             "row": self.tribute.pos[0],
             "col": self.tribute.pos[1],
-            "known_water_row": self.getKnownWater(self.tribute)[0],
-            "known_water_col": self.getKnownWater(self.tribute)[1],
+            "known_water_row": gh.getKnownWater(self.tribute)[0],
+            "known_water_col": gh.getKnownWater(self.tribute)[1],
         }
+
+        if not self.tribute.isAlive:
+            reward -= 500
+            terminated = True
+            gh.cleanUpAfterTurn(self.game, self.arena)
+            if terminated:
+                            # self.arena.displayArena()
+                print("____________________")
+                print("GAME OVER")
+                print("____________________\n\n")
+                return obs, reward, True, False, {}
 
         if action not in self.valid_actions:
             return obs, -100, False, False, {}
         
         # not done at all, placeholders
         if action == 0:
-            gameplay_handler.handleSingleMove(self.tribute, 'up', self.arena)
+            gh.handleSingleMove(self.tribute, 'up', self.arena)
             # print(f"Tribute {self.tribute.letter} moved up")
 
         elif action == 1:
-            gameplay_handler.handleSingleMove(self.tribute, 'down', self.arena)
+            gh.handleSingleMove(self.tribute, 'down', self.arena)
             # print(f"Tribute {self.tribute.letter} moved down")
             
         elif action == 2:
-            gameplay_handler.handleSingleMove(self.tribute, 'left', self.arena)
+            gh.handleSingleMove(self.tribute, 'left', self.arena)
             # print(f"Tribute {self.tribute.letter} moved left")
 
         elif action == 3:
-            gameplay_handler.handleSingleMove(self.tribute, 'right', self.arena)
+            gh.handleSingleMove(self.tribute, 'right', self.arena)
             # print(f"Tribute {self.tribute.letter} moved right")
 
         elif action == 4:
             health_before = self.tribute.health
             kills_before = self.tribute.num_kills
-            gameplay_handler.handleAttack(self.tribute, self.arena)
+            gh.handleAttack(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} attacked tribute")
             if self.tribute.num_kills > kills_before:
                 reward += 500 # got a kill
@@ -184,7 +127,7 @@ class GameEnv(gym.Env):
         elif action == 5:
             capacity_before = self.tribute.capacity
             weapon_before = self.tribute.weapon_value
-            result = gameplay_handler.handlePickup(self.tribute, self.arena)
+            result = gh.handlePickup(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} picked up an item")
             if result == 1:
                 reward += 50
@@ -196,26 +139,26 @@ class GameEnv(gym.Env):
                         reward += 10 # additional 5 for weapon being strong
 
         elif action == 6:
-            gameplay_handler.handleEatFood(self.tribute)
+            gh.handleEatFood(self.tribute)
             print(f"Tribute {self.tribute.letter} ate food")
             reward += 30
 
         elif action == 7:
-            gameplay_handler.handleDrinkWater(self.tribute, self.arena)
+            gh.handleDrinkWater(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} drank water")
             reward += 30
         elif action == 8:
-            gameplay_handler.handleUseMedical(self.tribute)
+            gh.handleUseMedical(self.tribute)
             print(f"Tribute {self.tribute.letter} used medical")
             reward += 30
 
         elif action == 9:
-            gameplay_handler.handleSleep(self.tribute)
+            gh.handleSleep(self.tribute)
             print(f"Tribute {self.tribute.letter} slept")
             reward += 10
 
         elif action == 10:
-            gameplay_handler.handleRefillWater(self.tribute, self.arena)
+            gh.handleRefillWater(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} refilled their canteen")
             reward += 50
 
@@ -235,13 +178,14 @@ class GameEnv(gym.Env):
             print(f"Tribute {self.tribute.letter} wins!!")
             terminated = True
 
-        self.cleanUpAfterTurn()
+        gh.cleanUpAfterTurn(self.game, self.arena)
 
         if terminated:
             # self.arena.displayArena()
             print("____________________")
             print("GAME OVER")
             print("____________________\n\n")
+
             return obs, reward, terminated, False, {}
 
         # move to next tribute
@@ -251,14 +195,14 @@ class GameEnv(gym.Env):
         self.tribute = self.arena.tributes[self.current_tribute_index]
 
         obs = {
-            "local_view": self.getLocalView(self.tribute),
+            "local_view": gh.getLocalView(self.tribute, self.arena),
             "health": self.tribute.health,
             "hunger": self.tribute.hunger,
             "thirst": self.tribute.thirst,
             "row": self.tribute.pos[0],
             "col": self.tribute.pos[1],
-            "known_water_row": self.getKnownWater(self.tribute)[0],
-            "known_water_col": self.getKnownWater(self.tribute)[1],
+            "known_water_row": gh.getKnownWater(self.tribute)[0],
+            "known_water_col": gh.getKnownWater(self.tribute)[1],
         }
 
 
