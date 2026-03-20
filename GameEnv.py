@@ -15,11 +15,20 @@ class GameEnv(gym.Env):
     def __init__(self, size):    
         super().__init__()
             
-        self.game = th.setupTrainingArena()
+        self.game = Game(size=48, robot=True)
         self.arena = self.game.arena
         self.tribute = None
         self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10}
         self.valid_actions = set()
+
+        # cut tribute count in half for training
+        for tribute in self.arena.tributes:
+            if tribute.gender == 'female':
+                tribute.isAlive = False
+                
+        # cleanup "dead" tributes 
+        self.arena.clearDeadTributes()
+        self.arena.displayArena()
 
 
         VIEW_RADIUS = 2  # 5x5 window
@@ -41,11 +50,13 @@ class GameEnv(gym.Env):
 
 
     def reset(self, **kwargs):
-        self.game = th.setupTrainingArena()
-        # self.arena.displayArena()
+        self.game = Game(size=48, robot=True)
         self.arena = self.game.arena
-        # for tribute in self.arena.tributes:
-        #     tribute.arenaKnowledge = self.arena.arena_grid
+        for tribute in self.arena.tributes:
+            if tribute.gender == 'female':
+                tribute.isAlive = False
+        self.arena.clearDeadTributes()
+        self.arena.displayArena()
         self.current_tribute_index = 0
         self.tribute = self.arena.tributes[self.current_tribute_index]
 
@@ -83,14 +94,16 @@ class GameEnv(gym.Env):
 
         if not self.tribute.isAlive:
             reward -= 500
-            terminated = True
             gh.cleanUpAfterTurn(self.game, self.arena)
-            if terminated:
-                            # self.arena.displayArena()
-                print("____________________")
-                print("GAME OVER")
-                print("____________________\n\n")
+            if len(self.arena.tributes) == 1:
+                reward += 2000
+                print(f"Tribute {self.arena.tributes[0].letter} wins!!")
+                print("GAME OVER\n\n")
                 return obs, reward, True, False, {}
+
+            self.current_tribute_index = 0
+            self.tribute = self.arena.tributes[self.current_tribute_index]
+            return obs, reward, False, False, {}
 
         if action not in self.valid_actions:
             return obs, -100, False, False, {}
@@ -98,19 +111,19 @@ class GameEnv(gym.Env):
         # not done at all, placeholders
         if action == 0:
             gh.handleSingleMove(self.tribute, 'up', self.arena)
-            # print(f"Tribute {self.tribute.letter} moved up")
+            print(f"Tribute {self.tribute.letter} moved up")
 
         elif action == 1:
             gh.handleSingleMove(self.tribute, 'down', self.arena)
-            # print(f"Tribute {self.tribute.letter} moved down")
+            print(f"Tribute {self.tribute.letter} moved down")
             
         elif action == 2:
             gh.handleSingleMove(self.tribute, 'left', self.arena)
-            # print(f"Tribute {self.tribute.letter} moved left")
+            print(f"Tribute {self.tribute.letter} moved left")
 
         elif action == 3:
             gh.handleSingleMove(self.tribute, 'right', self.arena)
-            # print(f"Tribute {self.tribute.letter} moved right")
+            print(f"Tribute {self.tribute.letter} moved right")
 
         elif action == 4:
             health_before = self.tribute.health
@@ -175,8 +188,8 @@ class GameEnv(gym.Env):
 
         if len(self.arena.tributes) == 1:
             reward += 2000
-            print(f"Tribute {self.tribute.letter} wins!!")
             terminated = True
+            print(f"Tribute {self.tribute.letter} wins!!")
 
         gh.cleanUpAfterTurn(self.game, self.arena)
 

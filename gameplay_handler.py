@@ -292,6 +292,7 @@ def cleanUpAfterTurn(game, arena):
     if game.turn_count == TURNS_PER_DAY:
         game.turn_count = 0
         game.day_count += 1
+        print(f"=== DAY {game.day_count + 1} ===")
 
 def setupActionMap(tribute, arena):
     valid_actions = set()
