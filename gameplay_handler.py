@@ -123,6 +123,25 @@ def handleSleep(tribute):
         return False
 
 
+def getRandomValidMove(tribute, arena):
+    dirs = []
+    if moveMask(tribute, 'up'):
+        dirs.append('up')
+    if moveMask(tribute, 'down'):
+        dirs.append('down')
+    if moveMask(tribute, 'left'):
+        dirs.append('left')
+    if moveMask(tribute, 'right'):
+        dirs.append('right')
+    
+    if not dirs:
+        return None
+    move = random.choice(dirs)
+    tribute.last_move = move
+    
+    return move
+
+
 
 def removeResource(self, resource):
     '''
@@ -174,15 +193,23 @@ def moveMask(tribute, direction):
     posC = tribute.pos[1]
     if direction.lower() == 'u' or direction.lower() == 'up':
        if tribute.canMoveTo((posR - 1, posC)):
+           if tribute.last_move == 1:
+               return False
            return True
     elif direction.lower() == 'd' or direction.lower() == 'down':
        if tribute.canMoveTo((posR + 1, posC)):
+           if tribute.last_move == 0:
+               return False
            return True
     elif direction.lower() == 'l' or direction.lower() == 'left':
        if tribute.canMoveTo((posR, posC - 1)):
+           if tribute.last_move == 3:
+               return False
            return True
     elif direction.lower() == 'r' or direction.lower() == 'right':
        if tribute.canMoveTo((posR, posC + 1)):
+           if tribute.last_move == 2:
+               return False
            return True
     return False
 
@@ -286,37 +313,37 @@ def setValuesBeforeTurn(tribute, arena):
     tribute.updateKnowledge(arena)
 
 def cleanUpAfterTurn(game, arena):
-    # reset values
     arena.clearDeadTributes()
-    game.turn_count += 1
-    if game.turn_count == TURNS_PER_DAY:
-        game.turn_count = 0
-        game.day_count += 1
-        print(f"=== DAY {game.day_count + 1} ===")
+    if len(arena.tributes) <= 1:
+        return
+    if all(t.turn_count == TURNS_PER_DAY for t in arena.tributes):
+        for t in arena.tributes:
+            t.turn_count = 0
+
 
 def setupActionMap(tribute, arena):
+    
     valid_actions = set()
-    if moveMask(tribute, 'up'):
+    up = moveMask(tribute, 'up')
+    down = moveMask(tribute, 'down')
+    left = moveMask(tribute, 'left')
+    right = moveMask(tribute, 'right')
+
+    if up or down or left or right:
         valid_actions.add(0)
-    if moveMask(tribute, 'down'):
-        valid_actions.add(1)
-    if moveMask(tribute, 'left'):
-        valid_actions.add(2)
-    if moveMask(tribute, 'right'):
-        valid_actions.add(3)
     if attackMask(arena, tribute):
-        valid_actions.add(4)
+        valid_actions.add(1)
     if pickupMask(tribute, arena):
-        valid_actions.add(5)
+        valid_actions.add(2)
     if eatMask(tribute):
-        valid_actions.add(6)
+        valid_actions.add(3)
     if drinkMask(tribute, arena):
-        valid_actions.add(7)
+        valid_actions.add(4)
     if healMask(tribute):
-        valid_actions.add(8)
+        valid_actions.add(5)
     if sleepMask(tribute):
-        valid_actions.add(9)
+        valid_actions.add(6)
     if refillMask(tribute, arena):
-        valid_actions.add(10)
+        valid_actions.add(7)
     
     return valid_actions

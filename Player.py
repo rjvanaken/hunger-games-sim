@@ -68,16 +68,16 @@ class HumanPlayer(Player):
             try:
 
                 if action == "0":
-                    success = gh.handleSingleMove(self.tribute, 'up')
+                    success = gh.handleSingleMove(self.tribute, 'up', self.arena)
 
                 elif action == "1":
-                    success = gh.handleSingleMove(self.tribute, 'down')
+                    success = gh.handleSingleMove(self.tribute, 'down', self.arena)
                     
                 elif action == "2":
-                    success = gh.handleSingleMove(self.tribute, 'left')
+                    success = gh.handleSingleMove(self.tribute, 'left', self.arena)
 
                 elif action == "3":
-                    success = gh.handleSingleMove(self.tribute, 'right')
+                    success = gh.handleSingleMove(self.tribute, 'right', self.arena)
 
                 elif action == "4":
                     success = gh.handleAttack(self.tribute, self.arena)
@@ -129,6 +129,8 @@ class BotPlayer(Player):
         super().__init__(tribute, arena)
         self.model = PPO.load(model_path)
         self.valid_actions = set()
+        self.turn_count = 0
+        
 
     def take_turn(self):
 
@@ -156,51 +158,41 @@ class BotPlayer(Player):
 
             else:
 
-                if action == 0:
-                    success = gh.handleSingleMove(self.tribute, 'up', self.arena)
-                    print(f"Tribute {self.tribute.letter} moved up")
+                if action == 0:          
+                    direction = gh.getRandomValidMove(self.tribute, self.arena)
+                    success = gh.handleSingleMove(self.tribute, direction, self.arena)
+                    print(f"Tribute {self.tribute.letter} moved {direction}")
 
                 elif action == 1:
-                    success = gh.handleSingleMove(self.tribute, 'down', self.arena)
-                    print(f"Tribute {self.tribute.letter} moved down")
-
-                elif action == 2:
-                    success = gh.handleSingleMove(self.tribute, 'left', self.arena)
-                    print(f"Tribute {self.tribute.letter} moved left")
-
-                elif action == 3:
-                    success = gh.handleSingleMove(self.tribute, 'right', self.arena)
-                    print(f"Tribute {self.tribute.letter} moved right")
-
-                elif action == 4:
                     success = gh.handleAttack(self.tribute, self.arena)
                     print(f"Tribute {self.tribute.letter} attacked tribute")
 
-                elif action == 5:
+                elif action == 2:
                     success = gh.handlePickup(self.tribute, self.arena)
                     print(f"Tribute {self.tribute.letter} picked up an item")
 
-                elif action == 6:
+                elif action == 3:
                     success = gh.handleEatFood(self.tribute)
                     print(f"Tribute {self.tribute.letter} ate food")
 
-                elif action == 7:
+                elif action == 4:
                     success = gh.handleDrinkWater(self.tribute, self.arena)
                     print(f"Tribute {self.tribute.letter} drank water")
 
-                elif action == 8:
+                elif action == 5:
                     success = gh.handleUseMedical(self.tribute)
                     print(f"Tribute {self.tribute.letter} used medical")
 
-                elif action == 9:
+                elif action == 6:
                     success = gh.handleSleep(self.tribute)
                     print(f"Tribute {self.tribute.letter} slept")
 
-                elif action == 10:
+                elif action == 7:
                     success = gh.handleRefillWater(self.tribute, self.arena)
                     print(f"Tribute {self.tribute.letter} refilled their canteen")
 
             if success:
+                self.turn_count += 1
                 # self.arena.displayArena() # temporary - ultimately, will only print at start of each day
                 break
 

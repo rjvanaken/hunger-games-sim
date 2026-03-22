@@ -37,6 +37,8 @@ class Tribute:
         self.arenaKnowledge = []
         self.segment = None
         self.num_kills = 0
+        self.turn_count = 0
+        self.last_move = None
         
     @property
     def health(self):

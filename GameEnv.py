@@ -18,7 +18,7 @@ class GameEnv(gym.Env):
         self.game = Game(size=48, robot=True)
         self.arena = self.game.arena
         self.tribute = None
-        self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, 10: 10}
+        self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
         self.valid_actions = set()
 
         # cut tribute count in half for training
@@ -33,7 +33,7 @@ class GameEnv(gym.Env):
 
         VIEW_RADIUS = 2  # 5x5 window
 
-        self.action_space = spaces.Discrete(11)
+        self.action_space = spaces.Discrete(8)
 
         self.observation_space = spaces.Dict({
             "local_view": spaces.Box(low=0, high=10, shape=(5, 5), dtype=np.int32),
@@ -77,9 +77,6 @@ class GameEnv(gym.Env):
         reward = 0
         terminated = False
         self.valid_actions = gh.setupActionMap(self.tribute, self.arena)
-        
-        gh.setValuesBeforeTurn(self.tribute, self.arena)
-
 
         obs = {
             "local_view": gh.getLocalView(self.tribute, self.arena),
@@ -108,24 +105,17 @@ class GameEnv(gym.Env):
         if action not in self.valid_actions:
             return obs, -100, False, False, {}
         
-        # not done at all, placeholders
+        
+        gh.setValuesBeforeTurn(self.tribute, self.arena)
+
+        # HANDLE ACTION
         if action == 0:
-            gh.handleSingleMove(self.tribute, 'up', self.arena)
-            print(f"Tribute {self.tribute.letter} moved up")
+            direction = gh.getRandomValidMove(self.tribute, self.arena)
+            gh.handleSingleMove(self.tribute, direction, self.arena)
+            reward += 1
+            print(f"Tribute {self.tribute.letter} moved {direction}")
 
         elif action == 1:
-            gh.handleSingleMove(self.tribute, 'down', self.arena)
-            print(f"Tribute {self.tribute.letter} moved down")
-            
-        elif action == 2:
-            gh.handleSingleMove(self.tribute, 'left', self.arena)
-            print(f"Tribute {self.tribute.letter} moved left")
-
-        elif action == 3:
-            gh.handleSingleMove(self.tribute, 'right', self.arena)
-            print(f"Tribute {self.tribute.letter} moved right")
-
-        elif action == 4:
             health_before = self.tribute.health
             kills_before = self.tribute.num_kills
             gh.handleAttack(self.tribute, self.arena)
@@ -137,7 +127,7 @@ class GameEnv(gym.Env):
             else:
                 reward += 50 # won an attakc
 
-        elif action == 5:
+        elif action == 2:
             capacity_before = self.tribute.capacity
             weapon_before = self.tribute.weapon_value
             result = gh.handlePickup(self.tribute, self.arena)
@@ -151,30 +141,31 @@ class GameEnv(gym.Env):
                     if self.tribute.weapon_value > WEAK_WEAPON:
                         reward += 10 # additional 5 for weapon being strong
 
-        elif action == 6:
+        elif action == 3:
             gh.handleEatFood(self.tribute)
             print(f"Tribute {self.tribute.letter} ate food")
             reward += 30
 
-        elif action == 7:
+        elif action == 4:
             gh.handleDrinkWater(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} drank water")
             reward += 30
-        elif action == 8:
+        elif action == 5:
             gh.handleUseMedical(self.tribute)
             print(f"Tribute {self.tribute.letter} used medical")
             reward += 30
 
-        elif action == 9:
+        elif action == 6:
             gh.handleSleep(self.tribute)
             print(f"Tribute {self.tribute.letter} slept")
             reward += 10
 
-        elif action == 10:
+        elif action == 7:
             gh.handleRefillWater(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} refilled their canteen")
             reward += 50
 
+        # stat rewards
         if self.tribute.hunger <= HUNGER_WARNING_THRESHOLD:
             reward -= 10
         if self.tribute.thirst <= THIRST_WARNING_THRESHOLD:
@@ -182,16 +173,26 @@ class GameEnv(gym.Env):
         if self.tribute.health <= 40:
             reward -= 10
 
+        
         if not self.tribute.isAlive:
             print(f"Tribute {self.tribute.letter} died")
             reward -= 500
-
+        
         if len(self.arena.tributes) == 1:
             reward += 2000
             terminated = True
             print(f"Tribute {self.tribute.letter} wins!!")
 
+
+
         gh.cleanUpAfterTurn(self.game, self.arena)
+
+        if self.game.day_count >= 14:
+            terminated = True
+
+        if len(self.arena.tributes) == 0:
+            terminated = True
+        
 
         if terminated:
             # self.arena.displayArena()
@@ -202,9 +203,14 @@ class GameEnv(gym.Env):
             return obs, reward, terminated, False, {}
 
         # move to next tribute
+        self.tribute.turn_count += 1
         self.current_tribute_index += 1
         if self.current_tribute_index >= len(self.arena.tributes):
+            self.game.turn_count += 1
             self.current_tribute_index = 0
+            if self.game.turn_count % TURNS_PER_DAY == 0:
+                self.game.day_count += 1
+                print(f"=== DAY {self.game.day_count + 1} ===")
         self.tribute = self.arena.tributes[self.current_tribute_index]
 
         obs = {

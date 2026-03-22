@@ -90,15 +90,13 @@ class Game():
         self.arena.addCornucopia()
         for tribute in self.arena.tributes:
             tribute.arenaKnowledge = self.arena.arena_grid
-        self.arena.setupArenaLayout
-
-        # self.arena.addSources()
-        # self.arena.addTrees(0.15)
-        # self.arena.displayArena()
+        self.setupArenaLayout(self.arena)
 
 
 
-    def setupArenaLayout(arena):
+
+
+    def setupArenaLayout(self, arena):
         '''
         Sets up the fixed arena layout — trees, water sources, and food.
         Call this after tributes and cornucopia are already placed.
@@ -113,49 +111,100 @@ class Game():
             [(r, arena.size - 1) for r in range(1, arena.size - 1)]
         )
 
-        # --- INTERIOR TREES ---
+        # --- INTERIOR TREES (~120 total, dense coverage) ---
         interior_trees = [
-            (3,8),  (4,20),  (6,35),  (7,14),
-            (10,2), (12,28), (14,42), (16,10),
-            (19,22),(21,38), (23,5),  (25,17),
-            (28,32),(30,8),  (32,44), (34,20),
-            (37,12),(39,36), (43,26), (46,6),
+            # row 2-3
+            (2,5),(2,11),(2,18),(2,24),(2,31),(2,37),(2,43),
+            (3,8),(3,15),(3,21),(3,28),(3,34),(3,40),(3,46),
+            # row 4-6
+            (4,3),(4,13),(4,19),(4,26),(4,33),(4,38),(4,45),
+            (5,7),(5,16),(5,22),(5,29),(5,36),(5,42),
+            (6,10),(6,20),(6,32),(6,39),(6,44),
+            # row 7-9
+            (7,4),(7,13),(7,25),(7,35),(7,43),
+            (8,8),(8,17),(8,22),(8,30),(8,38),(8,45),
+            (9,3),(9,12),(9,19),(9,27),(9,33),(9,41),
+            # row 10-13
+            (10,6),(10,15),(10,24),(10,36),(10,44),
+            (11,10),(11,20),(11,29),(11,39),(11,46),
+            (12,4),(12,14),(12,23),(12,32),(12,42),
+            (13,8),(13,18),(13,26),(13,35),(13,43),
+            # row 14-17
+            (14,3),(14,12),(14,22),(14,30),(14,40),(14,46),
+            (15,7),(15,16),(15,24),(15,33),(15,44),
+            (16,11),(16,20),(16,29),(16,38),(16,45),
+            (17,5),(17,14),(17,23),(17,31),(17,41),
+            # row 18-21 (avoid cornucopia center ~19-28, 19-29)
+            (18,3),(18,9),(18,40),(18,46),
+            (19,6),(19,13),(19,38),(19,44),
+            (20,4),(20,10),(20,37),(20,43),
+            (21,7),(21,12),(21,39),(21,46),
+            # row 22-26
+            (22,3),(22,9),(22,41),(22,45),
+            (23,5),(23,13),(23,38),(23,44),
+            (24,8),(24,11),(24,40),(24,46),
+            (25,4),(25,14),(25,37),(25,43),
+            (26,6),(26,10),(26,39),(26,45),
+            # row 27-30
+            (27,3),(27,12),(27,34),(27,40),(27,46),
+            (28,7),(28,16),(28,30),(28,38),(28,44),
+            (29,4),(29,11),(29,22),(29,35),(29,42),
+            (30,8),(30,18),(30,26),(30,37),(30,45),
+            # row 31-34
+            (31,3),(31,13),(31,21),(31,32),(31,41),(31,46),
+            (32,6),(32,17),(32,28),(32,36),(32,43),
+            (33,10),(33,20),(33,25),(33,33),(33,40),(33,45),
+            (34,4),(34,14),(34,22),(34,30),(34,38),(34,46),
+            # row 35-38
+            (35,7),(35,16),(35,24),(35,33),(35,42),
+            (36,3),(36,11),(36,20),(36,29),(36,38),(36,45),
+            (37,6),(37,15),(37,23),(37,31),(37,40),(37,46),
+            (38,9),(38,18),(38,26),(38,35),(38,43),
+            # row 39-42
+            (39,4),(39,13),(39,22),(39,30),(39,41),(39,46),
+            (40,7),(40,16),(40,25),(40,34),(40,44),
+            (41,3),(41,11),(41,20),(41,28),(41,37),(41,45),
+            (42,6),(42,15),(42,23),(42,32),(42,40),(42,46),
+            # row 43-46
+            (43,9),(43,18),(43,26),(43,35),(43,43),
+            (44,4),(44,13),(44,22),(44,30),(44,41),(44,46),
+            (45,7),(45,16),(45,24),(45,33),(45,40),
+            (46,3),(46,11),(46,20),(46,28),(46,37),(46,45),
         ]
 
-        for pos in border + interior_trees:
-            arena.obstacles.append(pos)
-            arena.arena_grid[pos[0]][pos[1]] = 8
-
-        # --- WATER SOURCES (type 1) — 4x4 clusters in 3 corners ---
+        # --- WATER SOURCES (type 1) ---
         water_positions = []
 
-        # upper-left corner
-        for r in range(2, 6):
-            for c in range(2, 6):
+        # upper-left — 4x4
+        for r in range(4, 8):
+            for c in range(6, 10):
                 water_positions.append((r, c))
 
-        # upper-right corner
-        for r in range(2, 6):
-            for c in range(42, 46):
+        # upper-right — 4x4
+        for r in range(3, 7):
+            for c in range(38, 42):
                 water_positions.append((r, c))
 
-        # lower-right corner
-        for r in range(42, 46):
-            for c in range(42, 46):
+        # bottom-center — larger 5x6
+        for r in range(38, 43):
+            for c in range(21, 27):
                 water_positions.append((r, c))
 
         for pos in water_positions:
+            r, c = pos
+            if arena.arena_grid[r][c] != 0:
+                continue
             arena.resources.append(Resource(arena.next_resource_id, pos, Resource.Type(1)))
-            arena.arena_grid[pos[0]][pos[1]] = 1
+            arena.arena_grid[r][c] = 1
             arena.next_resource_id += 1
 
         # --- FOOD SOURCES (type 3) ---
-        # 2x3 clusters ("bushes") spread around the mid-ring
+        # 2x3 clusters ("bushes")
         food_cluster_origins = [
-            (5, 15), (5, 28),
-            (15, 5), (15, 40),
-            (32, 5), (32, 40),
-            (42, 15),(42, 28),
+            (6, 16), (6, 27),
+            (16, 5), (16, 40),
+            (31, 5), (31, 40),
+            (41, 16),(41, 27),
         ]
         cluster_food = [
             (r + dr, c + dc)
@@ -164,39 +213,50 @@ class Game():
             for dc in range(2)
         ]
 
-        # single food tiles ("animals") scattered throughout
+        # single food tiles ("animals")
         single_food = [
-            (8,10),  (8,25),  (8,38),
-            (15,20), (20,8),  (20,40),
-            (24,15), (24,33), (30,18),
-            (30,28), (35,10), (35,38),
-            (40,20), (40,30), (44,8),
-            (44,38),
+            (8,12),(8,26),(8,39),
+            (14,22),(18,10),(18,38),
+            (24,16),(24,32),(29,19),
+            (29,28),(34,11),(34,37),
+            (39,22),(39,31),(44,9),
+            (44,37),(11,35),(11,8),
+            (21,42),(21,5),
         ]
 
         for pos in cluster_food + single_food:
+            r, c = pos
+            if arena.arena_grid[r][c] != 0:
+                continue
             arena.resources.append(Resource(arena.next_resource_id, pos, Resource.Type(3)))
-            arena.arena_grid[pos[0]][pos[1]] = 3
+            arena.arena_grid[r][c] = 3
             arena.next_resource_id += 1
 
-
+        # --- TREES (placed last so they never overwrite anything) ---
+        for pos in border + interior_trees:
+            r, c = pos
+            if arena.arena_grid[r][c] != 0:
+                continue
+            arena.obstacles.append(pos)
+            arena.arena_grid[r][c] = 8
 
     def run(self):
             while len(self.arena.tributes) > 1:
                 self.turn_count += 1
                 print(f"=== DAY {self.day_count + 1} ===")
-                for player in self.players:
-                    if player.tribute.isAlive:
-                        print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
-                        player.take_turn()
-                self.arena.clearDeadTributes()
-                self.arena.displayArena()
-                # if turn cap has been reached, reset and move to next day
-                if self.turn_count == TURNS_PER_DAY:
-                    self.turn_count = 0
-                    self.day_count += 1
-            print("THE GAMES ARE OVER! Congratulations to our victor!")
+                while self.turn_count <= TURNS_PER_DAY:
+                    for player in self.players:
+                        if player.tribute.isAlive:
+                            print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
+                            player.take_turn()
+                    self.arena.clearDeadTributes()
+                    self.arena.displayArena()
+                    self.turn_count += 1
+                    # if turn cap has been reached, reset and move to next day
+                self.turn_count = 0
+                self.day_count += 1
 
+            print("THE GAMES ARE OVER! Congratulations to our victor!")
             self.printGameResults()
 
     def printGameResults(self):
