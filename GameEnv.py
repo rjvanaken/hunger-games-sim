@@ -88,12 +88,11 @@ class GameEnv(gym.Env):
             "known_water_row": gh.getKnownWater(self.tribute)[0],
             "known_water_col": gh.getKnownWater(self.tribute)[1],
         }
-
         if not self.tribute.isAlive:
-            reward -= 500
+            reward -= 5
             gh.cleanUpAfterTurn(self.game, self.arena)
             if len(self.arena.tributes) == 1:
-                reward += 2000
+                reward += 20
                 print(f"Tribute {self.arena.tributes[0].letter} wins!!")
                 print("GAME OVER\n\n")
                 return obs, reward, True, False, {}
@@ -103,8 +102,7 @@ class GameEnv(gym.Env):
             return obs, reward, False, False, {}
 
         if action not in self.valid_actions:
-            return obs, -100, False, False, {}
-        
+            return obs, -1, False, False, {}
         
         gh.setValuesBeforeTurn(self.tribute, self.arena)
 
@@ -112,7 +110,7 @@ class GameEnv(gym.Env):
         if action == 0:
             direction = gh.getRandomValidMove(self.tribute, self.arena)
             gh.handleSingleMove(self.tribute, direction, self.arena)
-            reward += 1
+            reward += 0.01
             print(f"Tribute {self.tribute.letter} moved {direction}")
 
         elif action == 1:
@@ -121,11 +119,11 @@ class GameEnv(gym.Env):
             gh.handleAttack(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} attacked tribute")
             if self.tribute.num_kills > kills_before:
-                reward += 500 # got a kill
+                reward += 5.0  # got a kill
             if self.tribute.health < health_before:
-                reward -= 50 # got damage
+                reward -= 0.5  # got damage
             else:
-                reward += 50 # won an attakc
+                reward += 0.5  # won an attack
 
         elif action == 2:
             capacity_before = self.tribute.capacity
@@ -133,57 +131,55 @@ class GameEnv(gym.Env):
             result = gh.handlePickup(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} picked up an item")
             if result == 1:
-                reward += 50
+                reward += 0.5
                 if self.tribute.capacity > capacity_before:
-                    reward += 20 # additional 10 for picking up backpack
+                    reward += 0.2  # picked up backpack
                 if self.tribute.weapon_value > weapon_before:
-                    reward += 20 # additional 10 for picking up weapon
+                    reward += 0.2  # picked up weapon
                     if self.tribute.weapon_value > WEAK_WEAPON:
-                        reward += 10 # additional 5 for weapon being strong
+                        reward += 0.1  # weapon is strong
 
         elif action == 3:
             gh.handleEatFood(self.tribute)
             print(f"Tribute {self.tribute.letter} ate food")
-            reward += 30
+            reward += 0.3
 
         elif action == 4:
             gh.handleDrinkWater(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} drank water")
-            reward += 30
+            reward += 0.3
+
         elif action == 5:
             gh.handleUseMedical(self.tribute)
             print(f"Tribute {self.tribute.letter} used medical")
-            reward += 30
+            reward += 0.3
 
         elif action == 6:
             gh.handleSleep(self.tribute)
             print(f"Tribute {self.tribute.letter} slept")
-            reward += 10
+            reward += 0.1
 
         elif action == 7:
             gh.handleRefillWater(self.tribute, self.arena)
             print(f"Tribute {self.tribute.letter} refilled their canteen")
-            reward += 50
+            reward += 0.5
 
-        # stat rewards
+        # stat penalties
         if self.tribute.hunger <= HUNGER_WARNING_THRESHOLD:
-            reward -= 10
+            reward -= 0.1
         if self.tribute.thirst <= THIRST_WARNING_THRESHOLD:
-            reward -= 10
+            reward -= 0.1
         if self.tribute.health <= 40:
-            reward -= 10
+            reward -= 0.1
 
-        
         if not self.tribute.isAlive:
             print(f"Tribute {self.tribute.letter} died")
-            reward -= 500
+            reward -= 5.0
         
         if len(self.arena.tributes) == 1:
-            reward += 2000
+            reward += 20.0
             terminated = True
             print(f"Tribute {self.tribute.letter} wins!!")
-
-
 
         gh.cleanUpAfterTurn(self.game, self.arena)
 
@@ -192,14 +188,11 @@ class GameEnv(gym.Env):
 
         if len(self.arena.tributes) == 0:
             terminated = True
-        
 
         if terminated:
-            # self.arena.displayArena()
             print("____________________")
             print("GAME OVER")
             print("____________________\n\n")
-
             return obs, reward, terminated, False, {}
 
         # move to next tribute
@@ -224,8 +217,4 @@ class GameEnv(gym.Env):
             "known_water_col": gh.getKnownWater(self.tribute)[1],
         }
 
-
-        
         return obs, reward, terminated, False, {}
-    
-

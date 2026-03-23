@@ -14,7 +14,7 @@ if __name__ == "__main__":
     if mode == "--train":
         env = GameEnv(size=48)
         model = PPO("MultiInputPolicy", env, verbose=1, n_steps=8192,  ent_coef=0.1, device="cpu")
-        model.learn(total_timesteps=25000000)
+        model.learn(total_timesteps=500000)
         model.save("hunger_games_model")
         
     elif mode == "--robot":
