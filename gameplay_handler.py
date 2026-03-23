@@ -121,6 +121,12 @@ def handleSleep(tribute):
     else:
         print("You are not tired")
         return False
+    
+
+def handleMuttAttack(tribute, arena):
+    mutt = arena.getTargetAt(tribute.pos) # if mutt on square, attack before tribute's next turn
+    if mutt != None:
+        mutt.attack(tribute)
 
 
 def getRandomValidMove(tribute, arena):
@@ -220,6 +226,10 @@ def attackMask(arena, tribute):
         if target.pos == tribute.pos and tribute != target:
             canAttack = True
             break
+    for mutt in arena.mutts:
+        if mutt.pos == tribute.pos:
+            canAttack = True
+            break
     if canAttack:
         return True
     return False
@@ -312,8 +322,14 @@ def setValuesBeforeTurn(tribute, arena):
     tribute.updateStatsBeforeTurn()
     tribute.updateKnowledge(arena)
 
+    mutt = arena.getTargetAt(tribute.pos) # if mutt on square, attack before tribute's next turn
+    if mutt != None:
+        mutt.attack(tribute)
+
+
 def cleanUpAfterTurn(game, arena):
     arena.clearDeadTributes()
+    arena.clearDeadMutts()
     if len(arena.tributes) <= 1:
         return
     if all(t.turn_count == TURNS_PER_DAY for t in arena.tributes):
@@ -329,8 +345,10 @@ def setupActionMap(tribute, arena):
     left = moveMask(tribute, 'left')
     right = moveMask(tribute, 'right')
 
-    if up or down or left or right:
-        valid_actions.add(0)
+    mutt = arena.getTarget(tribute)
+    if mutt == None or not mutt.isAlive:
+        if up or down or left or right:
+            valid_actions.add(0)
     if attackMask(arena, tribute):
         valid_actions.add(1)
     if pickupMask(tribute, arena):

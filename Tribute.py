@@ -8,50 +8,14 @@ from config import *
 
 
 class Fighter:
-    def __init__(self, id, pos, health, strength):
+    def __init__(self, id, pos):
         self.id = id
         self.pos = pos
-        self.health = health
-        self.strength = strength
+        self.health = 100
+        self.strength = 0 # set by subclass
         self.isAlive = True
         self.num_kills = 0
 
-
-
-class Tribute(Fighter):
-
-    def __init__(self, id, pos):
-        self.base_strength = self.getRandomStrength()
-        self.strength = self.base_strength
-        self.max_strength = self.strength
-
-        super().__init__(id, pos, health, strength, self.strength)
-
-        if id % 2 == 0:
-            self.gender = 'male'
-        else:
-            self.gender = 'female'
-
-        self.letter = chr(65 + id)
-        self.district = (id // 2) + 1
-        self.age = self.getRandomAge()
-        self.hunting_skill = self.getHuntingSkill()
-        self.max_speed = self.getRandomSpeed()
-        self.speed = self.max_speed
-        self.health = 100
-        self.thirst = 100
-        self.hunger = 100
-        self.water_supply = 0
-        self.max_water = 0
-        self.capacity = 2
-        self.inventory = []
-        self.weapon_value = 0
-        self.isAsleep = False
-        self.arenaKnowledge = []
-        self.segment = None
-        self.turn_count = 0
-        self.last_move = None
-        
     @property
     def health(self):
         return self._health
@@ -76,6 +40,76 @@ class Tribute(Fighter):
         # clear old pos in grid
         # add new pos to grid
         # set new self.pos afterwards
+
+    def attack(self, target):
+        difference = max(target.strength, self.strength) - min(target.strength, self.strength)
+        if self.strength > target.strength:
+            attacker = (50 + difference) / 100
+        else:
+            attacker = (50 - difference) / 100
+
+        if random.random() >= attacker:
+            target.health -= (BASE_DAMAGE + int(math.ceil((self.strength * DAMAGE_MULTIPLIER))))
+            if isinstance(target, Mutt):
+                print("Tribute wins an attack against a mutt")
+            else:
+                print("Tribute wins attack, target health decreased")
+        else:
+            self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * DAMAGE_MULTIPLIER))))
+            if isinstance(target, Mutt):
+                print("A mutt won an attack on a tribute, tribute health decreased")
+            else:
+                print("Target wins attack, tribute health decreased")
+        
+        if not isinstance(target, Mutt):
+            if not target.isAlive:
+                self.num_kills += 1
+
+
+class Mutt(Fighter):
+    def __init__(self, id, pos):
+        super().__init__(id, pos)
+        self.strength = MUTT_STRENGTH
+        self.isDormant = True
+
+
+    def activateMutt(self):
+        self.isDormant = False
+
+
+class Tribute(Fighter):
+
+    def __init__(self, id, pos):
+
+        super().__init__(id, pos)
+
+        if id % 2 == 0:
+            self.gender = 'male'
+        else:
+            self.gender = 'female'
+
+        self.letter = chr(65 + id)
+        self.district = (id // 2) + 1
+        self.age = self.getRandomAge()
+        self.hunting_skill = self.getHuntingSkill()
+        self.max_speed = self.getRandomSpeed()
+        self.base_strength = self.getRandomStrength()
+        self.strength = self.base_strength
+        self.max_strength = self.strength
+        self.speed = self.max_speed
+        self.thirst = 100
+        self.hunger = 100
+        self.water_supply = 0
+        self.max_water = 0
+        self.capacity = 2
+        self.inventory = []
+        self.weapon_value = 0
+        self.isAsleep = False
+        self.arenaKnowledge = []
+        self.segment = None
+        self.turn_count = 0
+        self.last_move = None
+        
 
         # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
 
@@ -105,7 +139,7 @@ class Tribute(Fighter):
         return random.randint(12, 18)
 
 
-    def updateStatsBeforeTurn(self):
+    def updateStatsBeforeTurn(self): #atm does not handle mutt attack before turn
         self.hunger -= HUNGER_DECAY
         self.thirst -= THIRST_DECAY
         self.hunger = max(0, self.hunger)
@@ -266,22 +300,6 @@ class Tribute(Fighter):
         
 
 
-    def attack(self, target):
-        difference = max(target.strength, self.strength) - min(target.strength, self.strength)
-        if self.strength > target.strength:
-            attacker = (50 + difference) / 100
-        else:
-            attacker = (50 - difference) / 100
-
-        if random.random() >= attacker:
-            target.health -= (BASE_DAMAGE + int(math.ceil((self.strength * DAMAGE_MULTIPLIER))))
-            print("Tribute wins attack, target health decreased")
-        else:
-            self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * DAMAGE_MULTIPLIER))))
-            print("Target wins attack, tribute health decreased")
-        
-        if not target.isAlive:
-            self.num_kills += 1
 
     def sleep(self):
         # handler handles the "tired enough" case

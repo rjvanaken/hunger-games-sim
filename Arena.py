@@ -16,6 +16,7 @@ class Arena:
         self.obstacles = []
         self.tributes = []
         self.segments = {}
+        self.mutts = []
 
 
 
@@ -154,12 +155,15 @@ class Arena:
         for resource in self.resources:
             self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
 
+    def addMutts():
+        pass
+
     def getResourceAt(self, pos):
         for resource in self.resources:
             if resource.pos == pos:
                 return resource
         return None
-    
+        
     def getSegmentFromPos(self, pos):
         for key, value in self.segments.items():
             if pos in value:
@@ -177,6 +181,19 @@ class Arena:
                 tribute.pos = None
                 self.num_tributes -= 1
         self.tributes = new_list
+
+
+    def clearDeadMutts(self):
+        new_list = []
+        for mutt in self.mutts:
+            pos = mutt.pos 
+            if mutt.isAlive:
+                new_list.append(mutt)
+            else:
+                self.restoreOldCellData(mutt, pos)
+                mutt.pos = None
+        self.mutts = new_list
+
 
     def displayArena(self):
         for i in range(self.size):
@@ -234,6 +251,10 @@ class Arena:
         for t in self.tributes:
             if t.pos == tribute.pos and tribute != t:
                 target = t
+                break
+        for m in self.mutts:
+            if m.pos == tribute.pos:
+                target = m
                 break
 
         return target
