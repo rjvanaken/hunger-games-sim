@@ -5,10 +5,27 @@ import gameplay_handler as gh
 
 # Constants
 from config import *
-class Tribute:
-    def __init__(self, id, pos):
-        self.pos = pos
+
+
+class Fighter:
+    def __init__(self, id, pos, health, strength):
         self.id = id
+        self.pos = pos
+        self.health = health
+        self.strength = strength
+        self.isAlive = True
+        self.num_kills = 0
+
+
+
+class Tribute(Fighter):
+
+    def __init__(self, id, pos):
+        self.base_strength = self.getRandomStrength()
+        self.strength = self.base_strength
+        self.max_strength = self.strength
+
+        super().__init__(id, pos, health, strength, self.strength)
 
         if id % 2 == 0:
             self.gender = 'male'
@@ -19,9 +36,6 @@ class Tribute:
         self.district = (id // 2) + 1
         self.age = self.getRandomAge()
         self.hunting_skill = self.getHuntingSkill()
-        self.base_strength = self.getRandomStrength()
-        self.strength = self.base_strength
-        self.max_strength = self.strength
         self.max_speed = self.getRandomSpeed()
         self.speed = self.max_speed
         self.health = 100
@@ -32,11 +46,9 @@ class Tribute:
         self.capacity = 2
         self.inventory = []
         self.weapon_value = 0
-        self.isAlive = True
         self.isAsleep = False
         self.arenaKnowledge = []
         self.segment = None
-        self.num_kills = 0
         self.turn_count = 0
         self.last_move = None
         
