@@ -125,10 +125,10 @@ def handleSleep(tribute):
     
 
 def handleMuttAttack(tribute, arena):
-    mutt = arena.getTargetAt(tribute.pos) # if mutt on square, attack before tribute's next turn
-    if isinstance(mutt, Mutt):
-        if mutt != None and not mutt.isDormant:
-            mutt.attack(tribute)
+    mutt = arena.getTarget(tribute) # if mutt on square, attack before tribute's next turn
+    hasMutt = isinstance(mutt, Mutt) and mutt.isAlive and not mutt.isDormant
+    if hasMutt:
+        mutt.attack(tribute)
 
 
 def getRandomValidMove(tribute, arena):
