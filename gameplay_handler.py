@@ -2,6 +2,7 @@ import random
 from Resource import Resource
 from config import SLEEP_VALUE, TURNS_PER_DAY
 import numpy as np
+from Tribute import Mutt
 
 def handleMove (tribute, arena):
     # only used by manual - AI mode will use pathfinding
@@ -125,8 +126,9 @@ def handleSleep(tribute):
 
 def handleMuttAttack(tribute, arena):
     mutt = arena.getTargetAt(tribute.pos) # if mutt on square, attack before tribute's next turn
-    if mutt != None:
-        mutt.attack(tribute)
+    if isinstance(mutt, Mutt):
+        if mutt != None and not mutt.isDormant:
+            mutt.attack(tribute)
 
 
 def getRandomValidMove(tribute, arena):
@@ -321,10 +323,9 @@ def setValuesBeforeTurn(tribute, arena):
     arena.updateSegmentData(tribute, segment)
     tribute.updateStatsBeforeTurn()
     tribute.updateKnowledge(arena)
+    handleMuttAttack(tribute, arena)
 
-    mutt = arena.getTargetAt(tribute.pos) # if mutt on square, attack before tribute's next turn
-    if mutt != None:
-        mutt.attack(tribute)
+
 
 
 def cleanUpAfterTurn(game, arena):
@@ -344,9 +345,10 @@ def setupActionMap(tribute, arena):
     down = moveMask(tribute, 'down')
     left = moveMask(tribute, 'left')
     right = moveMask(tribute, 'right')
-
     mutt = arena.getTarget(tribute)
-    if mutt == None or not mutt.isAlive:
+    preventMove = isinstance(mutt, Mutt) and mutt.isAlive and not mutt.isDormant
+
+    if not preventMove:
         if up or down or left or right:
             valid_actions.add(0)
     if attackMask(arena, tribute):
