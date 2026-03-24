@@ -175,6 +175,8 @@ class Game():
         # --- WATER SOURCES (type 1) ---
         water_positions = []
 
+        
+
         # upper-left — 4x4
         for r in range(4, 8):
             for c in range(6, 10):
@@ -190,6 +192,21 @@ class Game():
             for c in range(21, 27):
                 water_positions.append((r, c))
 
+        # center-right — 3x3 near cornucopia
+        for r in range(23, 26):
+            for c in range(28, 31):
+                water_positions.append((r, c)) # TEST
+
+        # center-left — near cornucopia, rows 15-18
+        for r in range(15, 19):
+            for c in range(21, 25):
+                water_positions.append((r, c)) # TEST
+
+        # center-right — near cornucopia, rows 15-18
+        for r in range(15, 19):
+            for c in range(28, 32):
+                water_positions.append((r, c)) # TEST
+
         for pos in water_positions:
             r, c = pos
             if arena.arena_grid[r][c] != 0:
@@ -204,7 +221,8 @@ class Game():
             (6, 16), (6, 27),
             (16, 5), (16, 40),
             (31, 5), (31, 40),
-            (41, 16),(41, 27),
+            (41, 16), (41, 27),
+            (22, 31), (24, 35), (26, 32), # TEST
         ]
         cluster_food = [
             (r + dr, c + dc)

@@ -21,11 +21,16 @@ class GameEnv(gym.Env):
         self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
         self.valid_actions = set()
 
+        self.action_counts = {i: 0 for i in range(8)}
         # cut tribute count in half for training
-        for tribute in self.arena.tributes:
-            if tribute.gender == 'female':
-                tribute.isAlive = False
-                
+        # for tribute in self.arena.tributes:
+        #     if tribute.gender == 'female':
+        #         tribute.isAlive = False
+
+        
+        for i in range(18):
+            self.arena.tributes[i].isAlive = False
+ 
         # cleanup "dead" tributes 
         self.arena.clearDeadTributes()
         self.arena.displayArena()
@@ -52,11 +57,15 @@ class GameEnv(gym.Env):
     def reset(self, **kwargs):
         self.game = Game(size=48, robot=True)
         self.arena = self.game.arena
-        for tribute in self.arena.tributes:
-            if tribute.gender == 'female':
-                tribute.isAlive = False
+        # for tribute in self.arena.tributes:
+        #     if tribute.gender == 'female':
+        #         tribute.isAlive = False
+
+        for i in range(18):
+            self.arena.tributes[i].isAlive = False
+
         self.arena.clearDeadTributes()
-        self.arena.displayArena()
+        # self.arena.displayArena()
         self.current_tribute_index = 0
         self.tribute = self.arena.tributes[self.current_tribute_index]
 
@@ -111,25 +120,24 @@ class GameEnv(gym.Env):
             direction = gh.getRandomValidMove(self.tribute, self.arena)
             gh.handleSingleMove(self.tribute, direction, self.arena)
             reward += 0.01
-            print(f"Tribute {self.tribute.letter} moved {direction}")
+            # print(f"Tribute {self.tribute.letter} moved {direction}")
 
         elif action == 1:
             health_before = self.tribute.health
             kills_before = self.tribute.num_kills
             gh.handleAttack(self.tribute, self.arena)
-            print(f"Tribute {self.tribute.letter} attacked tribute")
+            # print(f"Tribute {self.tribute.letter} attacked tribute")
             if self.tribute.num_kills > kills_before:
-                reward += 5.0  # got a kill
-            if self.tribute.health < health_before:
-                reward -= 0.5  # got damage
-            else:
-                reward += 0.5  # won an attack
+                reward += 15.0  # got a kill
+            if self.tribute.health >= health_before:
+                reward += 2.0  # won an attack
+            
 
         elif action == 2:
             capacity_before = self.tribute.capacity
             weapon_before = self.tribute.weapon_value
             result = gh.handlePickup(self.tribute, self.arena)
-            print(f"Tribute {self.tribute.letter} picked up an item")
+            # print(f"Tribute {self.tribute.letter} picked up an item")
             if result == 1:
                 reward += 0.5
                 if self.tribute.capacity > capacity_before:
@@ -141,28 +149,32 @@ class GameEnv(gym.Env):
 
         elif action == 3:
             gh.handleEatFood(self.tribute)
-            print(f"Tribute {self.tribute.letter} ate food")
-            reward += 0.3
+            # print(f"Tribute {self.tribute.letter} ate food")
+            reward += 1.0
 
         elif action == 4:
             gh.handleDrinkWater(self.tribute, self.arena)
-            print(f"Tribute {self.tribute.letter} drank water")
-            reward += 0.3
+            # print(f"Tribute {self.tribute.letter} drank water")
+            reward += 1.0
 
         elif action == 5:
             gh.handleUseMedical(self.tribute)
-            print(f"Tribute {self.tribute.letter} used medical")
-            reward += 0.3
+            # print(f"Tribute {self.tribute.letter} used medical")
+            reward += 1.0
 
         elif action == 6:
+            health_before = self.tribute.health
             gh.handleSleep(self.tribute)
-            print(f"Tribute {self.tribute.letter} slept")
-            reward += 0.1
+            # print(f"Tribute {self.tribute.letter} slept")
+            if health_before <= 40:
+                reward += 0.1
 
         elif action == 7:
             gh.handleRefillWater(self.tribute, self.arena)
-            print(f"Tribute {self.tribute.letter} refilled their canteen")
-            reward += 0.5
+            # print(f"Tribute {self.tribute.letter} refilled their canteen")
+            reward += 1.0
+
+        self.action_counts[action] += 1
 
         # stat penalties
         if self.tribute.hunger <= HUNGER_WARNING_THRESHOLD:
@@ -174,25 +186,34 @@ class GameEnv(gym.Env):
 
         if not self.tribute.isAlive:
             print(f"Tribute {self.tribute.letter} died")
-            reward -= 5.0
+
         
         if len(self.arena.tributes) == 1:
-            reward += 20.0
             terminated = True
             print(f"Tribute {self.tribute.letter} wins!!")
 
         gh.cleanUpAfterTurn(self.game, self.arena)
 
-        if self.game.day_count >= 14:
+        if self.game.day_count >= 10:
             terminated = True
 
         if len(self.arena.tributes) == 0:
             terminated = True
+            
 
         if terminated:
             print("____________________")
             print("GAME OVER")
             print("____________________\n\n")
+
+
+            action_names = {0: 'move', 1: 'attack', 2: 'pickup', 3: 'eat', 4: 'drink', 5: 'medical', 6: 'sleep', 7: 'refill'}
+            print(f"{'Action':<10} {'Count':<10}")
+            print("-" * 20)
+            for k, v in self.action_counts.items():
+                print(f"{action_names[k]:<10} {v:<10}")
+            self.action_counts = {i: 0 for i in range(8)}
+            print("\n\n")
             return obs, reward, terminated, False, {}
 
         # move to next tribute
