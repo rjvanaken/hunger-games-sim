@@ -163,14 +163,14 @@ def removeResource(self, resource):
     resource.id = None
 
 def wasFoodPickedUp(tribute):
-    requires_skill_check = random.randint(0, 100)
-    # 70% chance of getting a skill check
-    if requires_skill_check > 30:
-        # if chance is greater than skill, return food check as a fail
-        if random.randint(1, 100) >= tribute.hunting_skill:
-            return False 
+    # requires_skill_check = random.randint(0, 100)
+    # # 70% chance of getting a skill check
+    # if requires_skill_check > 30:
+    #     # if chance is greater than skill, return food check as a fail
+    #     if random.randint(1, 100) >= tribute.hunting_skill:
+    #         return False 
     
-    # either no check or successful pickup check, return true
+    # # either no check or successful pickup check, return true
     return True
 
 
@@ -351,8 +351,8 @@ def setupActionMap(tribute, arena):
     if not preventMove:
         if up or down or left or right:
             valid_actions.add(0)
-    if attackMask(arena, tribute):
-        valid_actions.add(1)
+    # if attackMask(arena, tribute):
+    #     valid_actions.add(1)
     if pickupMask(tribute, arena):
         valid_actions.add(2)
     if eatMask(tribute):

@@ -1,7 +1,7 @@
 from Arena import Arena
 from Tribute import Tribute
 from Resource import Resource
-from config import TURNS_PER_DAY
+from config import CANTEEN_VALUE, TURNS_PER_DAY
 from Player import Player, HumanPlayer, BotPlayer
 import gymnasium as gym
 from gymnasium import spaces
@@ -85,8 +85,11 @@ class Game():
     def setupArena(self, robot=False):
         self.arena = Arena(self.arena.size)
         self.arena.tributes = []
-
         self.addTributes(self.arena.center, robot)
+        for tribute in self.arena.tributes:
+            canteen = Resource(None, None, Resource.Type(2))
+            tribute.inventory.append(canteen)
+            tribute.max_water = CANTEEN_VALUE
         self.arena.addCornucopia()
         for tribute in self.arena.tributes:
             tribute.arenaKnowledge = self.arena.arena_grid
@@ -207,6 +210,30 @@ class Game():
             for c in range(28, 32):
                 water_positions.append((r, c)) # TEST
 
+
+    # mid-left — rows 22-25
+        for r in range(22, 25):
+            for c in range(8, 11):
+                water_positions.append((r, c))
+
+        # mid-right — rows 22-25
+        for r in range(22, 25):
+            for c in range(39, 42):
+                water_positions.append((r, c))
+
+        # center-bottom-left — rows 30-33
+        for r in range(30, 33):
+            for c in range(10, 13):
+                water_positions.append((r, c))
+
+        # center-bottom-right — rows 30-33
+        for r in range(30, 33):
+            for c in range(37, 40):
+                water_positions.append((r, c))
+
+
+
+
         for pos in water_positions:
             r, c = pos
             if arena.arena_grid[r][c] != 0:
@@ -217,13 +244,36 @@ class Game():
 
         # --- FOOD SOURCES (type 3) ---
         # 2x3 clusters ("bushes")
+        # food_cluster_origins = [
+        #     (6, 16), (6, 27),
+        #     (16, 5), (16, 40),
+        #     (31, 5), (31, 40),
+        #     (41, 16), (41, 27),
+        #     (22, 31), (24, 35), (26, 32), # TEST
+
+        #                 # additional clusters
+        #     (10, 30), (10, 16),   # upper mid left/right
+        #     (20, 42), (20, 3),    # mid outer left/right
+        #     (30, 42), (30, 3),    # lower outer left/right
+        #     (36, 16), (36, 27),   # lower mid left/right
+        #     (18, 16), (18, 31),   # near cornucopia
+        
+        # ]
+
         food_cluster_origins = [
             (6, 16), (6, 27),
             (16, 5), (16, 40),
             (31, 5), (31, 40),
             (41, 16), (41, 27),
-            (22, 31), (24, 35), (26, 32), # TEST
+            # (22, 31), (24, 35), (26, 32),
+            # additional clusters (all outside rows 18-29, cols 18-29 clear zone)
+            (10, 16), (10, 30),   # upper mid left/right
+            (15, 3), (15, 42),    # upper outer left/right
+            (20, 3), (20, 42),    # mid outer left/right
+            (30, 3), (30, 42),    # lower outer left/right
+            (36, 16), (36, 27),   # lower mid left/right
         ]
+
         cluster_food = [
             (r + dr, c + dc)
             for r, c in food_cluster_origins
