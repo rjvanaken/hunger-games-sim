@@ -224,6 +224,9 @@ class GameEnv(gym.Env):
             self.current_tribute_index = 0
             if self.game.turn_count % TURNS_PER_DAY == 0:
                 self.game.day_count += 1
+                for tribute in self.arena.tributes:
+                    tribute.updateDailyStats()
+                    tribute.health = min(100, tribute.health + int(SLEEP_VALUE * (tribute.hunger / 100)))
                 print(f"=== DAY {self.game.day_count + 1} ===")
         self.tribute = self.arena.tributes[self.current_tribute_index]
 

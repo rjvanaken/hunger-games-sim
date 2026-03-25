@@ -361,8 +361,8 @@ def setupActionMap(tribute, arena):
         valid_actions.add(4)
     if healMask(tribute):
         valid_actions.add(5)
-    if sleepMask(tribute):
-        valid_actions.add(6)
+    # if sleepMask(tribute):
+    #     valid_actions.add(6)
     if refillMask(tribute, arena):
         valid_actions.add(7)
     

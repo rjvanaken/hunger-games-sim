@@ -9,7 +9,7 @@ MALE_BONUS = 5
 TURNS_PER_DAY = 48
 BASE_SPEED = 1
 # SLEEP_CAP
-SLEEP_VALUE = 10
+SLEEP_VALUE = 25
 DAMAGE_MULTIPLIER = 0.5 # how much the tribute's strength impacts how strong their attack is
 SMALL_BACKPACK_FOOD = 2
 SMALL_BACKPACK_MED = 0

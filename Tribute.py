@@ -140,6 +140,10 @@ class Tribute(Fighter):
 
 
     def updateStatsBeforeTurn(self): #atm does not handle mutt attack before turn
+        self.strength = math.ceil((self.base_strength + self.weapon_value) * (self.health / 100))
+        
+
+    def updateDailyStats(self):
         self.hunger -= HUNGER_DECAY
         self.thirst -= THIRST_DECAY
         self.hunger = max(0, self.hunger)
@@ -155,8 +159,7 @@ class Tribute(Fighter):
             self.health -= THIRST_HEALTH_PENALTY
         elif self.thirst <= THIRST_WARNING_THRESHOLD:
             self.health -= THIRST_WARNING_PENALTY
-        self.strength = math.ceil((self.base_strength + self.weapon_value) * (self.health / 100))
-        
+
 
     def getFood(self):
         food = 0
