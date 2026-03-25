@@ -50,12 +50,6 @@ class HumanPlayer(Player):
         self.arena.updateSegmentData(self.tribute, segment)
 
         self.tribute.updateStatsBeforeTurn()
-        # if asleep, skip turn but decrement sleep counter
-        if self.tribute.isAsleep:
-            self.tribute.num_sleep_turns -= 1
-            if self.tribute.num_sleep_turns == 0:
-                self.tribute.isAsleep = False
-            return
             
         # keep looping until a valid action succeeds
         while True:

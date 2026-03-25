@@ -6,15 +6,15 @@ import sys
 
 
 
-
+timesteps = 500000
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "--play"
     
     if mode == "--train":
         env = GameEnv(size=48)
-        model = PPO("MultiInputPolicy", env, verbose=1, n_steps=8192,  ent_coef=0.1, device="cpu")
-        model.learn(total_timesteps=50000000)
+        model = PPO("MultiInputPolicy", env, verbose=1, n_steps=8192,  ent_coef=0.1, device="cpu", learning_rate=0.00003)
+        model.learn(total_timesteps=timesteps)
         model.save("hunger_games_model")
         
     elif mode == "--robot":

@@ -104,7 +104,6 @@ class Tribute(Fighter):
         self.capacity = 2
         self.inventory = []
         self.weapon_value = 0
-        self.isAsleep = False
         self.arenaKnowledge = []
         self.segment = None
         self.turn_count = 0
@@ -140,6 +139,10 @@ class Tribute(Fighter):
 
 
     def updateStatsBeforeTurn(self): #atm does not handle mutt attack before turn
+        self.updateDailyStats()
+        self.strength = math.ceil((self.base_strength + self.weapon_value) * (self.health / 100))
+
+    def updateDailyStats(self):
         self.hunger -= HUNGER_DECAY
         self.thirst -= THIRST_DECAY
         self.hunger = max(0, self.hunger)
@@ -148,15 +151,16 @@ class Tribute(Fighter):
         if self.hunger <= 0:
             self.health -= HUNGER_HEALTH_PENALTY
         elif self.hunger <= HUNGER_WARNING_THRESHOLD:
-            self.health -= HUNGER_WARNING_PENALTY
+            penalty = HUNGER_WARNING_PENALTY * (1 - self.hunger / HUNGER_WARNING_THRESHOLD)
+            self.health -= penalty
         
         # subtract full penalty if under 0, partial if only below threshold
         if self.thirst <= 0:
             self.health -= THIRST_HEALTH_PENALTY
         elif self.thirst <= THIRST_WARNING_THRESHOLD:
-            self.health -= THIRST_WARNING_PENALTY
-        self.strength = math.ceil((self.base_strength + self.weapon_value) * (self.health / 100))
-        
+            penalty = THIRST_WARNING_PENALTY * (1 - self.thirst / THIRST_WARNING_THRESHOLD)
+            self.health -= penalty
+
 
     def getFood(self):
         food = 0
@@ -182,8 +186,8 @@ class Tribute(Fighter):
         if resource.type == Resource.Type.BACKPACK_SMALL:
             if self.capacity <= 2:
                 self.capacity += SMALL_CAPACITY
-                canteen = Resource(None, None, Resource.Type(2))
-                self.inventory.append(canteen)
+                # canteen = Resource(None, None, Resource.Type(2))
+                # self.inventory.append(canteen)
                 for i in range(SMALL_BACKPACK_FOOD):
                     food = Resource(None, None, Resource.Type(3))
                     self.inventory.append(food)
@@ -197,8 +201,8 @@ class Tribute(Fighter):
         elif resource.type == Resource.Type.BACKPACK_LARGE:
             if self.capacity <= 2:
                 self.capacity += LARGE_CAPACITY
-                canteen = Resource(None, None, Resource.Type(2))
-                self.inventory.append(canteen)
+                # canteen = Resource(None, None, Resource.Type(2))
+                # self.inventory.append(canteen)
                 for i in range(LARGE_BACKPACK_MED):
                     medical = Resource(None, None, Resource.Type(4))
                     self.inventory.append(medical)

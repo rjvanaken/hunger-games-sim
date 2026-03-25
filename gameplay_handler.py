@@ -2,7 +2,6 @@ import random
 from Resource import Resource
 from config import SLEEP_VALUE, TURNS_PER_DAY
 import numpy as np
-from Tribute import Mutt
 
 def handleMove (tribute, arena):
     # only used by manual - AI mode will use pathfinding
@@ -126,9 +125,10 @@ def handleSleep(tribute):
 
 def handleMuttAttack(tribute, arena):
     mutt = arena.getTarget(tribute) # if mutt on square, attack before tribute's next turn
-    hasMutt = isinstance(mutt, Mutt) and mutt.isAlive and not mutt.isDormant
-    if hasMutt:
-        mutt.attack(tribute)
+
+    if hasattr(mutt, 'isDormant'):
+        if mutt != None and not mutt.isDormant:
+            mutt.attack(tribute)
 
 
 def getRandomValidMove(tribute, arena):
@@ -163,14 +163,14 @@ def removeResource(self, resource):
     resource.id = None
 
 def wasFoodPickedUp(tribute):
-    requires_skill_check = random.randint(0, 100)
-    # 70% chance of getting a skill check
-    if requires_skill_check > 30:
-        # if chance is greater than skill, return food check as a fail
-        if random.randint(1, 100) >= tribute.hunting_skill:
-            return False 
+    # requires_skill_check = random.randint(0, 100)
+    # # 70% chance of getting a skill check
+    # if requires_skill_check > 30:
+    #     # if chance is greater than skill, return food check as a fail
+    #     if random.randint(1, 100) >= tribute.hunting_skill:
+    #         return False 
     
-    # either no check or successful pickup check, return true
+    # # either no check or successful pickup check, return true
     return True
 
 
@@ -321,7 +321,7 @@ def setValuesBeforeTurn(tribute, arena):
     tribute.segment = arena.getSegmentFromPos(tribute.pos)
     segment = tribute.segment
     arena.updateSegmentData(tribute, segment)
-    tribute.updateStatsBeforeTurn()
+    tribute.updateStatsBeforeTurn() # right now, recalcs strength - mutt logic to be added either here or there
     tribute.updateKnowledge(arena)
     handleMuttAttack(tribute, arena)
 
@@ -346,13 +346,13 @@ def setupActionMap(tribute, arena):
     left = moveMask(tribute, 'left')
     right = moveMask(tribute, 'right')
     mutt = arena.getTarget(tribute)
-    preventMove = isinstance(mutt, Mutt) and mutt.isAlive and not mutt.isDormant
+    preventMove = hasattr(mutt, 'isDormant') and mutt.isAlive and not mutt.isDormant
 
     if not preventMove:
         if up or down or left or right:
             valid_actions.add(0)
-    if attackMask(arena, tribute):
-        valid_actions.add(1)
+    # if attackMask(arena, tribute):
+    #     valid_actions.add(1)
     if pickupMask(tribute, arena):
         valid_actions.add(2)
     if eatMask(tribute):
@@ -361,9 +361,9 @@ def setupActionMap(tribute, arena):
         valid_actions.add(4)
     if healMask(tribute):
         valid_actions.add(5)
-    if sleepMask(tribute):
-        valid_actions.add(6)
+    # if sleepMask(tribute):
+    #     valid_actions.add(6)
     if refillMask(tribute, arena):
-        valid_actions.add(7)
+        valid_actions.add(6)
     
     return valid_actions
