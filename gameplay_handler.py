@@ -321,7 +321,7 @@ def setValuesBeforeTurn(tribute, arena):
     tribute.segment = arena.getSegmentFromPos(tribute.pos)
     segment = tribute.segment
     arena.updateSegmentData(tribute, segment)
-    tribute.updateStatsBeforeTurn()
+    tribute.updateStatsBeforeTurn() # right now, recalcs strength - mutt logic to be added either here or there
     tribute.updateKnowledge(arena)
     handleMuttAttack(tribute, arena)
 
@@ -364,6 +364,6 @@ def setupActionMap(tribute, arena):
     # if sleepMask(tribute):
     #     valid_actions.add(6)
     if refillMask(tribute, arena):
-        valid_actions.add(7)
+        valid_actions.add(6)
     
     return valid_actions

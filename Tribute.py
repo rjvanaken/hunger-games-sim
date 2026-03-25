@@ -104,7 +104,6 @@ class Tribute(Fighter):
         self.capacity = 2
         self.inventory = []
         self.weapon_value = 0
-        self.isAsleep = False
         self.arenaKnowledge = []
         self.segment = None
         self.turn_count = 0
@@ -185,8 +184,8 @@ class Tribute(Fighter):
         if resource.type == Resource.Type.BACKPACK_SMALL:
             if self.capacity <= 2:
                 self.capacity += SMALL_CAPACITY
-                canteen = Resource(None, None, Resource.Type(2))
-                self.inventory.append(canteen)
+                # canteen = Resource(None, None, Resource.Type(2))
+                # self.inventory.append(canteen)
                 for i in range(SMALL_BACKPACK_FOOD):
                     food = Resource(None, None, Resource.Type(3))
                     self.inventory.append(food)
@@ -200,8 +199,8 @@ class Tribute(Fighter):
         elif resource.type == Resource.Type.BACKPACK_LARGE:
             if self.capacity <= 2:
                 self.capacity += LARGE_CAPACITY
-                canteen = Resource(None, None, Resource.Type(2))
-                self.inventory.append(canteen)
+                # canteen = Resource(None, None, Resource.Type(2))
+                # self.inventory.append(canteen)
                 for i in range(LARGE_BACKPACK_MED):
                     medical = Resource(None, None, Resource.Type(4))
                     self.inventory.append(medical)

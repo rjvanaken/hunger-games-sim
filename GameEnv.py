@@ -163,7 +163,7 @@ class GameEnv(gym.Env):
             reward += 1.0
 
 
-        elif action == 7:
+        elif action == 6:
             gh.handleRefillWater(self.tribute, self.arena)
             # print(f"Tribute {self.tribute.letter} refilled their canteen")
             reward += 1.0
