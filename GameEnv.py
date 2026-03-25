@@ -38,7 +38,7 @@ class GameEnv(gym.Env):
 
         VIEW_RADIUS = 2  # 5x5 window
 
-        self.action_space = spaces.Discrete(8)
+        self.action_space = spaces.Discrete(7)
 
         self.observation_space = spaces.Dict({
             "local_view": spaces.Box(low=0, high=10, shape=(5, 5), dtype=np.int32),
@@ -162,12 +162,6 @@ class GameEnv(gym.Env):
             # print(f"Tribute {self.tribute.letter} used medical")
             reward += 1.0
 
-        elif action == 6:
-            health_before = self.tribute.health
-            gh.handleSleep(self.tribute)
-            # print(f"Tribute {self.tribute.letter} slept")
-            if health_before <= 40:
-                reward += 0.1
 
         elif action == 7:
             gh.handleRefillWater(self.tribute, self.arena)
