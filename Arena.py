@@ -246,16 +246,23 @@ class Arena:
         if tribute.isAlive:
             self.arena_grid[tribute.pos[0]][tribute.pos[1]] = tribute.letter
 
-    def getTarget(self, tribute):
+    def getTarget(self, tribute, attack=False):
         target = None
-        for t in self.tributes:
-            if t.pos == tribute.pos and tribute != t:
-                target = t
-                break
-        for m in self.mutts:
-            if m.pos == tribute.pos:
-                target = m
-                break
+
+        if attack:
+            for t in self.tributes:
+                if (abs(t.pos[0] - abs(tribute.pos[0])) <= 1) and (abs(t.pos[1] - abs(tribute.pos[1])) <= 1) and tribute != t:
+                    target = t
+                    break
+        else:     
+            for t in self.tributes:
+                if t.pos == abs(tribute.pos - 2) and tribute != t:
+                    target = t
+                    break
+            for m in self.mutts:
+                if m.pos == tribute.pos:
+                    target = m
+                    break
 
         return target
     

@@ -93,7 +93,7 @@ class GameEnv(gym.Env):
     def step(self, action):
         reward = 0
         terminated = False
-        self.valid_actions = gh.setupActionMap(self.tribute, self.arena)
+        self.valid_actions = gh.setupActionMap(self.tribute, self.arena, self.game)
 
         obs = {
             "local_view": gh.getLocalView(self.tribute, self.arena),

@@ -130,7 +130,7 @@ class BotPlayer(Player):
 
         while True:
                 
-            self.valid_actions = gh.setupActionMap(self.tribute, self.arena)
+            # self.valid_actions = gh.setupActionMap(self.tribute, self.arena) ; this is messed up need to fix
             
             obs = {
                 "local_view": gh.getLocalView(self.tribute, self.arena),

@@ -37,7 +37,7 @@ def handleSingleMove (tribute, direction, arena):
         return False
 
 def handleAttack (tribute, arena):
-    target = arena.getTarget(tribute)
+    target = arena.getTarget(tribute, True)
     if not target:
         return False
     if (-2 <= tribute.pos[0] - target.pos[0] <= 2) and (-2 <= tribute.pos[1] - target.pos[1] <= 2) :
@@ -225,7 +225,7 @@ def attackMask(arena, tribute):
     # is there a tribute on the same cell as you?
     canAttack = False
     for target in arena.tributes:
-        if target.pos == tribute.pos and tribute != target:
+        if (abs(target.pos[0] - abs(tribute.pos[0])) <= 1) and (abs(target.pos[1] - abs(tribute.pos[1])) <= 1) and tribute != target:
             canAttack = True
             break
     for mutt in arena.mutts:
@@ -338,7 +338,7 @@ def cleanUpAfterTurn(game, arena):
             t.turn_count = 0
 
 
-def setupActionMap(tribute, arena):
+def setupActionMap(tribute, arena, game):
     
     valid_actions = set()
     up = moveMask(tribute, 'up')
@@ -351,7 +351,8 @@ def setupActionMap(tribute, arena):
     if not preventMove:
         if up or down or left or right:
             valid_actions.add(0)
-    if attackMask(arena, tribute):
+    if attackMask(arena, tribute) and not (game.day_count == 0 and tribute.turn_count < 2):
+    # add attack to valid actions
         valid_actions.add(1)
     if pickupMask(tribute, arena):
         valid_actions.add(2)
