@@ -134,6 +134,8 @@ class GameEnv(gym.Env):
             health_before = self.tribute.health
             kills_before = self.tribute.num_kills
             gh.handleAttack(self.tribute, self.arena)
+            reward += ATTACK_REWARD
+
             if self.tribute.num_kills > kills_before:
                 reward += KILL_REWARD
             if self.tribute.health >= health_before:
@@ -173,7 +175,13 @@ class GameEnv(gym.Env):
                 reward += 1.0
 
         elif action == 5:
+            very_low_health = False
+            if self.tribute.health < 40:
+                very_low_health = True
             gh.handleUseMedical(self.tribute)
+            reward += MEDICAL_REWARD
+            if very_low_health:
+                reward += 1.0
 
         elif action == 6:
             gh.handleRefillWater(self.tribute, self.arena)

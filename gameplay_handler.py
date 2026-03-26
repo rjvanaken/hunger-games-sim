@@ -351,8 +351,8 @@ def setupActionMap(tribute, arena):
     if not preventMove:
         if up or down or left or right:
             valid_actions.add(0)
-    # if attackMask(arena, tribute):
-    #     valid_actions.add(1)
+    if attackMask(arena, tribute):
+        valid_actions.add(1)
     if pickupMask(tribute, arena):
         valid_actions.add(2)
     if eatMask(tribute):

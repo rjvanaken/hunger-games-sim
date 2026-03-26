@@ -6,7 +6,7 @@ import sys
 
 
 
-timesteps = 500000
+timesteps = 5000000
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "--play"
