@@ -174,20 +174,38 @@ def wasFoodPickedUp(tribute):
     return True
 
 
-def checkNeighborsFor(tribute, arena, type_num):
+def checkNeighborsFor(tribute, arena, type_num=-1, find_tribute=False):
     tRow = tribute.pos[0]
     tCol = tribute.pos[1]
-    neighbors = [
-        arena.getResourceAt((tRow + 1, tCol)),
-        arena.getResourceAt((tRow - 1, tCol)),
-        arena.getResourceAt((tRow, tCol + 1)),
-        arena.getResourceAt((tRow, tCol - 1))
+
+    if find_tribute:
+        neighbors = [
+        (tRow + 1, tCol),
+        (tRow - 1, tCol),
+        (tRow, tCol + 1),
+        (tRow, tCol - 1)
     ]
-    
-    for item in neighbors:
-        if item != None and item.type.value == type_num:
-            return True
-    return False
+
+        for row, col in neighbors:
+            cell = arena.arena_grid[row][col]
+            if cell not in (0, 1, 3, 4, 5, 6, 7, 8, 9):
+                for target in arena.tributes:
+                    if target.pos == (row, col) and target != tribute and target.isAlive:
+                        return target
+                    
+
+    else:
+        neighbors = [
+            arena.getResourceAt((tRow + 1, tCol)),
+            arena.getResourceAt((tRow - 1, tCol)),
+            arena.getResourceAt((tRow, tCol + 1)),
+            arena.getResourceAt((tRow, tCol - 1))
+        ]
+        
+        for item in neighbors:
+            if item != None and item.type.value == type_num:
+                return True
+        return False
 
 
 

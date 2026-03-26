@@ -23,7 +23,7 @@ class GameEnv(gym.Env):
 
         self.action_counts = {i: 0 for i in range(7)}
 
-        for i in range(18):
+        for i in range(REMOVAL):
             self.arena.tributes[i].isAlive = False
  
         self.arena.clearDeadTributes()
@@ -70,7 +70,7 @@ class GameEnv(gym.Env):
         self.game = Game(size=48, robot=True)
         self.arena = self.game.arena
 
-        for i in range(18):
+        for i in range(REMOVAL):
             self.arena.tributes[i].isAlive = False
 
         self.arena.clearDeadTributes()

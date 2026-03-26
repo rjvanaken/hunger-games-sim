@@ -1,6 +1,6 @@
 from Resource import Resource
 import random
-
+import gameplay_handler as gh
 from config import WEAK_WEAPON, STRONG_WEAPON
 
 class Arena:
@@ -250,13 +250,10 @@ class Arena:
         target = None
 
         if attack:
-            for t in self.tributes:
-                if (abs(t.pos[0] - abs(tribute.pos[0])) <= 1) and (abs(t.pos[1] - abs(tribute.pos[1])) <= 1) and tribute != t:
-                    target = t
-                    break
+            target = gh.checkNeighborsFor(tribute, self, find_tribute=True)
         else:     
             for t in self.tributes:
-                if t.pos == abs(tribute.pos - 2) and tribute != t:
+                if t.pos == tribute.pos and tribute != t:
                     target = t
                     break
             for m in self.mutts:

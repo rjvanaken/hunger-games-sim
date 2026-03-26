@@ -64,4 +64,8 @@ BOMB_DAMAGE_NEAR = -30
 BOMB_DAMAGE_FAR = -10
 
 
+# test
+REMOVAL = 6
+
+
 
