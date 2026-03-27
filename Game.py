@@ -6,6 +6,7 @@ from Player import Player, HumanPlayer, BotPlayer
 import gymnasium as gym
 from gymnasium import spaces
 import numpy as np
+import gameplay_handler as gh
 
 class Game():
     
@@ -316,6 +317,7 @@ class Game():
                     for player in self.players:
                         if player.tribute.isAlive:
                             print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
+                            gh.setupActionMap(player.tribute, self.arena, self)
                             player.take_turn()
                     self.arena.clearDeadTributes()
                     self.arena.displayArena()

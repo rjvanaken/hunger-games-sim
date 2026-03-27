@@ -127,10 +127,9 @@ class BotPlayer(Player):
         
 
     def take_turn(self):
-
+        print("started")
         while True:
-                
-            # self.valid_actions = gh.setupActionMap(self.tribute, self.arena) ; this is messed up need to fix
+            print("entered while loop")
             
             obs = {
                 "local_view": gh.getLocalView(self.tribute, self.arena),
@@ -142,15 +141,19 @@ class BotPlayer(Player):
                 "known_water_row": gh.getKnownWater(self.tribute)[0],
                 "known_water_col": gh.getKnownWater(self.tribute)[1],
             }
-
+            print("obs set up")
             action, _ = self.model.predict(obs)
+            print("action called from predict")
             action = int(action)
+            print("action set")
             success = False
 
             if action not in self.valid_actions:
+                print("not valid action, continuing")
                 continue
 
             else:
+                print("moving into action else block")
 
                 if action == 0:          
                     direction = gh.getRandomValidMove(self.tribute, self.arena)
@@ -178,10 +181,6 @@ class BotPlayer(Player):
                     print(f"Tribute {self.tribute.letter} used medical")
 
                 elif action == 6:
-                    success = gh.handleSleep(self.tribute)
-                    print(f"Tribute {self.tribute.letter} slept")
-
-                elif action == 7:
                     success = gh.handleRefillWater(self.tribute, self.arena)
                     print(f"Tribute {self.tribute.letter} refilled their canteen")
 
