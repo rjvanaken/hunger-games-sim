@@ -256,9 +256,12 @@ def pickupMask(tribute, arena):
     if resource.type == Resource.Type.BACKPACK_SMALL or resource.type == Resource.Type.BACKPACK_LARGE:
         if tribute.capacity > 2:
             return False
+    if resource.type == Resource.Type.WEAPON:
+        if tribute.countInInventory(Resource.Type.WEAPON.value) > 0:
+            return False
     if len(tribute.inventory) < tribute.capacity:
         return True
-    if resource.type.value == 6 or resource.type.value == 7:
+    if resource.type == Resource.Type.BACKPACK_SMALL or resource.type == Resource.Type.BACKPACK_LARGE or resource.type == Resource.Type.WEAPON:
         return True
     return False
 
