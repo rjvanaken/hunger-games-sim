@@ -73,7 +73,7 @@ class GameEnv(gym.Env):
             "col": self.tribute.pos[1],
             "known_water_row": 0,
             "known_water_col": 0,
-            "recently_attacked": spaces.Discrete(2),
+            "recently_attacked": self.tribute.recently_attacked
         }
 
         return obs, {}
@@ -173,9 +173,12 @@ class GameEnv(gym.Env):
         if self.tribute.health <= 40:
             reward -= 0.1
 
+
         if not self.tribute.isAlive:
             print(f"Tribute {self.tribute.letter} died")
             reward -= 2.0
+
+        self.game.game_rewards += reward
 
         gh.cleanUpAfterTurn(self.game, self.arena)
 
