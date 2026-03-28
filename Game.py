@@ -18,7 +18,7 @@ class Game():
         self.day_count = 0
         self.drama = 0
         self.retaliation_count = 0
-        self.total_rewards
+        self.game_rewards = 0
         self.winner = None
         self.action_counts = {i: 0 for i in range(7)}
         self.deaths_by_combat = 0
