@@ -138,6 +138,7 @@ class BotPlayer(Player):
                 "col": self.tribute.pos[1],
                 "known_water_row": gh.getKnownWater(self.tribute)[0],
                 "known_water_col": gh.getKnownWater(self.tribute)[1],
+                "recently_attacked": self.tribute.recently_attacked
             }
             action, _ = self.model.predict(obs)
             action = int(action)
