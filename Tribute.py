@@ -107,6 +107,7 @@ class Tribute(Fighter):
         self.segment = None
         self.turn_count = 0
         self.last_move = None
+        self.recently_attacked = 0
         
 
         # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
