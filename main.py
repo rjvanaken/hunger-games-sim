@@ -10,6 +10,7 @@ timesteps = 3000000
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "--play"
+    display = sys.argv[2] if len(sys.argv) > 2 else "--arena"
     
     if mode == "--train":
         env = GameEnv(size=48)
@@ -20,7 +21,11 @@ if __name__ == "__main__":
     elif mode == "--robot":
         # load model into Robot, run Game
         game = Game(size=48, robot=True, train=False, test=False)
-        game.run()
+        if display == "--show":
+            game.run(show_arena=True)
+
+        elif display == "--hide":
+            game.run()
 
     elif mode == "--play":
         # load model into Robot, run Game

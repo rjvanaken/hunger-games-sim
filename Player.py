@@ -127,10 +127,7 @@ class BotPlayer(Player):
         
 
     def take_turn(self):
-
         while True:
-                
-            # self.valid_actions = gh.setupActionMap(self.tribute, self.arena) ; this is messed up need to fix
             
             obs = {
                 "local_view": gh.getLocalView(self.tribute, self.arena),
@@ -142,7 +139,6 @@ class BotPlayer(Player):
                 "known_water_row": gh.getKnownWater(self.tribute)[0],
                 "known_water_col": gh.getKnownWater(self.tribute)[1],
             }
-
             action, _ = self.model.predict(obs)
             action = int(action)
             success = False
@@ -178,10 +174,6 @@ class BotPlayer(Player):
                     print(f"Tribute {self.tribute.letter} used medical")
 
                 elif action == 6:
-                    success = gh.handleSleep(self.tribute)
-                    print(f"Tribute {self.tribute.letter} slept")
-
-                elif action == 7:
                     success = gh.handleRefillWater(self.tribute, self.arena)
                     print(f"Tribute {self.tribute.letter} refilled their canteen")
 

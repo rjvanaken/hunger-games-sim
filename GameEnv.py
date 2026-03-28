@@ -23,7 +23,7 @@ class GameEnv(gym.Env):
 
         self.action_counts = {i: 0 for i in range(7)}
 
-        for i in range(18):
+        for i in range(REMOVAL):
             self.arena.tributes[i].isAlive = False
  
         self.arena.clearDeadTributes()
@@ -70,7 +70,7 @@ class GameEnv(gym.Env):
         self.game = Game(size=48, robot=True)
         self.arena = self.game.arena
 
-        for i in range(18):
+        for i in range(REMOVAL):
             self.arena.tributes[i].isAlive = False
 
         self.arena.clearDeadTributes()
@@ -108,16 +108,6 @@ class GameEnv(gym.Env):
         result = self.check_game_over(obs, reward)
         if result is not None:
             return result
-
-        # if not self.tribute.isAlive:
-        #     reward -= 5
-        #     gh.cleanUpAfterTurn(self.game, self.arena)
-        #     result = self.check_game_over(obs, reward)
-        #     if result is not None:
-        #         return result
-        #     self.current_tribute_index = 0
-        #     self.tribute = self.arena.tributes[self.current_tribute_index]
-        #     return obs, reward, False, False, {}
 
         if action not in self.valid_actions:
             return obs, -1, False, False, {}
@@ -159,11 +149,6 @@ class GameEnv(gym.Env):
             reward += EAT_REWARD
             if very_hungry:
                 reward += 1.0
-
-        # elif action == 4:
-        #     gh.handleDrinkWater(self.tribute, self.arena)
-        #     reward += DRINK_REWARD
-
 
         elif action == 4:
             very_thirsty = False

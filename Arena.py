@@ -1,7 +1,7 @@
 from Resource import Resource
 import random
-
-from config import WEAK_WEAPON, STRONG_WEAPON
+import gameplay_handler as gh
+from config import *
 
 class Arena:
     def __init__(self, size):
@@ -168,6 +168,7 @@ class Arena:
         for key, value in self.segments.items():
             if pos in value:
                 return key
+        return list(self.segments.keys())[0] 
         
 
     def clearDeadTributes(self):
@@ -177,6 +178,7 @@ class Arena:
             if tribute.isAlive:
                 new_list.append(tribute)
             else:
+                print(f"Tribute {tribute.letter} has died")
                 self.restoreOldCellData(tribute, pos)
                 tribute.pos = None
                 self.num_tributes -= 1
@@ -202,9 +204,17 @@ class Arena:
                 
                 if cell_value == 0:
                     print('.', end=' ')
+                elif isinstance(cell_value, str):
+                    tribute = next((t for t in self.tributes if t.letter == cell_value), None)
+                    if tribute:
+                        c = COLORS[tribute.id % len(COLORS)]
+                        print(f"{c}{cell_value}{RESET}", end=' ')
+                    else:
+                        print(cell_value, end=' ')
                 else:
                     print(cell_value, end=' ')
-            print()  # New line after each row
+            print()
+ 
 
 
     def updateSegmentData(self, tribute, segment):
@@ -250,13 +260,10 @@ class Arena:
         target = None
 
         if attack:
-            for t in self.tributes:
-                if (abs(t.pos[0] - abs(tribute.pos[0])) <= 1) and (abs(t.pos[1] - abs(tribute.pos[1])) <= 1) and tribute != t:
-                    target = t
-                    break
+            target = gh.checkNeighborsFor(tribute, self, find_tribute=True)
         else:     
             for t in self.tributes:
-                if t.pos == abs(tribute.pos - 2) and tribute != t:
+                if t.pos == tribute.pos and tribute != t:
                     target = t
                     break
             for m in self.mutts:
