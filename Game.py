@@ -327,11 +327,11 @@ class Game():
             arena.obstacles.append(pos)
             arena.arena_grid[r][c] = 8
 
-    def run(self, show_arena=True):
+    def run(self, show_arena=True, show_colors=False):
             while len(self.arena.tributes) > 1:
                 self.turn_count += 1
                 if show_arena:
-                    self.arena.displayArena()
+                    self.arena.displayArena(show_colors)
                 print(f"\n========== DAY {self.day_count + 1} ===============")
                 while self.turn_count <= TURNS_PER_DAY:
                     for player in self.players:

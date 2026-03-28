@@ -201,7 +201,7 @@ class Arena:
         self.mutts = new_list
 
 
-    def displayArena(self):
+    def displayArena(self, colors=False):
         for i in range(self.size):
             for j in range(self.size):
                 cell_value = self.arena_grid[i][j]
@@ -211,8 +211,12 @@ class Arena:
                 elif isinstance(cell_value, str):
                     tribute = next((t for t in self.tributes if t.letter == cell_value), None)
                     if tribute:
-                        c = COLORS[tribute.id % len(COLORS)]
-                        print(f"{c}{cell_value}{RESET}", end=' ')
+                        if colors:
+                            c = COLORS[tribute.id % len(COLORS)]
+                            print(f"{c}{cell_value}{RESET}", end=' ')
+                        else:
+                            print(f"{tribute.letter}", end=' ')
+                            
                     else:
                         print(cell_value, end=' ')
                 else:

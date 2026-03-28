@@ -6,11 +6,12 @@ import sys
 
 
 
-timesteps = 3000000
+timesteps = 5000000
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "--play"
-    display = sys.argv[2] if len(sys.argv) > 2 else "--arena"
+    display = sys.argv[2] if len(sys.argv) > 2 else "--hide"
+    colors = sys.argv[3] if len(sys.argv) > 3 else "--none"
     
     if mode == "--train":
         env = GameEnv(size=48)
@@ -20,9 +21,15 @@ if __name__ == "__main__":
         
     elif mode == "--robot":
         # load model into Robot, run Game
+        show_colors=False
         game = Game(size=48, robot=True, train=False, test=False)
         if display == "--show":
-            game.run(show_arena=True)
+            show_arena=True
+            
+            if colors == '--rainbow':
+                show_colors = True
+            game.run(show_arena, show_colors)
+        
 
         elif display == "--hide":
             game.run()
