@@ -175,7 +175,7 @@ class GameEnv(gym.Env):
 
 
         if not self.tribute.isAlive:
-            print(f"Tribute {self.tribute.letter} died")
+            # print(f"Tribute {self.tribute.letter} died")
             reward -= 2.0
 
         self.game.game_rewards += reward
