@@ -315,7 +315,6 @@ class Game():
                 self.turn_count += 1
                 if show_arena:
                     self.arena.displayArena()
-                self.arena.displayArena()
                 print(f"\n========== DAY {self.day_count + 1} ===============")
                 while self.turn_count <= TURNS_PER_DAY:
                     for player in self.players:

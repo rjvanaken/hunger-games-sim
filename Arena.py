@@ -1,7 +1,7 @@
 from Resource import Resource
 import random
 import gameplay_handler as gh
-from config import WEAK_WEAPON, STRONG_WEAPON
+from config import *
 
 class Arena:
     def __init__(self, size):
@@ -204,9 +204,17 @@ class Arena:
                 
                 if cell_value == 0:
                     print('.', end=' ')
+                elif isinstance(cell_value, str):
+                    tribute = next((t for t in self.tributes if t.letter == cell_value), None)
+                    if tribute:
+                        c = COLORS[tribute.id % len(COLORS)]
+                        print(f"{c}{cell_value}{RESET}", end=' ')
+                    else:
+                        print(cell_value, end=' ')
                 else:
                     print(cell_value, end=' ')
-            print()  # New line after each row
+            print()
+ 
 
 
     def updateSegmentData(self, tribute, segment):
