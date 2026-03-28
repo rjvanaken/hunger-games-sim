@@ -24,7 +24,6 @@ class Game():
         self.deaths_by_combat = 0
         self.deaths_by_decay = 0
 
-        self.game.action_counts = {i: 0 for i in range(7)}
 
 
 
