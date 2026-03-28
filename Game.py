@@ -18,7 +18,9 @@ class Game():
         self.day_count = 0
         self.drama = 0
         self.retaliation_count = 0
+        self.total_rewards
         self.winner = None
+        self.game.action_counts = {i: 0 for i in range(7)}
 
 
         if test:
@@ -99,7 +101,17 @@ class Game():
             tribute.arenaKnowledge = self.arena.arena_grid
         self.setupArenaLayout(self.arena)
 
-
+    def print_results(self):
+        print("____________________")
+        print("GAME OVER")
+        print("____________________\n\n")
+        action_names = {0: 'move', 1: 'attack', 2: 'pickup', 3: 'eat', 4: 'drink', 5: 'medical', 6: 'refill'}
+        print(f"{'Action':<10} {'Count':<10}")
+        print("-" * 20)
+        for k, v in self.action_counts.items():
+            print(f"{action_names[k]:<10} {v:<10}")
+        self.action_counts = {i: 0 for i in range(7)}
+        print("\n\n")
 
 
 
