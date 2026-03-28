@@ -42,6 +42,7 @@ class GameEnv(gym.Env):
             "thirst": spaces.Discrete(101),
             "row": spaces.Discrete(49),
             "col": spaces.Discrete(49),
+            "recently_attacked": spaces.Discrete(2),
         })
 
 
@@ -86,6 +87,7 @@ class GameEnv(gym.Env):
             "col": self.tribute.pos[1],
             "known_water_row": 0,
             "known_water_col": 0,
+            "recently_attacked": spaces.Discrete(2),
         }
 
         return obs, {}
@@ -104,6 +106,7 @@ class GameEnv(gym.Env):
             "col": self.tribute.pos[1],
             "known_water_row": gh.getKnownWater(self.tribute)[0],
             "known_water_col": gh.getKnownWater(self.tribute)[1],
+            "recently_attacked": self.tribute.recently_attacked
         }
         result = self.check_game_over(obs, reward)
         if result is not None:
@@ -125,6 +128,9 @@ class GameEnv(gym.Env):
             kills_before = self.tribute.num_kills
             gh.handleAttack(self.tribute, self.arena)
             reward += ATTACK_REWARD
+            if self.tribute.recently_attacked:
+                reward += CONTINUE_FIGHT_REWARD
+                self.tribute.recently_attacked = 0
 
             if self.tribute.num_kills > kills_before:
                 reward += KILL_REWARD
@@ -227,6 +233,7 @@ class GameEnv(gym.Env):
             "col": self.tribute.pos[1],
             "known_water_row": gh.getKnownWater(self.tribute)[0],
             "known_water_col": gh.getKnownWater(self.tribute)[1],
+            "recently_attacked": self.tribute.recently_attacked
         }
 
         return obs, reward, terminated, False, {}

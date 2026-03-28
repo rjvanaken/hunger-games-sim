@@ -17,7 +17,9 @@ class Game():
         self.turn_count = 0
         self.day_count = 0
         self.drama = 0
+        self.retaliation_count = 0
         self.winner = None
+
 
         if test:
             pass

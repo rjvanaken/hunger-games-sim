@@ -42,6 +42,7 @@ def handleAttack (tribute, arena):
         return False
     if (-1 <= tribute.pos[0] - target.pos[0] <= 1) and (-1 <= tribute.pos[1] - target.pos[1] <= 1):
         tribute.attack(target)
+        target.recently_attacked = 1
         return True
     else:
         print("cannot attack, too far away") # temp debug
