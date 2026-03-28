@@ -26,7 +26,7 @@ class GameEnv(gym.Env):
         for i in range(REMOVAL):
             self.arena.tributes[i].isAlive = False
  
-        self.arena.clearDeadTributes()
+        self.arena.clearDeadTributes(self.game)
         self.arena.displayArena()
 
         VIEW_RADIUS = 2
@@ -73,7 +73,7 @@ class GameEnv(gym.Env):
         for i in range(REMOVAL):
             self.arena.tributes[i].isAlive = False
 
-        self.arena.clearDeadTributes()
+        self.arena.clearDeadTributes(self.game)
         self.current_tribute_index = 0
         self.tribute = self.arena.tributes[self.current_tribute_index]
 

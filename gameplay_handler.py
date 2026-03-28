@@ -349,7 +349,7 @@ def setValuesBeforeTurn(tribute, arena):
 
 def cleanUpAfterTurn(game, arena):
     
-    arena.clearDeadTributes()
+    arena.clearDeadTributes(game)
     arena.clearDeadMutts()
     if len(arena.tributes) <= 1:
         return

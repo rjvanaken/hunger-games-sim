@@ -18,6 +18,10 @@ class Game():
         self.day_count = 0
         self.drama = 0
         self.winner = None
+        self.action_counts = {i: 0 for i in range(7)}
+        self.deaths_by_combat = 0
+        self.deaths_by_decay = 0
+
 
         if test:
             pass
@@ -97,7 +101,20 @@ class Game():
             tribute.arenaKnowledge = self.arena.arena_grid
         self.setupArenaLayout(self.arena)
 
-
+    def print_results(self):
+        print("____________________")
+        print("GAME OVER")
+        print("____________________\n\n")
+        action_names = {0: 'move', 1: 'attack', 2: 'pickup', 3: 'eat', 4: 'drink', 5: 'medical', 6: 'refill'}
+        print(f"{'Action':<10} {'Count':<10}")
+        print("-" * 20)
+        for k, v in self.action_counts.items():
+            print(f"{action_names[k]:<10} {v:<10}")
+        self.action_counts = {i: 0 for i in range(7)}
+        print("\nDEATHS")
+        print(f"Combat: {self.deaths_by_combat}")
+        print(f"Decay: {self.deaths_by_decay}")
+        print("\n\n")
 
 
 
@@ -325,7 +342,7 @@ class Game():
                         player.valid_actions = gh.setupActionMap(player.tribute, self.arena, self)
                         print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
                         player.take_turn()
-                        self.arena.clearDeadTributes()
+                        self.arena.clearDeadTributes(self)
                         self.players = [p for p in self.players if p.tribute.isAlive]
                         if len(self.arena.tributes) <= 1:
                             if len(self.arena.tributes) == 1:

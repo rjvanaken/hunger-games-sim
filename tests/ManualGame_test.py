@@ -298,7 +298,7 @@ def testManualGame():
         gh.handleAttack(B.tribute, game.arena)
     
 
-    game.arena.clearDeadTributes()
+    game.arena.clearDeadTributes(game)
     assert A.tribute in game.arena.tributes
     assert A.tribute.isAlive == True
     assert B.tribute.isAlive == False

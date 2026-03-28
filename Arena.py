@@ -171,7 +171,7 @@ class Arena:
         return list(self.segments.keys())[0] 
         
 
-    def clearDeadTributes(self):
+    def clearDeadTributes(self, game):
         new_list = []
         for tribute in self.tributes:
             pos = tribute.pos 
@@ -181,6 +181,10 @@ class Arena:
                 print(f"Tribute {tribute.letter} has died")
                 self.restoreOldCellData(tribute, pos)
                 tribute.pos = None
+                if tribute.recently_attacked:
+                    game.deaths_by_combat += 1
+                else:
+                    game.deaths_by_decay += 1
                 self.num_tributes -= 1
         self.tributes = new_list
 

@@ -9,7 +9,7 @@ from Arena import Arena
 
 game = Game(30)
 
-def testClearDeadTributes():
+def testClearDeadTributes(game):
     game.addTributes(game.arena.center, False)
     
     T1 = game.arena.tributes[12]
@@ -29,7 +29,7 @@ def testClearDeadTributes():
 
     T1_pos = T1.pos
     T2_pos = T2.pos
-    game.arena.clearDeadTributes()
+    game.arena.clearDeadTributes(game)
 
     assert T1 not in game.arena.tributes
     assert T2 not in game.arena.tributes
@@ -39,7 +39,7 @@ def testClearDeadTributes():
 
 
 def main():
-    testClearDeadTributes()
+    testClearDeadTributes(game)
 
 
 
