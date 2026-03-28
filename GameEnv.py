@@ -21,8 +21,6 @@ class GameEnv(gym.Env):
         self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
         self.valid_actions = set()
 
-        self.action_counts = {i: 0 for i in range(7)}
-
         for i in range(REMOVAL):
             self.arena.tributes[i].isAlive = False
  
@@ -47,23 +45,11 @@ class GameEnv(gym.Env):
 
 
 
-    def print_results(self):
-        print("____________________")
-        print("GAME OVER")
-        print("____________________\n\n")
-        action_names = {0: 'move', 1: 'attack', 2: 'pickup', 3: 'eat', 4: 'drink', 5: 'medical', 6: 'refill'}
-        print(f"{'Action':<10} {'Count':<10}")
-        print("-" * 20)
-        for k, v in self.action_counts.items():
-            print(f"{action_names[k]:<10} {v:<10}")
-        self.action_counts = {i: 0 for i in range(7)}
-        print("\n\n")
-
     def check_game_over(self, obs, reward):
         if len(self.arena.tributes) <= 1:
             if len(self.arena.tributes) == 1:
                 print(f"Tribute {self.arena.tributes[0].letter} wins!!")
-            self.print_results()
+            self.game.print_results()
             return obs, reward, True, False, {}
         return None
 
@@ -178,7 +164,7 @@ class GameEnv(gym.Env):
             gh.handleRefillWater(self.tribute, self.arena)
             reward += REFILL_REWARD
 
-        self.action_counts[action] += 1
+        self.game.action_counts[action] += 1
 
         if self.tribute.hunger <= HUNGER_WARNING_THRESHOLD:
             reward -= 0.1
@@ -201,7 +187,7 @@ class GameEnv(gym.Env):
             terminated = True
 
         if terminated:
-            self.print_results()
+            self.game.print_results()
             return obs, reward, terminated, False, {}
 
         self.tribute.turn_count += 1
