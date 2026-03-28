@@ -127,9 +127,7 @@ class BotPlayer(Player):
         
 
     def take_turn(self):
-        print("started")
         while True:
-            print("entered while loop")
             
             obs = {
                 "local_view": gh.getLocalView(self.tribute, self.arena),
@@ -141,19 +139,14 @@ class BotPlayer(Player):
                 "known_water_row": gh.getKnownWater(self.tribute)[0],
                 "known_water_col": gh.getKnownWater(self.tribute)[1],
             }
-            print("obs set up")
             action, _ = self.model.predict(obs)
-            print("action called from predict")
             action = int(action)
-            print("action set")
             success = False
 
             if action not in self.valid_actions:
-                print("not valid action, continuing")
                 continue
 
             else:
-                print("moving into action else block")
 
                 if action == 0:          
                     direction = gh.getRandomValidMove(self.tribute, self.arena)

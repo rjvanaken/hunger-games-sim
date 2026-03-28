@@ -1,7 +1,7 @@
 from Arena import Arena
 from Tribute import Tribute
 from Resource import Resource
-from config import CANTEEN_VALUE, TURNS_PER_DAY
+from config import *
 from Player import Player, HumanPlayer, BotPlayer
 import gymnasium as gym
 from gymnasium import spaces
@@ -17,6 +17,7 @@ class Game():
         self.turn_count = 0
         self.day_count = 0
         self.drama = 0
+        self.winner = None
 
         if test:
             pass
@@ -309,37 +310,50 @@ class Game():
             arena.obstacles.append(pos)
             arena.arena_grid[r][c] = 8
 
-    def run(self):
+    def run(self, show_arena=True):
             while len(self.arena.tributes) > 1:
                 self.turn_count += 1
-                print(f"=== DAY {self.day_count + 1} ===")
+                if show_arena:
+                    self.arena.displayArena()
+                self.arena.displayArena()
+                print(f"\n========== DAY {self.day_count + 1} ===============")
                 while self.turn_count <= TURNS_PER_DAY:
                     for player in self.players:
-                        if player.tribute.isAlive:
-                            print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
-                            gh.setupActionMap(player.tribute, self.arena, self)
-                            player.take_turn()
-                    self.arena.clearDeadTributes()
-                    self.arena.displayArena()
+                        if not player.tribute.isAlive:
+                            continue
+                        player.tribute.segment = self.arena.getSegmentFromPos(player.tribute.pos)
+                        gh.setValuesBeforeTurn(player.tribute, self.arena)
+                        player.valid_actions = gh.setupActionMap(player.tribute, self.arena, self)
+                        print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
+                        player.take_turn()
+                        self.arena.clearDeadTributes()
+                        self.players = [p for p in self.players if p.tribute.isAlive]
+                        if len(self.arena.tributes) <= 1:
+                            if len(self.arena.tributes) == 1:
+                                self.winner = self.arena.tributes[0]
+                            break
+                    if len(self.arena.tributes) <= 1:
+                        break
                     self.turn_count += 1
-                    # if turn cap has been reached, reset and move to next day
+                    
                 self.turn_count = 0
                 self.day_count += 1
+                if len(self.arena.tributes) <= 1:
+                    break
 
             print("THE GAMES ARE OVER! Congratulations to our victor!")
             self.printGameResults()
 
     def printGameResults(self):
-        winner = self.arena.tributes[0]
-        print("──────────────────────────────")
+        print("_" * 30)
         print(" VICTOR")
-        print("──────────────────────────────")
-        print(f"  Name:        Tribute {winner.letter}")
-        print(f"  District:    {winner.district}")
-        print(f"  Gender:      {winner.gender.capitalize()}")
-        print("──────────────────────────────")
+        print("_" * 30)
+        print(f"  Name:        Tribute {self.winner.letter}")
+        print(f"  District:    {self.winner.district}")
+        print(f"  Gender:      {self.winner.gender.capitalize()}")
+        print("_" * 30)
         print(" GAME STATS")
-        print("──────────────────────────────")
+        print("_" * 30)
         print(f"  Days:        {self.day_count}")
         print(f"  Drama Score: {self.drama}")
-        print("──────────────────────────────")
+        print("_" * 30)

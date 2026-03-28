@@ -168,6 +168,7 @@ class Arena:
         for key, value in self.segments.items():
             if pos in value:
                 return key
+        return list(self.segments.keys())[0] 
         
 
     def clearDeadTributes(self):
@@ -177,6 +178,7 @@ class Arena:
             if tribute.isAlive:
                 new_list.append(tribute)
             else:
+                print(f"Tribute {tribute.letter} has died")
                 self.restoreOldCellData(tribute, pos)
                 tribute.pos = None
                 self.num_tributes -= 1

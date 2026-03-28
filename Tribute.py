@@ -53,14 +53,13 @@ class Fighter:
             if isinstance(target, Mutt):
                 print("Tribute wins an attack against a mutt")
             else:
-                print(f"Tribute wins attack, tribute {str(target.letter)} health decreased")
+                print(f"Tribute {self.letter} wins attack, tribute {str(target.letter)} health decreased")
         else:
             self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * DAMAGE_MULTIPLIER))))
             if isinstance(target, Mutt):
                 print("A mutt won an attack on a tribute, tribute health decreased")
             else:
-                print(f"Target ({str(target.letter)}) wins attack, tribute health decreased")
-        
+                print(f"Target ({str(target.letter)}) wins attack, tribute {self.letter} health decreased")
         if not isinstance(target, Mutt):
             if not target.isAlive:
                 self.num_kills += 1

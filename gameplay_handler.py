@@ -40,7 +40,7 @@ def handleAttack (tribute, arena):
     target = arena.getTarget(tribute, True)
     if not target:
         return False
-    if (-2 <= tribute.pos[0] - target.pos[0] <= 2) and (-2 <= tribute.pos[1] - target.pos[1] <= 2) :
+    if (-1 <= tribute.pos[0] - target.pos[0] <= 1) and (-1 <= tribute.pos[1] - target.pos[1] <= 1):
         tribute.attack(target)
         return True
     else:
@@ -93,6 +93,7 @@ def handleRefillWater(tribute, arena):
     return False
 
 def handlePickup(tribute, arena):
+
     resource = arena.getResourceAt(tribute.pos)
     if resource is None:
         print("No resource at your position.")
@@ -108,6 +109,7 @@ def handlePickup(tribute, arena):
             return 2
 
     pickup = tribute.pickUpResource(resource)
+    print(f"resource type: {resource.type}, pickup result: {pickup}")
     if pickup == True:
         arena.removeResource(resource)
         return 1
@@ -188,7 +190,7 @@ def checkNeighborsFor(tribute, arena, type_num=-1, find_tribute=False):
 
         for row, col in neighbors:
             cell = arena.arena_grid[row][col]
-            if cell not in (0, 1, 3, 4, 5, 6, 7, 8, 9):
+            if isinstance(cell, str):
                 for target in arena.tributes:
                     if target.pos == (row, col) and target != tribute and target.isAlive:
                         return target
@@ -240,24 +242,20 @@ def moveMask(tribute, direction):
     return False
 
 def attackMask(arena, tribute):
-    # is there a tribute on the same cell as you?
-    canAttack = False
-    for target in arena.tributes:
-        if (abs(target.pos[0] - abs(tribute.pos[0])) <= 1) and (abs(target.pos[1] - abs(tribute.pos[1])) <= 1) and tribute != target:
-            canAttack = True
-            break
+    if checkNeighborsFor(tribute, arena, find_tribute=True):
+        return True
     for mutt in arena.mutts:
         if mutt.pos == tribute.pos:
-            canAttack = True
-            break
-    if canAttack:
-        return True
+            return True
     return False
 
 def pickupMask(tribute, arena):
     resource = arena.getResourceAt(tribute.pos)
     if resource is None:
         return False
+    if resource.type == Resource.Type.BACKPACK_SMALL or resource.type == Resource.Type.BACKPACK_LARGE:
+        if tribute.capacity > 2:
+            return False
     if len(tribute.inventory) < tribute.capacity:
         return True
     if resource.type.value == 6 or resource.type.value == 7:
@@ -347,6 +345,7 @@ def setValuesBeforeTurn(tribute, arena):
 
 
 def cleanUpAfterTurn(game, arena):
+    
     arena.clearDeadTributes()
     arena.clearDeadMutts()
     if len(arena.tributes) <= 1:
