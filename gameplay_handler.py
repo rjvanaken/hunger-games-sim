@@ -110,7 +110,6 @@ def handlePickup(tribute, arena):
             return 2
 
     pickup = tribute.pickUpResource(resource)
-    print(f"resource type: {resource.type}, pickup result: {pickup}")
     if pickup == True:
         arena.removeResource(resource)
         return 1
