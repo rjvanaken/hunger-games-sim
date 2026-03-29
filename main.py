@@ -9,9 +9,9 @@ import sys
 timesteps = 5000000
 
 if __name__ == "__main__":
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--play"
-    display = sys.argv[2] if len(sys.argv) > 2 else "--hide"
-    colors = sys.argv[3] if len(sys.argv) > 3 else "--none"
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--eval" # train, eval, robot, or play
+    display = "--show" in sys.argv
+    colors = "--color" in sys.argv
     
     if mode == "--train":
         env = GameEnv(size=48)
@@ -19,24 +19,17 @@ if __name__ == "__main__":
         model.learn(total_timesteps=timesteps)
         model.save("hunger_games_model")
         
-    elif mode == "--robot":
-        # load model into Robot, run Game
-        show_colors=False
+    
+    elif mode in ("--robot", "--eval"):
         game = Game(size=48, robot=True, train=False, test=False)
-        if display == "--show":
-            show_arena=True
-            
-            if colors == '--rainbow':
-                show_colors = True
-            game.run(show_arena, show_colors)
+        if mode == "--eval":
+            pass
+            # eval loop
+        else:
+            game.run(display, colors)
         
-
-        elif display == "--hide":
-            game.run()
 
     elif mode == "--play":
         # load model into Robot, run Game
         game = Game(size=48)
         game.run()
-
-
