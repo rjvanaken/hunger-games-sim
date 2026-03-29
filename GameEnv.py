@@ -115,6 +115,7 @@ class GameEnv(gym.Env):
             gh.handleAttack(self.tribute, self.arena)
             reward += ATTACK_REWARD
             if self.tribute.recently_attacked:
+                self.game.retaliation_count += 1
                 reward += CONTINUE_FIGHT_REWARD
                 self.tribute.recently_attacked = 0
 
@@ -140,7 +141,7 @@ class GameEnv(gym.Env):
             gh.handleEatFood(self.tribute)
             reward += EAT_REWARD
             if very_hungry:
-                reward += 1.0
+                reward += VERY_HUNGRY_BONUS
 
         elif action == 4:
             very_thirsty = False
@@ -149,7 +150,7 @@ class GameEnv(gym.Env):
             gh.handleDrinkWater(self.tribute, self.arena)
             reward += DRINK_REWARD
             if very_thirsty:
-                reward += 1.0
+                reward += VERY_THIRSTY_BONUS
 
         elif action == 5:
             very_low_health = False
@@ -158,7 +159,7 @@ class GameEnv(gym.Env):
             gh.handleUseMedical(self.tribute)
             reward += MEDICAL_REWARD
             if very_low_health:
-                reward += 1.0
+                reward += VERY_LOW_HEALTH_BONUS
 
         elif action == 6:
             gh.handleRefillWater(self.tribute, self.arena)
@@ -202,7 +203,7 @@ class GameEnv(gym.Env):
                 self.game.day_count += 1
                 for tribute in self.arena.tributes:
                     tribute.health = min(100, tribute.health + int(SLEEP_VALUE * (tribute.hunger / 100)))
-                    print(f"{tribute.letter}, health: {tribute.health}, hunger: {tribute.hunger}, thirst: {tribute.thirst}") 
+                    # print(f"{tribute.letter}, health: {tribute.health}, hunger: {tribute.hunger}, thirst: {tribute.thirst}") 
                 gh.cleanUpAfterTurn(self.game, self.arena)
 
                 result = self.check_game_over(obs, reward)
