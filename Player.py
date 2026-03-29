@@ -1,3 +1,5 @@
+import os
+
 import gameplay_handler as gh
 from stable_baselines3 import PPO
 import numpy as np
@@ -121,7 +123,7 @@ class HumanPlayer(Player):
 class BotPlayer(Player):
     def __init__(self, tribute, arena, model_path="hunger_games_model"):
         super().__init__(tribute, arena)
-        self.model = PPO.load(model_path)
+        self.model = PPO.load(model_path) if os.path.exists(model_path + ".zip") else None
         self.valid_actions = set()
         self.turn_count = 0
         
