@@ -377,5 +377,5 @@ class Game():
         print(" GAME STATS")
         print("_" * 30)
         print(f"  Days:        {self.day_count}")
-        print(f"  Drama Score: {self.drama}")
+        # print(f"  Drama Score: {self.drama}")
         print("_" * 30)

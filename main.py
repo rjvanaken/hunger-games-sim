@@ -82,9 +82,11 @@ if __name__ == "__main__":
             avg_kill_rate = round((sum(all_kill_rates) / episodes) * 100, 2)
             avg_days = sum(all_day_counts) / episodes
 
-    
-            print(f'''AVERAGE ACTION DISTRIBUTION
-move        {int(avg_moves)}
+
+            print("=" * 30)
+            print("ACTION DISTRIBUTION")
+            print("=" * 30)
+            print(f'''move        {int(avg_moves)}
 attack      {int(avg_attacks)}
 pickup      {int(avg_pickups)}
 eat         {int(avg_eats)}
@@ -95,14 +97,13 @@ refill      {int(avg_refills)}
     
 
             # print results
-            print(f"PERFORMANCE REVIEW")
+            print("=" * 30)
+            print("GAME STATS")
+            print("=" * 30)
             print(f"Average Rewards: {round(avg_rewards, 2)}" ) 
             print(f"Retaliation Rate: {avg_retal_rate}%")
             print(f"Death by Combat Rate: {avg_kill_rate}%")
-
-            print(f"\nGAME STATS")
             print(f"Average length: {round(avg_days)} days")
-    
 
         else:
             game.run(display, colors)
