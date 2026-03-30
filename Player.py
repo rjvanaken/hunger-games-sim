@@ -4,6 +4,7 @@ from config import HUNGER_WARNING_THRESHOLD, THIRST_WARNING_THRESHOLD
 import gameplay_handler as gh
 from stable_baselines3 import PPO
 import numpy as np
+import os
 
 class Player:
 

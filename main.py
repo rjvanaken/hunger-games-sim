@@ -17,6 +17,9 @@ if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "--eval" # train, eval, robot, or play
     display = "--show" in sys.argv
     colors = "--color" in sys.argv
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--eval" # train, eval, robot, or play
+    display = "--show" in sys.argv
+    colors = "--color" in sys.argv
     
     if mode == "--train":
         env = GameEnv(size=48)
@@ -24,6 +27,8 @@ if __name__ == "__main__":
         model.learn(total_timesteps=timesteps)
         model.save("hunger_games_model")
         
+    
+    elif mode in ("--robot", "--eval"):
     
     elif mode in ("--robot", "--eval"):
         game = Game(size=48, robot=True, train=False, test=False)
@@ -113,5 +118,3 @@ refill      {int(avg_refills)}
         # load model into Robot, run Game
         game = Game(size=48)
         game.run()
-
-
