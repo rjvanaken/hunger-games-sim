@@ -27,9 +27,6 @@ if __name__ == "__main__":
         model.learn(total_timesteps=timesteps)
         model.save("hunger_games_model")
         
-    
-    elif mode in ("--robot", "--eval"):
-    
     elif mode in ("--robot", "--eval"):
         game = Game(size=48, robot=True, train=False, test=False)
         if mode == "--eval":
