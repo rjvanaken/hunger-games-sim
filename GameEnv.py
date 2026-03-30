@@ -21,8 +21,6 @@ class GameEnv(gym.Env):
         self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
         self.valid_actions = set()
 
-        self.action_counts = {i: 0 for i in range(7)}
-
         for i in range(REMOVAL):
             self.arena.tributes[i].isAlive = False
  
@@ -42,27 +40,16 @@ class GameEnv(gym.Env):
             "thirst": spaces.Discrete(101),
             "row": spaces.Discrete(49),
             "col": spaces.Discrete(49),
+            "recently_attacked": spaces.Discrete(2),
         })
 
 
-
-    def print_results(self):
-        print("____________________")
-        print("GAME OVER")
-        print("____________________\n\n")
-        action_names = {0: 'move', 1: 'attack', 2: 'pickup', 3: 'eat', 4: 'drink', 5: 'medical', 6: 'refill'}
-        print(f"{'Action':<10} {'Count':<10}")
-        print("-" * 20)
-        for k, v in self.action_counts.items():
-            print(f"{action_names[k]:<10} {v:<10}")
-        self.action_counts = {i: 0 for i in range(7)}
-        print("\n\n")
 
     def check_game_over(self, obs, reward):
         if len(self.arena.tributes) <= 1:
             if len(self.arena.tributes) == 1:
                 print(f"Tribute {self.arena.tributes[0].letter} wins!!")
-            self.print_results()
+            self.game.print_results()
             return obs, reward, True, False, {}
         return None
 
@@ -86,6 +73,7 @@ class GameEnv(gym.Env):
             "col": self.tribute.pos[1],
             "known_water_row": 0,
             "known_water_col": 0,
+            "recently_attacked": self.tribute.recently_attacked
         }
 
         return obs, {}
@@ -104,6 +92,7 @@ class GameEnv(gym.Env):
             "col": self.tribute.pos[1],
             "known_water_row": gh.getKnownWater(self.tribute)[0],
             "known_water_col": gh.getKnownWater(self.tribute)[1],
+            "recently_attacked": self.tribute.recently_attacked
         }
         result = self.check_game_over(obs, reward)
         if result is not None:
@@ -125,6 +114,10 @@ class GameEnv(gym.Env):
             kills_before = self.tribute.num_kills
             gh.handleAttack(self.tribute, self.arena)
             reward += ATTACK_REWARD
+            if self.tribute.recently_attacked:
+                self.game.retaliation_count += 1
+                reward += CONTINUE_FIGHT_REWARD
+                self.tribute.recently_attacked = 0
 
             if self.tribute.num_kills > kills_before:
                 reward += KILL_REWARD
@@ -148,7 +141,7 @@ class GameEnv(gym.Env):
             gh.handleEatFood(self.tribute)
             reward += EAT_REWARD
             if very_hungry:
-                reward += 1.0
+                reward += VERY_HUNGRY_BONUS
 
         elif action == 4:
             very_thirsty = False
@@ -157,7 +150,7 @@ class GameEnv(gym.Env):
             gh.handleDrinkWater(self.tribute, self.arena)
             reward += DRINK_REWARD
             if very_thirsty:
-                reward += 1.0
+                reward += VERY_THIRSTY_BONUS
 
         elif action == 5:
             very_low_health = False
@@ -166,13 +159,13 @@ class GameEnv(gym.Env):
             gh.handleUseMedical(self.tribute)
             reward += MEDICAL_REWARD
             if very_low_health:
-                reward += 1.0
+                reward += VERY_LOW_HEALTH_BONUS
 
         elif action == 6:
             gh.handleRefillWater(self.tribute, self.arena)
             reward += REFILL_REWARD
 
-        self.action_counts[action] += 1
+        self.game.action_counts[action] += 1
 
         if self.tribute.hunger <= HUNGER_WARNING_THRESHOLD:
             reward -= 0.1
@@ -181,9 +174,12 @@ class GameEnv(gym.Env):
         if self.tribute.health <= 40:
             reward -= 0.1
 
+
         if not self.tribute.isAlive:
-            print(f"Tribute {self.tribute.letter} died")
+            # print(f"Tribute {self.tribute.letter} died")
             reward -= 2.0
+
+        self.game.game_rewards += reward
 
         gh.cleanUpAfterTurn(self.game, self.arena)
 
@@ -195,7 +191,7 @@ class GameEnv(gym.Env):
             terminated = True
 
         if terminated:
-            self.print_results()
+            self.game.print_results()
             return obs, reward, terminated, False, {}
 
         self.tribute.turn_count += 1
@@ -207,7 +203,7 @@ class GameEnv(gym.Env):
                 self.game.day_count += 1
                 for tribute in self.arena.tributes:
                     tribute.health = min(100, tribute.health + int(SLEEP_VALUE * (tribute.hunger / 100)))
-                    print(f"{tribute.letter}, health: {tribute.health}, hunger: {tribute.hunger}, thirst: {tribute.thirst}") 
+                    # print(f"{tribute.letter}, health: {tribute.health}, hunger: {tribute.hunger}, thirst: {tribute.thirst}") 
                 gh.cleanUpAfterTurn(self.game, self.arena)
 
                 result = self.check_game_over(obs, reward)
@@ -227,6 +223,7 @@ class GameEnv(gym.Env):
             "col": self.tribute.pos[1],
             "known_water_row": gh.getKnownWater(self.tribute)[0],
             "known_water_col": gh.getKnownWater(self.tribute)[1],
+            "recently_attacked": self.tribute.recently_attacked
         }
 
         return obs, reward, terminated, False, {}

@@ -17,10 +17,16 @@ class Game():
         self.turn_count = 0
         self.day_count = 0
         self.drama = 0
+        self.retaliation_count = 0
+        self.game_rewards = 0
         self.winner = None
-        self.action_counts = {i: 0 for i in range(7)}
         self.deaths_by_combat = 0
         self.deaths_by_decay = 0
+
+        self.action_counts = {i: 0 for i in range(7)}
+
+
+
 
 
         if test:
@@ -341,7 +347,7 @@ class Game():
                         gh.setValuesBeforeTurn(player.tribute, self.arena)
                         player.valid_actions = gh.setupActionMap(player.tribute, self.arena, self)
                         print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
-                        player.take_turn()
+                        player.take_turn(self)
                         self.arena.clearDeadTributes(self)
                         self.players = [p for p in self.players if p.tribute.isAlive]
                         if len(self.arena.tributes) <= 1:
@@ -371,5 +377,5 @@ class Game():
         print(" GAME STATS")
         print("_" * 30)
         print(f"  Days:        {self.day_count}")
-        print(f"  Drama Score: {self.drama}")
+        # print(f"  Drama Score: {self.drama}")
         print("_" * 30)

@@ -1,14 +1,22 @@
+from math import floor
+import os
+from tqdm import tqdm
 from Game import Game
 from GameEnv import GameEnv
 import tests.test_helper as th
 from stable_baselines3 import PPO
 import sys
+from contextlib import redirect_stdout
 
 
 
 timesteps = 5000000
+episodes = 10
 
 if __name__ == "__main__":
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--eval" # train, eval, robot, or play
+    display = "--show" in sys.argv
+    colors = "--color" in sys.argv
     mode = sys.argv[1] if len(sys.argv) > 1 else "--eval" # train, eval, robot, or play
     display = "--show" in sys.argv
     colors = "--color" in sys.argv
@@ -21,10 +29,87 @@ if __name__ == "__main__":
         
     
     elif mode in ("--robot", "--eval"):
+    
+    elif mode in ("--robot", "--eval"):
         game = Game(size=48, robot=True, train=False, test=False)
         if mode == "--eval":
-            pass
-            # eval loop
+
+            # rewards
+            all_rewards = []
+            # action distribution
+            all_moves = []
+            all_attacks = []
+            all_pickups = []
+            all_eats = []
+            all_drinks = []
+            all_meds = []
+            all_refills = []
+            # retaliation
+            all_retaliation_rates = []
+            # kills
+            all_kill_rates = []
+            # game length
+            all_day_counts = []
+
+            print("The Hunger Games are underway...")
+
+            with redirect_stdout(open(os.devnull, 'w')):
+                for i in tqdm(range(episodes)):
+                    game = Game(size=48, robot=True, train=False, test=False)
+                    game.run(display, colors)
+                    all_rewards.append(game.game_rewards)
+                    all_moves.append(game.action_counts[0])
+                    all_attacks.append(game.action_counts[1])
+                    all_pickups.append(game.action_counts[2])
+                    all_eats.append(game.action_counts[3])
+                    all_drinks.append(game.action_counts[4])
+                    all_meds.append(game.action_counts[5])
+                    all_refills.append(game.action_counts[6])
+
+                    retaliation_rate = game.retaliation_count / max(game.action_counts[1], 1)
+                    all_retaliation_rates.append(retaliation_rate)
+
+                    combat_death_rate = game.deaths_by_combat / 23
+                    all_kill_rates.append(combat_death_rate)
+
+                    all_day_counts.append(game.day_count)
+
+            # get averages
+            avg_rewards = sum(all_rewards) / episodes
+            avg_moves = sum(all_moves) / episodes
+            avg_attacks = sum(all_attacks) / episodes
+            avg_pickups = sum(all_pickups) / episodes
+            avg_eats = sum(all_eats) / episodes
+            avg_drinks = sum(all_drinks) / episodes
+            avg_meds = sum(all_meds) / episodes
+            avg_refills = sum(all_refills) / episodes
+            avg_retal_rate = round((sum(all_retaliation_rates) / episodes) * 100, 2)
+            avg_kill_rate = round((sum(all_kill_rates) / episodes) * 100, 2)
+            avg_days = sum(all_day_counts) / episodes
+
+
+            print("=" * 30)
+            print("ACTION DISTRIBUTION")
+            print("=" * 30)
+            print(f'''move        {int(avg_moves)}
+attack      {int(avg_attacks)}
+pickup      {int(avg_pickups)}
+eat         {int(avg_eats)}
+drink       {int(avg_drinks)}
+medical     {int(avg_meds)}
+refill      {int(avg_refills)}
+                  ''')
+    
+
+            # print results
+            print("=" * 30)
+            print("GAME STATS")
+            print("=" * 30)
+            print(f"Average Rewards: {round(avg_rewards, 2)}" ) 
+            print(f"Retaliation Rate: {avg_retal_rate}%")
+            print(f"Death by Combat Rate: {avg_kill_rate}%")
+            print(f"Average length: {round(avg_days)} days")
+
         else:
             game.run(display, colors)
         

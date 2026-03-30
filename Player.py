@@ -1,3 +1,6 @@
+import os
+
+from config import HUNGER_WARNING_THRESHOLD, THIRST_WARNING_THRESHOLD
 import gameplay_handler as gh
 from stable_baselines3 import PPO
 import numpy as np
@@ -127,7 +130,8 @@ class BotPlayer(Player):
         self.turn_count = 0
         
 
-    def take_turn(self):
+    def take_turn(self, game):
+        starters = gh.getRewardStarters(self.tribute)
         while True:
             
             obs = {
@@ -139,6 +143,7 @@ class BotPlayer(Player):
                 "col": self.tribute.pos[1],
                 "known_water_row": gh.getKnownWater(self.tribute)[0],
                 "known_water_col": gh.getKnownWater(self.tribute)[1],
+                "recently_attacked": self.tribute.recently_attacked
             }
             action, _ = self.model.predict(obs)
             action = int(action)
@@ -148,6 +153,7 @@ class BotPlayer(Player):
                 continue
 
             else:
+                game.action_counts[action] += 1
 
                 if action == 0:          
                     direction = gh.getRandomValidMove(self.tribute, self.arena)
@@ -177,6 +183,9 @@ class BotPlayer(Player):
                 elif action == 6:
                     success = gh.handleRefillWater(self.tribute, self.arena)
                     print(f"Tribute {self.tribute.letter} refilled their canteen")
+
+                
+                gh.calculateRewards(game, self.tribute, action, starters)
 
             if success:
                 self.turn_count += 1

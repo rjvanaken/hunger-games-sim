@@ -1,6 +1,6 @@
 import random
 from Resource import Resource
-from config import SLEEP_VALUE, TURNS_PER_DAY
+from config import *
 import numpy as np
 
 def handleMove (tribute, arena):
@@ -42,6 +42,7 @@ def handleAttack (tribute, arena):
         return False
     if (-1 <= tribute.pos[0] - target.pos[0] <= 1) and (-1 <= tribute.pos[1] - target.pos[1] <= 1):
         tribute.attack(target)
+        target.recently_attacked = 1
         return True
     else:
         print("cannot attack, too far away") # temp debug
@@ -109,7 +110,6 @@ def handlePickup(tribute, arena):
             return 2
 
     pickup = tribute.pickUpResource(resource)
-    print(f"resource type: {resource.type}, pickup result: {pickup}")
     if pickup == True:
         arena.removeResource(resource)
         return 1
@@ -356,6 +356,67 @@ def cleanUpAfterTurn(game, arena):
     if all(t.turn_count == TURNS_PER_DAY for t in arena.tributes):
         for t in arena.tributes:
             t.turn_count = 0
+
+        
+
+def getRewardStarters(tribute):
+    return {
+        "health": tribute.health,
+        "kills": tribute.num_kills,
+        "food": tribute.getFood(),
+        "very_hungry": tribute.hunger < HUNGER_WARNING_THRESHOLD,
+        "very_thirsty": tribute.thirst < THIRST_WARNING_THRESHOLD,
+        "very_low_health": tribute.health < 40
+    }
+
+
+def calculateRewards(game, tribute, action, starters):
+    health_before, kills_before, food_before, very_hungry, very_thirsty, very_low_health = starters.values()
+    
+    reward = 0
+
+    if action == 0:
+        reward += MOVE_REWARD
+    elif action == 1:
+        if tribute.recently_attacked:
+            reward += CONTINUE_FIGHT_REWARD
+            tribute.recently_attacked = 0
+            game.retaliation_count += 1
+        if tribute.num_kills > kills_before:
+            reward += KILL_REWARD
+        if tribute.health >= health_before:
+            reward += WIN_ATTACK_REWARD
+        reward += ATTACK_REWARD
+    elif action == 2:
+        reward += PICKUP_REWARD
+        if tribute.getFood() > food_before:
+            reward += FOOD_PICKUP_REWARD
+    elif action == 3:
+        reward += EAT_REWARD
+        if very_hungry:
+            reward += VERY_HUNGRY_BONUS
+    elif action == 4:
+        reward += DRINK_REWARD
+        if very_thirsty:
+            reward += VERY_THIRSTY_BONUS
+    elif action == 5:
+        reward += MEDICAL_REWARD
+        if very_low_health:
+            reward += VERY_LOW_HEALTH_BONUS
+    elif action == 6:
+        reward += REFILL_REWARD
+
+
+    if tribute.hunger <= HUNGER_WARNING_THRESHOLD:
+        reward -= 0.1
+    if tribute.thirst <= THIRST_WARNING_THRESHOLD:
+        reward -= 0.1
+    if tribute.health <= 40:
+        reward -= 0.1
+    if not tribute.isAlive:
+        reward -= 2.0
+
+    game.game_rewards += reward
 
 
 def setupActionMap(tribute, arena, game):
