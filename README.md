@@ -19,3 +19,4 @@ To run the single run game and show the map of the arena, add the `--show` flag
 
 To see the arena diagram with different color tributes to easily spot them, add the `--color` flag
 
+Note: If you are running this to an output file, the colors will not work and will cause visual disruptions
