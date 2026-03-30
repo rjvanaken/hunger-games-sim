@@ -14,12 +14,10 @@ timesteps = 5000000
 episodes = 10
 
 if __name__ == "__main__":
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--eval" # train, eval, robot, or play
+    mode = sys.argv[1] if len(sys.argv) > 1 else "--robot" # train, eval, robot, or play
     display = "--show" in sys.argv
     colors = "--color" in sys.argv
-    mode = sys.argv[1] if len(sys.argv) > 1 else "--eval" # train, eval, robot, or play
-    display = "--show" in sys.argv
-    colors = "--color" in sys.argv
+
     
     if mode == "--train":
         env = GameEnv(size=48)
@@ -29,7 +27,9 @@ if __name__ == "__main__":
         
     elif mode in ("--robot", "--eval"):
         game = Game(size=48, robot=True, train=False, test=False)
+        # IF EVAL MODE - BATCH RUN
         if mode == "--eval":
+            display
 
             # rewards
             all_rewards = []
@@ -107,6 +107,8 @@ refill      {int(avg_refills)}
             print(f"Death by Combat Rate: {avg_kill_rate}%")
             print(f"Average length: {round(avg_days)} days")
 
+
+        # IF NOT EVAL MODE - robot and single run, run with --robot
         else:
             game.run(display, colors)
         
