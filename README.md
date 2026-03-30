@@ -3,6 +3,17 @@ Welcome welcome, to the annual Hunger Games event!
 May the odds be ever in your favor
 
 ## Running Modes
+The model has been trained and can be run with the existing model or training can be executed
+
+### Train the Model
+To train the model, run:
+```
+python main.py --train > filename.txt
+```
+Best to add > `filename.txt`, as it will be many lines
+
+
+### Run with the Model
 To run the simulator and evaluate the model over 10k episodes:
 ```
 python main.py --eval
