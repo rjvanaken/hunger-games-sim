@@ -162,7 +162,7 @@ class BotPlayer(Player):
                         print(f"Tribute {self.tribute.letter} moved {direction}")
 
                 elif action == 1:
-                    success = gh.handleAttack(self.tribute, self.arena, print)
+                    success = gh.handleAttack(self.tribute, self.arena, print_moves)
                     if print_moves:
                         print(f"Tribute {self.tribute.letter} attacked tribute")
 

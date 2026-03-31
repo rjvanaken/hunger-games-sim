@@ -5,6 +5,7 @@ from config import *
 from Player import Player, HumanPlayer, BotPlayer
 import gymnasium as gym
 from gymnasium import spaces
+from tqdm import tqdm
 import numpy as np
 import gameplay_handler as gh
 
@@ -126,7 +127,7 @@ class Game():
 
 
 
-    def run(self, show_arena=True, show_colors=False, print_moves=False, save_frames=False):
+    def run(self, show_arena=True, show_colors=False, print_moves=False, save_frames=False, progress=None):
             
         frames = []
 
@@ -134,6 +135,7 @@ class Game():
             self.turn_count += 1
             if show_arena:
                 self.arena.displayArena(show_colors)
+            # if print_moves:
             print(f"\n========== DAY {self.day_count + 1} ===============")
             while self.turn_count <= TURNS_PER_DAY:
                 if save_frames:
@@ -160,12 +162,21 @@ class Game():
 
             self.turn_count = 0
             self.day_count += 1
+            if progress is not None:
+                progress.update(1)
             if len(self.arena.tributes) <= 1:
                 break
-        if save_frames:
+
+        if self.death_log:
+            print(f"\n--- Day {self.day_count} Deaths ---")
+            for msg in self.death_log:
+                print(msg)
+            self.death_log = []
+
+        if save_frames and frames:
             frames[0].save("games.gif", save_all=True, append_images=frames[1:], duration=300, loop=0)
 
-        print("THE GAMES ARE OVER! Congratulations to our victor!")
+        print("\nTHE GAMES ARE OVER! Congratulations to our victor!")
         self.printGameResults()
 
     def printGameResults(self):

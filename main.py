@@ -116,8 +116,8 @@ refill      {int(avg_refills)}
             if print_moves:
                 game.run(display, colors, print_moves, save_frames=True)
             else:
-                with tqdm(total=TURNS_PER_DAY) as pbar:
-                    game.run(display, colors, print_moves, save_frames=True)
+                with tqdm() as pbar:
+                    game.run(display, colors, print_moves, save_frames=True, progress=pbar)
         
 
     elif mode == "--play": # THIS MODE IS PROBABLY BROKEN AT THIS POINT
