@@ -2,6 +2,12 @@
 Welcome welcome, to the annual Hunger Games event!
 May the odds be ever in your favor
 
+## Dependencies
+
+```
+pip install gymnasium stable-baselines3 tqdm
+```
+
 ## Running Modes
 The model has been trained and can be run with the existing model or training can be executed.
 
