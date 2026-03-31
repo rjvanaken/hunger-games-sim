@@ -130,7 +130,7 @@ class BotPlayer(Player):
         self.turn_count = 0
         
 
-    def take_turn(self, game):
+    def take_turn(self, game, print_moves=False):
         starters = gh.getRewardStarters(self.tribute)
         while True:
             
@@ -158,32 +158,38 @@ class BotPlayer(Player):
                 if action == 0:          
                     direction = gh.getRandomValidMove(self.tribute, self.arena)
                     success = gh.handleSingleMove(self.tribute, direction, self.arena)
-                    print(f"Tribute {self.tribute.letter} moved {direction}")
+                    if print_moves:
+                        print(f"Tribute {self.tribute.letter} moved {direction}")
 
                 elif action == 1:
-                    success = gh.handleAttack(self.tribute, self.arena)
-                    print(f"Tribute {self.tribute.letter} attacked tribute")
+                    success = gh.handleAttack(self.tribute, self.arena, print)
+                    if print_moves:
+                        print(f"Tribute {self.tribute.letter} attacked tribute")
 
                 elif action == 2:
                     success = gh.handlePickup(self.tribute, self.arena)
-                    print(f"Tribute {self.tribute.letter} picked up an item")
+                    if print_moves:
+                        print(f"Tribute {self.tribute.letter} picked up an item")
 
                 elif action == 3:
                     success = gh.handleEatFood(self.tribute)
-                    print(f"Tribute {self.tribute.letter} ate food")
+                    if print_moves:
+                        print(f"Tribute {self.tribute.letter} ate food")
 
                 elif action == 4:
                     success = gh.handleDrinkWater(self.tribute, self.arena)
-                    print(f"Tribute {self.tribute.letter} drank water")
+                    if print_moves:
+                        print(f"Tribute {self.tribute.letter} drank water")
 
                 elif action == 5:
                     success = gh.handleUseMedical(self.tribute)
-                    print(f"Tribute {self.tribute.letter} used medical")
+                    if print_moves:
+                        print(f"Tribute {self.tribute.letter} used medical")
 
                 elif action == 6:
                     success = gh.handleRefillWater(self.tribute, self.arena)
-                    print(f"Tribute {self.tribute.letter} refilled their canteen")
-
+                    if print_moves:
+                        print(f"Tribute {self.tribute.letter} refilled their canteen")
                 
                 gh.calculateRewards(game, self.tribute, action, starters)
 

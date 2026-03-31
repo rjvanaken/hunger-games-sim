@@ -3,7 +3,7 @@ Welcome welcome, to the annual Hunger Games event!
 May the odds be ever in your favor
 
 ## Running Modes
-The model has been trained and can be run with the existing model or training can be executed
+The model has been trained and can be run with the existing model or training can be executed.
 
 ### Train the Model
 To train the model, run:
@@ -19,14 +19,22 @@ To run the simulator and evaluate the model over 10k episodes:
 python main.py --eval
 ```
 
-To run the simulator a single time and see what each tribute chose at every turn:
+#### Single Run
+In your single run, a `games.gif` file will be generated containing the arena frames for each turn (48 per day)
+
+To show tqdm progress bar:
 ```
 python main.py --robot
 ```
 
-#### Flags
+To show each tribute's move instead:
+```
+python main.py --robot --print
+```
 
-To run the single run game and show the map of the arena, add the `--show` flag
+#### Additional Flags
+
+To run the single run game and show the map of the arena in the terminal, add the `--display` flag
 
 To see the arena diagram with different color tributes to easily spot them, add the `--color` flag
 

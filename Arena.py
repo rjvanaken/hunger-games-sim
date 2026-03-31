@@ -2,6 +2,7 @@ from Resource import Resource
 import random
 import gameplay_handler as gh
 from config import *
+from PIL import Image, ImageDraw, ImageFont
 
 class Arena:
     def __init__(self, size):
@@ -280,4 +281,36 @@ class Arena:
                     break
 
         return target
+    
+
+
+    def renderTurnFrames(self, turn_num, day_num):
+        
+        font = ImageFont.load_default()
+        char_w, char_h = 6, 10
+
+        img = Image.new("RGB", (self.size * char_w * 2, self.size * char_h + 20), (0, 0, 0))
+        draw = ImageDraw.Draw(img)
+
+        draw.text((2, 0), f"Day {day_num} | Turn {turn_num}", fill=(200, 200, 200), font=font)
+
+        for i in range(self.size):
+            for j in range(self.size):
+                cell_value = self.arena_grid[i][j]
+
+                if cell_value == 0:
+                    ch = '.'
+                    color = (20, 20, 20)
+                elif isinstance(cell_value, str):
+                    tribute = next((t for t in self.tributes if t.letter == cell_value), None)
+                    ch = cell_value
+                    color = (255, 220, 50) if tribute else (150, 150, 150)
+                else:
+                    ch = str(cell_value)
+                    color = (80, 80, 80)  # walls, terrain numbers, etc.
+
+                x = j * char_w * 2  # *2 for the space
+                y = i * char_h + 20
+                draw.text((x, y), ch, fill=color, font=font)
+        return img
     

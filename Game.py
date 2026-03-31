@@ -22,6 +22,7 @@ class Game():
         self.winner = None
         self.deaths_by_combat = 0
         self.deaths_by_decay = 0
+        self.death_log = []
 
         self.action_counts = {i: 0 for i in range(7)}
 
@@ -121,6 +122,64 @@ class Game():
         print(f"Combat: {self.deaths_by_combat}")
         print(f"Decay: {self.deaths_by_decay}")
         print("\n\n")
+
+
+
+
+    def run(self, show_arena=True, show_colors=False, print_moves=False, save_frames=False):
+            
+        frames = []
+
+        while len(self.arena.tributes) > 1:
+            self.turn_count += 1
+            if show_arena:
+                self.arena.displayArena(show_colors)
+            print(f"\n========== DAY {self.day_count + 1} ===============")
+            while self.turn_count <= TURNS_PER_DAY:
+                if save_frames:
+                    frames.append(self.arena.renderTurnFrames(self.turn_count, self.day_count + 1))
+                for player in self.players:
+                    if not player.tribute.isAlive:
+                        continue
+                    player.tribute.segment = self.arena.getSegmentFromPos(player.tribute.pos)
+                    gh.setValuesBeforeTurn(player.tribute, self.arena)
+                    if print_moves:
+                        print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
+                    if player.tribute.isAlive:
+                        player.valid_actions = gh.setupActionMap(player.tribute, self.arena, self)
+                        player.take_turn(self, print_moves)
+                    self.arena.clearDeadTributes(self)
+                    self.players = [p for p in self.players if p.tribute.isAlive]
+                    if len(self.arena.tributes) <= 1:
+                        if len(self.arena.tributes) == 1:
+                            self.winner = self.arena.tributes[0]
+                        break
+                if len(self.arena.tributes) <= 1:
+                    break
+                self.turn_count += 1
+
+            self.turn_count = 0
+            self.day_count += 1
+            if len(self.arena.tributes) <= 1:
+                break
+        if save_frames:
+            frames[0].save("games.gif", save_all=True, append_images=frames[1:], duration=300, loop=0)
+
+        print("THE GAMES ARE OVER! Congratulations to our victor!")
+        self.printGameResults()
+
+    def printGameResults(self):
+        print("-" * 30)
+        print(" VICTOR")
+        print("-" * 30)
+        print(f"  Name:        Tribute {self.winner.letter}")
+        print(f"  District:    {self.winner.district}")
+        print(f"  Gender:      {self.winner.gender.capitalize()}")
+        print("-" * 30)
+        print(" GAME STATS")
+        print("-" * 30)
+        print(f"  Days:        {self.day_count}")
+        # print(f"  Drama Score: {self.drama}")
 
 
 
@@ -332,50 +391,4 @@ class Game():
                 continue
             arena.obstacles.append(pos)
             arena.arena_grid[r][c] = 8
-
-    def run(self, show_arena=True, show_colors=False):
-            while len(self.arena.tributes) > 1:
-                self.turn_count += 1
-                if show_arena:
-                    self.arena.displayArena(show_colors)
-                print(f"\n========== DAY {self.day_count + 1} ===============")
-                while self.turn_count <= TURNS_PER_DAY:
-                    for player in self.players:
-                        if not player.tribute.isAlive:
-                            continue
-                        player.tribute.segment = self.arena.getSegmentFromPos(player.tribute.pos)
-                        gh.setValuesBeforeTurn(player.tribute, self.arena)
-                        player.valid_actions = gh.setupActionMap(player.tribute, self.arena, self)
-                        print(f"\n[TRIBUTE {player.tribute.letter} - Turn {self.turn_count}]")
-                        player.take_turn(self)
-                        self.arena.clearDeadTributes(self)
-                        self.players = [p for p in self.players if p.tribute.isAlive]
-                        if len(self.arena.tributes) <= 1:
-                            if len(self.arena.tributes) == 1:
-                                self.winner = self.arena.tributes[0]
-                            break
-                    if len(self.arena.tributes) <= 1:
-                        break
-                    self.turn_count += 1
-                    
-                self.turn_count = 0
-                self.day_count += 1
-                if len(self.arena.tributes) <= 1:
-                    break
-
-            print("THE GAMES ARE OVER! Congratulations to our victor!")
-            self.printGameResults()
-
-    def printGameResults(self):
-        print("_" * 30)
-        print(" VICTOR")
-        print("_" * 30)
-        print(f"  Name:        Tribute {self.winner.letter}")
-        print(f"  District:    {self.winner.district}")
-        print(f"  Gender:      {self.winner.gender.capitalize()}")
-        print("_" * 30)
-        print(" GAME STATS")
-        print("_" * 30)
-        print(f"  Days:        {self.day_count}")
-        # print(f"  Drama Score: {self.drama}")
-        print("_" * 30)
+        print("-" * 30)

@@ -41,7 +41,7 @@ class Fighter:
         # add new pos to grid
         # set new self.pos afterwards
 
-    def attack(self, target):
+    def attack(self, target, print_moves=False):
         difference = max(target.strength, self.strength) - min(target.strength, self.strength)
         if self.strength > target.strength:
             attacker = (50 + difference) / 100
@@ -51,15 +51,19 @@ class Fighter:
         if random.random() >= attacker:
             target.health -= (BASE_DAMAGE + int(math.ceil((self.strength * DAMAGE_MULTIPLIER))))
             if isinstance(target, Mutt):
-                print("Tribute wins an attack against a mutt")
+                if print_moves:
+                    print("Tribute wins an attack against a mutt")
             else:
-                print(f"Tribute {self.letter} wins attack, tribute {str(target.letter)} health decreased")
+                if print_moves:
+                    print(f"Tribute {self.letter} wins attack, tribute {str(target.letter)} health decreased")
         else:
             self.health -= (BASE_DAMAGE + int(math.ceil((target.strength * DAMAGE_MULTIPLIER))))
             if isinstance(target, Mutt):
-                print("A mutt won an attack on a tribute, tribute health decreased")
+                if print_moves:
+                    print("A mutt won an attack on a tribute, tribute health decreased")
             else:
-                print(f"Target ({str(target.letter)}) wins attack, tribute {self.letter} health decreased")
+                if print_moves:
+                    print(f"Target ({str(target.letter)}) wins attack, tribute {self.letter} health decreased")
         if not isinstance(target, Mutt):
             if not target.isAlive:
                 self.num_kills += 1
@@ -160,6 +164,10 @@ class Tribute(Fighter):
         elif self.thirst <= THIRST_WARNING_THRESHOLD:
             penalty = THIRST_WARNING_PENALTY * (1 - self.thirst / THIRST_WARNING_THRESHOLD)
             self.health -= penalty
+
+        self.health = max(0, self.health)  # clamp health
+        if self.health <= 0:
+            self.isAlive = False
 
 
     def getFood(self):

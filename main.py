@@ -6,6 +6,7 @@ from GameEnv import GameEnv
 import tests.test_helper as th
 from stable_baselines3 import PPO
 import sys
+from config import TURNS_PER_DAY
 from contextlib import redirect_stdout
 
 
@@ -15,8 +16,9 @@ episodes = 10000
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "--robot" # train, eval, robot, or play
-    display = "--show" in sys.argv
+    display = "--display" in sys.argv
     colors = "--color" in sys.argv
+    print_moves = "--print" in sys.argv
 
     
     if mode == "--train":
@@ -53,7 +55,7 @@ if __name__ == "__main__":
             with redirect_stdout(open(os.devnull, 'w')):
                 for i in tqdm(range(episodes)):
                     game = Game(size=48, robot=True, train=False, test=False)
-                    game.run(display, colors)
+                    game.run(display, colors, save_frames=False)
                     all_rewards.append(game.game_rewards)
                     all_moves.append(game.action_counts[0])
                     all_attacks.append(game.action_counts[1])
@@ -109,11 +111,16 @@ refill      {int(avg_refills)}
 
 
         # IF NOT EVAL MODE - robot and single run, run with --robot
+
         else:
-            game.run(display, colors)
+            if print_moves:
+                game.run(display, colors, print_moves, save_frames=True)
+            else:
+                with tqdm(total=TURNS_PER_DAY) as pbar:
+                    game.run(display, colors, print_moves, save_frames=True)
         
 
-    elif mode == "--play":
+    elif mode == "--play": # THIS MODE IS PROBABLY BROKEN AT THIS POINT
         # load model into Robot, run Game
         game = Game(size=48)
         game.run()

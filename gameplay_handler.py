@@ -36,12 +36,12 @@ def handleSingleMove (tribute, direction, arena):
     else:
         return False
 
-def handleAttack (tribute, arena):
+def handleAttack (tribute, arena, print_moves):
     target = arena.getTarget(tribute, True)
     if not target:
         return False
     if (-1 <= tribute.pos[0] - target.pos[0] <= 1) and (-1 <= tribute.pos[1] - target.pos[1] <= 1):
-        tribute.attack(target)
+        tribute.attack(target, print_moves)
         target.recently_attacked = 1
         return True
     else:
