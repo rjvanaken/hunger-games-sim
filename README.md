@@ -14,12 +14,16 @@ Best to add > `filename.txt`, as it will be many lines
 
 
 ### Run with the Model
+You can run it with the model in 2 different ways:
+
+#### Evaluation Mode
+
 To run the simulator and evaluate the model over 10k episodes:
 ```
 python main.py --eval
 ```
 
-#### Single Run
+#### Single Run Mode
 In your single run, a `games.gif` file will be generated containing the arena frames for each turn (48 per day)
 
 To show tqdm progress bar:
@@ -27,7 +31,7 @@ To show tqdm progress bar:
 python main.py --robot
 ```
 
-To show each tribute's move instead:
+To print out each tribute's move instead:
 ```
 python main.py --robot --print
 ```
