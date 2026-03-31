@@ -16,7 +16,7 @@ To train the model, run:
 ```
 python main.py --train > filename.txt
 ```
-Best to add > `filename.txt`, as it will be many lines
+Best to add `> filename.txt`, as it will be many lines
 
 
 ### Run with the Model
