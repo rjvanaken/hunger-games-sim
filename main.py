@@ -11,7 +11,7 @@ from contextlib import redirect_stdout
 
 
 timesteps = 5000000
-episodes = 10
+episodes = 10000
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "--robot" # train, eval, robot, or play
