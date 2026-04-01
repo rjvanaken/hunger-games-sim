@@ -14,7 +14,7 @@ The model has been trained and can be run with the existing model or training ca
 ### Train the Model
 To train the model, run:
 ```
-python main.py --train > filename.txt
+python main.py --train
 ```
 It will output a `results.txt` file that will be overwritten when it gets too long
 
