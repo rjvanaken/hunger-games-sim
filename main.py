@@ -12,7 +12,7 @@ from log_helper import TrimmedFile
 
 
 
-timesteps = 5000000
+timesteps = 50000000
 episodes = 10000
 
 if __name__ == "__main__":
