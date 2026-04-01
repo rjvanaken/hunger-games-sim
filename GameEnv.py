@@ -20,9 +20,6 @@ class GameEnv(gym.Env):
         self.tribute = None
         self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
         self.valid_actions = set()
-
-        for i in range(REMOVAL):
-            self.arena.tributes[i].isAlive = False
  
         self.arena.clearDeadTributes(self.game)
         self.arena.displayArena()
@@ -56,9 +53,6 @@ class GameEnv(gym.Env):
     def reset(self, **kwargs):
         self.game = Game(size=48, robot=True)
         self.arena = self.game.arena
-
-        for i in range(REMOVAL):
-            self.arena.tributes[i].isAlive = False
 
         self.arena.clearDeadTributes(self.game)
         self.current_tribute_index = 0
@@ -112,7 +106,7 @@ class GameEnv(gym.Env):
         elif action == 1:
             health_before = self.tribute.health
             kills_before = self.tribute.num_kills
-            gh.handleAttack(self.tribute, self.arena)
+            gh.handleAttack(self.tribute, self.arena, print_moves=True)
             reward += ATTACK_REWARD
             if self.tribute.recently_attacked:
                 self.game.retaliation_count += 1
