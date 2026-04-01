@@ -8,6 +8,7 @@ from stable_baselines3 import PPO
 import sys
 from config import TURNS_PER_DAY
 from contextlib import redirect_stdout
+from log_helper import TrimmedFile
 
 
 
@@ -22,10 +23,14 @@ if __name__ == "__main__":
 
     
     if mode == "--train":
-        env = GameEnv(size=48)
-        model = PPO("MultiInputPolicy", env, verbose=1, n_steps=8192,  ent_coef=0.1, device="cpu", learning_rate=0.00003)
-        model.learn(total_timesteps=timesteps)
-        model.save("hunger_games_model")
+
+        with TrimmedFile("results.txt") as f:
+            sys.stdout = f
+            env = GameEnv(size=48)
+            model = PPO("MultiInputPolicy", env, verbose=1, n_steps=8192, ent_coef=0.1, device="cpu", learning_rate=0.00003)
+            model.learn(total_timesteps=timesteps)
+            model.save("hunger_games_model")
+        sys.stdout = sys.__stdout__
         
     elif mode in ("--robot", "--eval"):
         game = Game(size=48, robot=True, train=False, test=False)

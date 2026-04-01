@@ -16,7 +16,7 @@ To train the model, run:
 ```
 python main.py --train > filename.txt
 ```
-Best to add `> filename.txt`, as it will be many lines
+It will output a `results.txt` file that will be overwritten when it gets too long
 
 
 ### Run with the Model
