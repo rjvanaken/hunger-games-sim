@@ -1,4 +1,5 @@
 from Arena import Arena
+from Gamemaker import Gamemaker
 from Tribute import Tribute
 from Resource import Resource
 from config import *
@@ -14,6 +15,7 @@ class Game():
     def __init__(self, size, robot=False, train=False, test=False):    
 
         self.arena = Arena(size)
+        self.gamemaker = Gamemaker(self.arena)
         self.players = []
         self.turn_count = 0
         self.day_count = 0
@@ -24,6 +26,7 @@ class Game():
         self.deaths_by_combat = 0
         self.deaths_by_decay = 0
         self.death_log = []
+        self.deaths_per_day = {}
 
         self.action_counts = {i: 0 for i in range(7)}
 
@@ -140,7 +143,11 @@ class Game():
                 self.arena.displayArena(show_colors)
             # if print_moves:
             print(f"\n========== DAY {self.day_count + 1} ===============")
+            self.deaths_per_day[self.day_count + 1] = 0
             while self.turn_count <= TURNS_PER_DAY:
+                # at the start of new turn, assess interference
+                self.gamemaker.assessInterference(self)
+                
                 if save_frames:
                     frames.append(self.arena.renderTurnFrames(self.turn_count, self.day_count + 1))
                 for player in self.players:

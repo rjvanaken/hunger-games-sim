@@ -185,6 +185,8 @@ class Arena:
                 print(f"Tribute {tribute.letter} has died")
                 self.restoreOldCellData(tribute, pos)
                 tribute.pos = None
+                currentDeaths = game.deaths_per_day[game.day_count + 1]
+                game.deaths_per_day[game.day_count + 1] = currentDeaths + 1
                 if tribute.recently_attacked:
                     game.deaths_by_combat += 1
                 else:

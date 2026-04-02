@@ -9,6 +9,21 @@ class Gamemaker:
 
 
 
+    def assessInterference(self, game):
+        # if bomb deployed and the deploy delay has passed, detonate bomb
+        if self.arena.bomb.isDeployed:
+            if game.turn_count - self.arena.bomb.turn_deployed == 2:
+                self.detonate()
+        
+        elif game.deaths_per_day[game.day_count + 1] == 0:
+            # trigger bomb or wall? if no deaths yesterday
+            self.arena.bomb.turn_deployed = game.turn_count
+
+
+
+        # add other checks - something about kill type? if not a lot of combat kills, shrink arena?
+
+
     '''
     ========================
     TRIGGER MUTT
