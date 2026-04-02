@@ -13,11 +13,14 @@ class Gamemaker:
         # if bomb deployed and the deploy delay has passed, detonate bomb
         if self.arena.bomb.isDeployed:
             if game.turn_count - self.arena.bomb.turn_deployed == 2:
+                print("detonate bomb")
                 self.detonate()
-        
-        elif game.deaths_per_day[game.day_count + 1] == 0:
-            # trigger bomb or wall? if no deaths yesterday
+
+        elif game.day_count > 0 and game.deaths_per_day.get(game.day_count, 0) == 0:
             self.arena.bomb.turn_deployed = game.turn_count
+            self.deployBomb()
+            
+
 
 
 
