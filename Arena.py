@@ -1,3 +1,4 @@
+from Intervention import Intervention
 from Resource import Resource
 import random
 import gameplay_handler as gh
@@ -18,6 +19,8 @@ class Arena:
         self.tributes = []
         self.segments = {}
         self.mutts = []
+        self.hazards = []
+        self.bomb = Intervention(Intervention.Type.BOMB, positions=[], damage=BOMB_HALF_DAMAGE)
 
 
 
@@ -182,6 +185,8 @@ class Arena:
                 print(f"Tribute {tribute.letter} has died")
                 self.restoreOldCellData(tribute, pos)
                 tribute.pos = None
+                currentDeaths = game.deaths_per_day[game.day_count + 1]
+                game.deaths_per_day[game.day_count + 1] = currentDeaths + 1
                 if tribute.recently_attacked:
                     game.deaths_by_combat += 1
                 else:
@@ -279,9 +284,19 @@ class Arena:
                 if m.pos == tribute.pos:
                     target = m
                     break
-
         return target
-    
+
+    def getTributeAt(self, pos):
+        for tribute in self.tributes:
+            if tribute.pos == pos:
+                return tribute
+            else:
+                return None
+
+    def getBombFromSegment(self, segment):
+        if self.bomb.positions[0] in self.arena.segments[segment]:
+            return self.bomb
+        return None
 
 
     def renderTurnFrames(self, turn_num, day_num):

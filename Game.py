@@ -1,4 +1,5 @@
 from Arena import Arena
+from Gamemaker import Gamemaker
 from Tribute import Tribute
 from Resource import Resource
 from config import *
@@ -14,6 +15,7 @@ class Game():
     def __init__(self, size, robot=False, train=False, test=False):    
 
         self.arena = Arena(size)
+        self.gamemaker = None
         self.players = []
         self.turn_count = 0
         self.day_count = 0
@@ -24,6 +26,7 @@ class Game():
         self.deaths_by_combat = 0
         self.deaths_by_decay = 0
         self.death_log = []
+        self.deaths_per_day = {}
 
         self.action_counts = {i: 0 for i in range(7)}
 
@@ -98,6 +101,7 @@ class Game():
         
     def setupArena(self, robot=False):
         self.arena = Arena(self.arena.size)
+        self.gamemaker = Gamemaker(self.arena)
         self.arena.tributes = []
         self.addTributes(self.arena.center, robot)
         for tribute in self.arena.tributes:
@@ -131,13 +135,20 @@ class Game():
             
         frames = []
 
+        # AT THE START OF THE GAME LOOP FOR THE NEW DAY CALL THE FUNCTION FOR GAMEMAKERS TO EVALUATE AND REACT
+        # AND PASS IN THE CURRENT TURN, THEN CAN TRIGGER IF THE TURN VALUE IS NOT NONE WHEN TO DETONATE THE BOMB
+
         while len(self.arena.tributes) > 1:
             self.turn_count += 1
             if show_arena:
                 self.arena.displayArena(show_colors)
             # if print_moves:
             print(f"\n========== DAY {self.day_count + 1} ===============")
+            self.deaths_per_day[self.day_count + 1] = 0
             while self.turn_count <= TURNS_PER_DAY:
+                # at the start of new turn, assess interference
+                self.gamemaker.assessInterference(self)
+                
                 if save_frames:
                     frames.append(self.arena.renderTurnFrames(self.turn_count, self.day_count + 1))
                 for player in self.players:
@@ -162,6 +173,7 @@ class Game():
 
             self.turn_count = 0
             self.day_count += 1
+            self.arena.bomb.wasDeployedToday = False
             if progress is not None:
                 progress.update(1)
             if len(self.arena.tributes) <= 1:

@@ -195,6 +195,7 @@ class BotPlayer(Player):
 
             if success:
                 self.turn_count += 1
+                self.tribute.turn_count += 1
                 # self.arena.displayArena() # temporary - ultimately, will only print at start of each day
                 break
 
