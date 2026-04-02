@@ -20,7 +20,7 @@ class Arena:
         self.segments = {}
         self.mutts = []
         self.hazards = []
-        self.bomb = Intervention(Intervention.type.BOMB, positions=[], damage=BOMB_HALF_DAMAGE)
+        self.bomb = Intervention(Intervention.Type.BOMB, positions=[], damage=BOMB_HALF_DAMAGE)
 
 
 
