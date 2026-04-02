@@ -15,4 +15,7 @@ class Intervention:
         self.positions = positions
         self.damage = damage
         self.isDeployed = False
+        self.segment = None
+        self.wasDeployedToday = False
+        
 
