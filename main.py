@@ -13,7 +13,7 @@ from log_helper import TrimmedFile
 
 
 timesteps = 50000000
-episodes = 10000
+episodes = 100
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "--robot" # train, eval, robot, or play
