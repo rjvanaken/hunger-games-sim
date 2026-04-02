@@ -131,6 +131,9 @@ class Game():
             
         frames = []
 
+        # AT THE START OF THE GAME LOOP FOR THE NEW DAY CALL THE FUNCTION FOR GAMEMAKERS TO EVALUATE AND REACT
+        # AND PASS IN THE CURRENT TURN, THEN CAN TRIGGER IF THE TURN VALUE IS NOT NONE WHEN TO DETONATE THE BOMB
+
         while len(self.arena.tributes) > 1:
             self.turn_count += 1
             if show_arena:

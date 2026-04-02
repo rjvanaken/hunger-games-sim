@@ -1,4 +1,4 @@
-from config import BOMB_DAMAGE_FAR, BOMB_DAMAGE_NEAR
+from config import BOMB_HALF_DAMAGE, BOMB_CENTER_IND
 from collections import Counter
 
 class Gamemaker:
@@ -28,37 +28,35 @@ class Gamemaker:
     '''
 
     def deployBomb(self):
-        # CREATE bomb object
-        bomb = None
         # get target segment
         target = self.findDenseSegment()
-        bomb_center = [5, 6, 9, 10]
-        for i in range(len(bomb_center)):
-            index = bomb_center[i]
+        for i in range(len(BOMB_CENTER_IND)):
+            index = BOMB_CENTER_IND[i]
             pos = self.arena.segments[target][index]
-            bomb.positions.append(pos)
+            self.arena.bomb.positions.append(pos)
             row, col = pos
             if not self.arena.getTributeAt(pos):
                 self.arena.arena_grid[row][col] = 4
         
-        return bomb
+        self.arena.bomb.isDeployed = True
             
-
-
     
-    def detonate(self, bomb):
+    def detonate(self):
+        if self.arena.bomb.isDeployed:
+            segment = self.arena.bomb.segment
+            for i, pos in enumerate(self.arena.segments[segment]):
+                tribute = self.arena.getTributeAt(pos)
+                if tribute:
+                    tribute.health -= BOMB_HALF_DAMAGE
+                    if i in BOMB_CENTER_IND:
+                        tribute.health -= BOMB_HALF_DAMAGE
 
-        row, col = pos
-            if distance == 0:
-                tribute.health = 0 
-            elif distance == 1:
-                tribute.health -= BOMB_DAMAGE_NEAR
-            elif distance == 2:
-                tribute.health -= BOMB_DAMAGE_FAR
-
+        self.arena.bomb.isDeployed = False
+        self.arena.bomb.segment = None
+        self.arena.bomb.positions = []
+        
 
     def findDenseSegment(self):
-
         tribute_segments = []
         for tribute in self.arena.tributes:
             tribute_segments.append(tribute.segment)
