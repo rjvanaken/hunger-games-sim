@@ -1,3 +1,4 @@
+from Intervention import Intervention
 from Resource import Resource
 import random
 import gameplay_handler as gh
@@ -18,6 +19,8 @@ class Arena:
         self.tributes = []
         self.segments = {}
         self.mutts = []
+        self.hazards = []
+        self.bomb = Intervention(Intervention.type.BOMB, positions=[], damage=BOMB_HALF_DAMAGE)
 
 
 
@@ -288,7 +291,10 @@ class Arena:
             else:
                 return None
 
-    
+    def getBombFromSegment(self, segment):
+        if self.bomb.positions[0] in self.arena.segments[segment]:
+            return self.bomb
+        return None
 
 
     def renderTurnFrames(self, turn_num, day_num):

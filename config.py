@@ -64,8 +64,7 @@ VERY_THIRSTY_BONUS = 1.0
 
 
 # Gamemaker influence
-BOMB_DAMAGE_NEAR = -30
-BOMB_DAMAGE_FAR = -10
+BOMB_HALF_DAMAGE = 15 #todo adjust
 BOMB_CENTER_IND = [5, 6, 9, 10]
 
 
