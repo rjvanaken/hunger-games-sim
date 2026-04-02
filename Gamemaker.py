@@ -10,15 +10,16 @@ class Gamemaker:
 
 
     def assessInterference(self, game):
+        if not self.arena.bomb.wasDeployedToday:
         # if bomb deployed and the deploy delay has passed, detonate bomb
-        if self.arena.bomb.isDeployed:
-            if game.turn_count - self.arena.bomb.turn_deployed == 2:
-                print("detonate bomb")
-                self.detonate()
+            if self.arena.bomb.isDeployed:
+                if game.turn_count - self.arena.bomb.turn_deployed == 2:
+                    print("detonate bomb")
+                    self.detonate()
 
-        elif game.day_count > 0 and game.deaths_per_day.get(game.day_count, 0) == 0:
-            self.arena.bomb.turn_deployed = game.turn_count
-            self.deployBomb()
+            elif game.day_count > 0 and game.deaths_per_day.get(game.day_count, 0) == 0:
+                self.arena.bomb.turn_deployed = game.turn_count
+                self.deployBomb()
             
 
 
@@ -46,8 +47,10 @@ class Gamemaker:
     '''
 
     def deployBomb(self):
+        self.arena.bomb.wasDeployedToday = True
         # get target segment
         target = self.findDenseSegment()
+        self.arena.bomb.segment = target
         for i in range(len(BOMB_CENTER_IND)):
             index = BOMB_CENTER_IND[i]
             pos = self.arena.segments[target][index]
@@ -75,14 +78,11 @@ class Gamemaker:
         
 
     def findDenseSegment(self):
-        tribute_segments = []
-        for tribute in self.arena.tributes:
-            tribute_segments.append(tribute.segment)
-        
-        segment_counts = Counter(tribute_segments).most_common(1)[0][0]
-
-        return segment_counts[0]
-    
+        all_segments = [tribute.segment for tribute in self.arena.tributes]
+        tribute_segments = [s for s in all_segments if s is not None]
+        if not tribute_segments:
+            return None
+        return Counter(tribute_segments).most_common(1)[0][0]
 
     '''
     ========================

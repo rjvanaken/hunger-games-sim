@@ -15,7 +15,7 @@ class Game():
     def __init__(self, size, robot=False, train=False, test=False):    
 
         self.arena = Arena(size)
-        self.gamemaker = Gamemaker(self.arena)
+        self.gamemaker = None
         self.players = []
         self.turn_count = 0
         self.day_count = 0
@@ -101,6 +101,7 @@ class Game():
         
     def setupArena(self, robot=False):
         self.arena = Arena(self.arena.size)
+        self.gamemaker = Gamemaker(self.arena)
         self.arena.tributes = []
         self.addTributes(self.arena.center, robot)
         for tribute in self.arena.tributes:
@@ -172,6 +173,7 @@ class Game():
 
             self.turn_count = 0
             self.day_count += 1
+            self.arena.bomb.wasDeployedToday = False
             if progress is not None:
                 progress.update(1)
             if len(self.arena.tributes) <= 1:

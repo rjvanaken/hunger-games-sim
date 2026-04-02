@@ -287,7 +287,7 @@ class Arena:
         return target
 
     def getTributeAt(self, pos):
-        for tribute in self.arena.tributes:
+        for tribute in self.tributes:
             if tribute.pos == pos:
                 return tribute
             else:
