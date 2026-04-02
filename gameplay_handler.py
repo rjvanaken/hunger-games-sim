@@ -432,7 +432,7 @@ def setupActionMap(tribute, arena, game):
     if not preventMove:
         if up or down or left or right:
             valid_actions.add(0)
-    if attackMask(arena, tribute) and not (game.day_count == 0 and tribute.turn_count < 2):
+    if attackMask(arena, tribute) and not (game.day_count == 0 and tribute.turn_count < 3):
     # add attack to valid actions
         valid_actions.add(1)
     if pickupMask(tribute, arena):
