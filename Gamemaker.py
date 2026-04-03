@@ -50,6 +50,9 @@ class Gamemaker:
         self.arena.bomb.wasDeployedToday = True
         # get target segment
         target = self.findDenseSegment()
+        if not target:
+            return
+            # if should not drop bomb then do not deploy
         self.arena.bomb.segment = target
         for i in range(len(BOMB_CENTER_IND)):
             index = BOMB_CENTER_IND[i]
@@ -80,7 +83,7 @@ class Gamemaker:
     def findDenseSegment(self):
         all_segments = [tribute.segment for tribute in self.arena.tributes]
         tribute_segments = [s for s in all_segments if s is not None]
-        if not tribute_segments:
+        if len(tribute_segments) <= 1:
             return None
         return Counter(tribute_segments).most_common(1)[0][0]
 
