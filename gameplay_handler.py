@@ -147,8 +147,7 @@ def getRandomValidMove(tribute, arena):
     if not dirs:
         return None
     move = random.choice(dirs)
-    tribute.last_move = move
-    
+    tribute.last_move = tribute.move_map[move]
     return move
 
 

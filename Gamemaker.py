@@ -10,26 +10,28 @@ class Gamemaker:
 
 
     def assessInterference(self, game):
-        if self.arena.bomb.isDeployed:
-            if game.turn_count - self.arena.bomb.turn_deployed == 2:
-                print("detonate bomb")
-                self.detonate()
-                self.arena.clearDeadTributes(game, gamemaker_kill=True)
-                return
-            
-        if self.arena.bomb.wasDeployedToday or game.placed_wall_today:
-            return
-        
-        if len(self.arena.tributes) > 2:
-            if game.deaths_per_day.get(game.day_count, {}).get("combat", 0) == 0:
-                self.arena.bomb.turn_deployed = game.turn_count
-                self.deployBomb()
-                return
 
-        if game.day_count >= 2:
-            result = self.evaluateAndShrinkArena()
-            game.placed_wall_today = result
+        if game.day_count > 0:    
+            if self.arena.bomb.isDeployed:
+                if game.turn_count - self.arena.bomb.turn_deployed == 2:
+                    print("detonate bomb")
+                    self.detonate()
+                    self.arena.clearDeadTributes(game, gamemaker_kill=True)
+                    return
+                
+            if self.arena.bomb.wasDeployedToday or game.placed_wall_today:
+                return
             
+            if len(self.arena.tributes) > 2:
+                if game.deaths_per_day.get(game.day_count, {}).get("combat", 0) == 0:
+                    self.arena.bomb.turn_deployed = game.turn_count
+                    self.deployBomb()
+                    return
+
+            if game.day_count >= 2:
+                result = self.evaluateAndShrinkArena()
+                game.placed_wall_today = result
+                
 
 
         
