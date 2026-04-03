@@ -20,6 +20,7 @@ class Arena:
         self.mutts = []
         self.hazards = []
         self.bomb = Intervention(Intervention.Type.BOMB, positions=[], damage=BOMB_HALF_DAMAGE)
+        self.hazard = Intervention(Intervention.Type.HAZARD, positions=[], damage=HAZARD_DAMAGE)
 
 
 
@@ -266,11 +267,22 @@ class Arena:
 
 
     def restoreOldCellData(self, tribute, pos):
-        resource = self.getResourceAt(pos)
         # restore old cell - if it had a resource put it back, otherwise 0
-        self.arena_grid[pos[0]][pos[1]] = resource.type.value if resource else 0
-        if tribute.isAlive:
-            self.arena_grid[tribute.pos[0]][tribute.pos[1]] = tribute.letter
+        row, col = pos
+        resource = self.getResourceAt(pos)
+        
+        if pos in self.hazard.positions:
+            self.arena_grid[row][col] = Intervention.Type.HAZARD.value
+            
+        elif resource:
+            self.arena_grid[row][col] = resource.type.value
+        
+        else:
+            self.arena_grid[row][col] = 0
+
+        if tribute:
+            if tribute.isAlive:
+                self.arena_grid[tribute.pos[0]][tribute.pos[1]] = tribute.letter
 
     def getTarget(self, tribute, attack=False):
         target = None

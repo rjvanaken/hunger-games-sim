@@ -1,4 +1,5 @@
-from config import BOMB_HALF_DAMAGE, BOMB_CENTER_IND, WALL_TRIGGER_DISTANCE
+from Intervention import Intervention
+from config import BOMB_HALF_DAMAGE, BOMB_CENTER_IND, HAZARD_DAMAGE, HAZARD_TRIGGER_DISTANCE
 from collections import Counter
 
 class Gamemaker:
@@ -18,8 +19,11 @@ class Gamemaker:
                     self.detonate()
                     self.arena.clearDeadTributes(game, gamemaker_kill=True)
                     return
+        
+            # apply damage - function blocks applying unless isDeployed
+            self.applyHazardDamage
                 
-            if self.arena.bomb.wasDeployedToday or game.placed_wall_today:
+            if self.arena.bomb.wasDeployedToday or self.arena.hazard.wasDeployedToday:
                 return
             
             if len(self.arena.tributes) > 2:
@@ -30,14 +34,10 @@ class Gamemaker:
 
             if game.day_count >= 2:
                 result = self.evaluateAndShrinkArena()
-                game.placed_wall_today = result
+                self.arena.hazard.wasDeployedToday = result
+
                 
 
-
-        
-
-
-        # add other checks - something about kill type? if not a lot of combat kills, shrink arena?
 
 
     '''
@@ -50,7 +50,6 @@ class Gamemaker:
     def activateMutt(mutt):
         mutt.isDormant = False
 
-  
             
     '''
     ========================
@@ -72,7 +71,7 @@ class Gamemaker:
             self.arena.bomb.positions.append(pos)
             row, col = pos
             if not self.arena.getTributeAt(pos):
-                self.arena.arena_grid[row][col] = 4
+                self.arena.arena_grid[row][col] = Intervention.Type.BOMB.value
         
         self.arena.bomb.isDeployed = True
             
@@ -89,6 +88,8 @@ class Gamemaker:
 
         self.arena.bomb.isDeployed = False
         self.arena.bomb.segment = None
+        for pos in self.arena.bomb.positions:
+            self.arena.restoreOldCellData(None, pos)
         self.arena.bomb.positions = []
         
 
@@ -101,16 +102,39 @@ class Gamemaker:
 
     '''
     ========================
-    SHRINK ARENA - wall
+    THE STORM IS COMING
     ========================
     '''
 
+
+    def applyHazardDamage(self):
+        if self.arena.hazard.isDeployed:
+            for tribute in self.arena.tributes:
+                partial_damage = False
+                full_damage = False
+                row, col = tribute.pos
+                full = [(row + 1, col), (row - 1, col), (row, col + 1), (row, col - 1)]
+                partial = [(row + 2, col), (row - 2, col), (row, col + 2), (row, col - 2)]
+                
+                full_damage = any(pos in self.arena.hazard.positions for pos in full)
+                partial_damage = not full_damage and any(pos in self.arena.hazard.positions for pos in partial)
+                
+                if full_damage:
+                    tribute.health -= HAZARD_DAMAGE
+
+                elif partial_damage:
+                    tribute.health -= (HAZARD_DAMAGE / 2)
+                        
+        self.arena.clearDeadTributes(self, gamemaker_kill=True)
+
+
+        
     def evaluateAndShrinkArena(self):
         min_row, max_row = self.getShrinkRow()
         min_col, max_col = self.getShrinkColumns()
 
         spread = (max_col - min_col + max_row - min_row) / len(self.arena.tributes)
-        if spread > WALL_TRIGGER_DISTANCE:
+        if spread > HAZARD_TRIGGER_DISTANCE:
             self.shrinkArena(min_row, max_row, min_col, max_col)
             print("placed wall") # temp DEBUG
             return True
@@ -121,9 +145,13 @@ class Gamemaker:
         for i in range(self.arena.size):
             for j in range(self.arena.size):
                 if i < min_row or i > max_row:
-                    self.arena.arena_grid[i][j] = 8
+                    self.arena.hazard.positions.append((i, j))
+                    self.arena.arena_grid[i][j] = Intervention.Type.HAZARD.value
                 if j < min_col or j > max_col:
-                    self.arena.arena_grid[i][j] = 8
+                    self.arena.hazard.positions.append((i, j))
+                    self.arena.arena_grid[i][j] = Intervention.Type.HAZARD.value
+
+        self.arena.hazard.positions = list(set(self.arena.hazard.positions))
 
 
     def getShrinkColumns(self):

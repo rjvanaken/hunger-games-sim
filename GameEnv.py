@@ -207,7 +207,7 @@ class GameEnv(gym.Env):
                     return result
                 
                 self.game.deaths_per_day[self.game.day_count + 1] = {"decay": 0, "combat": 0, "gamemaker": 0}
-                self.game.placed_wall_today = False
+                self.game.arena.hazard.wasDeployedToday = False
                 self.game.arena.bomb.wasDeployedToday = False
                 
                 print(f"=== DAY {self.game.day_count + 1} ===")
