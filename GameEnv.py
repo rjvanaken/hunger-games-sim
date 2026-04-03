@@ -17,6 +17,7 @@ class GameEnv(gym.Env):
             
         self.game = Game(size=48, robot=True)
         self.arena = self.game.arena
+        self.gamemaker = self.game.gamemaker
         self.tribute = None
         self.ACTION_MAP = {0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7}
         self.valid_actions = set()
@@ -190,8 +191,9 @@ class GameEnv(gym.Env):
 
         self.tribute.turn_count += 1
         self.current_tribute_index += 1
-        if self.current_tribute_index >= len(self.arena.tributes):
+        if self.current_tribute_index >= len(self.arena.tributes): #all tributes have gone, new round
             self.game.turn_count += 1
+            self.gamemaker.assessInterference(self.game)
             self.current_tribute_index = 0
             if self.game.turn_count > 0 and self.game.turn_count % TURNS_PER_DAY == 0:
                 self.game.day_count += 1
@@ -203,6 +205,10 @@ class GameEnv(gym.Env):
                 result = self.check_game_over(obs, reward)
                 if result is not None:
                     return result
+                
+                self.game.deaths_per_day[self.game.day_count + 1] = {"decay": 0, "combat": 0, "gamemaker": 0}
+                self.game.placed_wall_today = False
+                self.game.arena.bomb.wasDeployedToday = False
                 
                 print(f"=== DAY {self.game.day_count + 1} ===")
 
