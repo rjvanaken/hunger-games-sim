@@ -83,6 +83,7 @@ if __name__ == "__main__":
 
             # get averages
             avg_rewards = sum(all_rewards) / episodes
+            avg_rewards_per_tribute = (sum(all_rewards) / episodes) / 24
             avg_moves = sum(all_moves) / episodes
             avg_attacks = sum(all_attacks) / episodes
             avg_pickups = sum(all_pickups) / episodes
@@ -114,10 +115,13 @@ refill      {int(avg_refills)}
             print("GAME STATS")
             print("=" * 30)
             print(f"Average Rewards: {round(avg_rewards, 2)}" ) 
+            print(f"Average Rewards Per Tribute: {round(avg_rewards_per_tribute, 2)}" ) 
+            print(f"Average Length: {round(avg_days)} days")
+            print(f"-" * 30)
             print(f"Retaliation Rate: {avg_retal_rate}%")
             print(f"Death by Combat Rate: {avg_kill_rate}%")
-            print(f"Death by Gamemakert Rate: {avg_gm_kill_rate}%")
-            print(f"Average length: {round(avg_days)} days")
+            print(f"Death by Gamemaker Rate: {avg_gm_kill_rate}%")
+            print("\n")
 
 
         # IF NOT EVAL MODE - robot and single run, run with --robot

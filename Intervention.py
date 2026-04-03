@@ -17,5 +17,6 @@ class Intervention:
         self.isDeployed = False
         self.segment = None
         self.wasDeployedToday = False
+        self.day_deployed = None
         
 

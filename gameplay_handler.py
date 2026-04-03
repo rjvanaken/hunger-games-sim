@@ -186,13 +186,13 @@ def checkNeighborsFor(tribute, arena, type_num=-1, find_tribute=False):
         (tRow, tCol + 1),
         (tRow, tCol - 1)
     ]
-
         for row, col in neighbors:
-            cell = arena.arena_grid[row][col]
-            if isinstance(cell, str):
-                for target in arena.tributes:
-                    if target.pos == (row, col) and target != tribute and target.isAlive:
-                        return target
+            if 0 <= row < arena.size and 0 <= col < arena.size:
+                cell = arena.arena_grid[row][col]
+                if isinstance(cell, str):
+                    for target in arena.tributes:
+                        if target.pos == (row, col) and target != tribute and target.isAlive:
+                            return target
                     
 
     else:

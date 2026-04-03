@@ -334,6 +334,12 @@ class Arena:
                     tribute = next((t for t in self.tributes if t.letter == cell_value), None)
                     ch = cell_value
                     color = (255, 220, 50) if tribute else (150, 150, 150)
+                elif cell_value == 2:
+                    ch = '░'
+                    color = (255, 105, 180)  # pink storm
+                elif cell_value == 4:
+                    ch = '*'
+                    color = (255, 140, 0)  # orange bomb
                 else:
                     ch = str(cell_value)
                     color = (80, 80, 80)  # walls, terrain numbers, etc.

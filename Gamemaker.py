@@ -21,16 +21,17 @@ class Gamemaker:
                     return
         
             # apply damage - function blocks applying unless isDeployed
-            self.applyHazardDamage
+            self.applyHazardDamage()
                 
             if self.arena.bomb.wasDeployedToday or self.arena.hazard.wasDeployedToday:
                 return
             
             if len(self.arena.tributes) > 2:
-                if game.deaths_per_day.get(game.day_count, {}).get("combat", 0) == 0:
-                    self.arena.bomb.turn_deployed = game.turn_count
-                    self.deployBomb()
-                    return
+                if self.arena.bomb.day_deployed is None or game.day_count - self.arena.bomb.day_deployed > 1:
+                    if game.deaths_per_day.get(game.day_count, {}).get("combat", 0) == 0:
+                        self.arena.bomb.turn_deployed = game.turn_count
+                        self.deployBomb(game)
+                        return
 
             if game.day_count >= 2:
                 result = self.evaluateAndShrinkArena()
@@ -57,7 +58,8 @@ class Gamemaker:
     ========================
     '''
 
-    def deployBomb(self):
+    def deployBomb(self, game):
+        self.arena.bomb.day_deployed = game.day_count
         self.arena.bomb.wasDeployedToday = True
         # get target segment
         target = self.findDenseSegment()
@@ -88,6 +90,7 @@ class Gamemaker:
 
         self.arena.bomb.isDeployed = False
         self.arena.bomb.segment = None
+        self.arena.bomb.day_deployed
         for pos in self.arena.bomb.positions:
             self.arena.restoreOldCellData(None, pos)
         self.arena.bomb.positions = []
@@ -122,10 +125,12 @@ class Gamemaker:
                 if full_damage:
                     tribute.health -= HAZARD_DAMAGE
                     tribute.hazard_damage += HAZARD_DAMAGE
+                    print(f"full damage applied to {tribute.letter}")
 
                 elif partial_damage:
                     tribute.health -= HAZARD_DAMAGE_PARTIAL
                     tribute.hazard_damage += HAZARD_DAMAGE_PARTIAL
+                    print(f"Partial damage applied to {tribute.letter}")
  
                     #may figure out how to use the hazard count later, leaving for now
                         
