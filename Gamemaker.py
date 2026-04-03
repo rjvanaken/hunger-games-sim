@@ -10,30 +10,29 @@ class Gamemaker:
 
 
     def assessInterference(self, game):
+        if self.arena.bomb.isDeployed:
+            if game.turn_count - self.arena.bomb.turn_deployed == 2:
+                print("detonate bomb")
+                self.detonate()
+                self.arena.clearDeadTributes(game, gamemaker_kill=True)
+                return
+            
+        if self.arena.bomb.wasDeployedToday or game.placed_wall_today:
+            return
+        
         if len(self.arena.tributes) > 2:
-            if not self.arena.bomb.wasDeployedToday:
-            # if bomb deployed and the deploy delay has passed, detonate bomb
-                if self.arena.bomb.isDeployed:
-                    if game.turn_count - self.arena.bomb.turn_deployed == 2:
-                        print("detonate bomb")
-                        self.detonate()
-                        self.arena.clearDeadTributes(game, gamemaker_kill=True)
-
-                elif game.day_count > 0 and game.deaths_per_day.get(game.day_count, 0) == 0:
-                    self.arena.bomb.turn_deployed = game.turn_count
-                    self.deployBomb()
-
-        # perhaps if not greater than 2, we do a wall instead?
+            if game.deaths_per_day.get(game.day_count, {}).get("combat", 0) == 0:
+                self.arena.bomb.turn_deployed = game.turn_count
+                self.deployBomb()
+                return
 
         if game.day_count >= 2:
-            if not game.placed_wall_today:
-                result = self.evaluateAndShrinkArena()
-                game.placed_wall_today = result
-            
-
+            result = self.evaluateAndShrinkArena()
+            game.placed_wall_today = result
             
 
 
+        
 
 
         # add other checks - something about kill type? if not a lot of combat kills, shrink arena?
