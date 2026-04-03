@@ -26,8 +26,9 @@ class Gamemaker:
         # perhaps if not greater than 2, we do a wall instead?
 
         if game.day_count >= 2:
-            result = self.evaluateAndShrinkArena()
-            game.placed_wall_today = result
+            if not game.placed_wall_today:
+                result = self.evaluateAndShrinkArena()
+                game.placed_wall_today = result
             
 
             
