@@ -54,7 +54,7 @@ class GameEnv(gym.Env):
     def reset(self, **kwargs):
         self.game = Game(size=48, robot=True)
         self.arena = self.game.arena
-
+        self.gamemaker = self.game.gamemaker
         self.arena.clearDeadTributes(self.game)
         self.current_tribute_index = 0
         self.tribute = self.arena.tributes[self.current_tribute_index]
