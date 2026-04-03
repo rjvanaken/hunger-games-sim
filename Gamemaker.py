@@ -1,5 +1,5 @@
 from Intervention import Intervention
-from config import BOMB_HALF_DAMAGE, BOMB_CENTER_IND, HAZARD_DAMAGE, HAZARD_TRIGGER_DISTANCE
+from config import BOMB_HALF_DAMAGE, BOMB_CENTER_IND, HAZARD_DAMAGE, HAZARD_DAMAGE_PARTIAL, HAZARD_TRIGGER_DISTANCE
 from collections import Counter
 
 class Gamemaker:
@@ -121,9 +121,13 @@ class Gamemaker:
                 
                 if full_damage:
                     tribute.health -= HAZARD_DAMAGE
+                    tribute.hazard_damage += HAZARD_DAMAGE
 
                 elif partial_damage:
-                    tribute.health -= (HAZARD_DAMAGE / 2)
+                    tribute.health -= HAZARD_DAMAGE_PARTIAL
+                    tribute.hazard_damage += HAZARD_DAMAGE_PARTIAL
+ 
+                    #may figure out how to use the hazard count later, leaving for now
                         
         self.arena.clearDeadTributes(self, gamemaker_kill=True)
 
