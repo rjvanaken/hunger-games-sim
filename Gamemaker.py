@@ -10,16 +10,18 @@ class Gamemaker:
 
 
     def assessInterference(self, game):
-        if not self.arena.bomb.wasDeployedToday:
-        # if bomb deployed and the deploy delay has passed, detonate bomb
-            if self.arena.bomb.isDeployed:
-                if game.turn_count - self.arena.bomb.turn_deployed == 2:
-                    print("detonate bomb")
-                    self.detonate()
+        if len(self.arena.tributes) > 2:
+            if not self.arena.bomb.wasDeployedToday:
+            # if bomb deployed and the deploy delay has passed, detonate bomb
+                if self.arena.bomb.isDeployed:
+                    if game.turn_count - self.arena.bomb.turn_deployed == 2:
+                        print("detonate bomb")
+                        self.detonate()
 
-            elif game.day_count > 0 and game.deaths_per_day.get(game.day_count, 0) == 0:
-                self.arena.bomb.turn_deployed = game.turn_count
-                self.deployBomb()
+                elif game.day_count > 0 and game.deaths_per_day.get(game.day_count, 0) == 0:
+                    self.arena.bomb.turn_deployed = game.turn_count
+                    self.deployBomb()
+        # perhaps if not greater than 2, we do a wall instead?
             
 
 
