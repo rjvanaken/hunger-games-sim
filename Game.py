@@ -25,6 +25,7 @@ class Game():
         self.winner = None
         self.deaths_by_combat = 0
         self.deaths_by_decay = 0
+        self.deaths_by_gamemaker = 0
         self.death_log = []
         self.deaths_per_day = {}
 
@@ -126,6 +127,7 @@ class Game():
         print("\nDEATHS")
         print(f"Combat: {self.deaths_by_combat}")
         print(f"Decay: {self.deaths_by_decay}")
+        print(f"Gamemaker: {self.deaths_by_gamemaker}")
         print("\n\n")
 
 
@@ -144,10 +146,8 @@ class Game():
                 self.arena.displayArena(show_colors)
             # if print_moves:
             print(f"\n========== DAY {self.day_count + 1} ===============")
-            self.deaths_per_day[self.day_count + 1] = 0
+            self.deaths_per_day[self.day_count + 1] = {"decay": 0, "combat": 0, "gamemaker" : 0}
             while self.turn_count <= TURNS_PER_DAY:
-                # at the start of new turn, assess interference
-                self.gamemaker.assessInterference(self)
                 
                 if save_frames:
                     frames.append(self.arena.renderTurnFrames(self.turn_count, self.day_count + 1))
@@ -170,6 +170,8 @@ class Game():
                 if len(self.arena.tributes) <= 1:
                     break
                 self.turn_count += 1
+                # at the end of a round, assess interference
+                self.gamemaker.assessInterference(self)
 
             self.turn_count = 0
             self.day_count += 1

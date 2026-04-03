@@ -17,6 +17,7 @@ class Gamemaker:
                     if game.turn_count - self.arena.bomb.turn_deployed == 2:
                         print("detonate bomb")
                         self.detonate()
+                        self.arena.clearDeadTributes(game, gamemaker_kill=True)
 
                 elif game.day_count > 0 and game.deaths_per_day.get(game.day_count, 0) == 0:
                     self.arena.bomb.turn_deployed = game.turn_count

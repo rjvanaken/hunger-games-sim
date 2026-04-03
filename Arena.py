@@ -13,7 +13,6 @@ class Arena:
         self.arena_grid = [[0 for _ in range(size)] for _ in range(size)]  # Start empty
         # x, y are bottom left corner of cornucopia
         self.num_tributes = 24
-        
         self.resources = []
         self.obstacles = []
         self.tributes = []
@@ -175,7 +174,7 @@ class Arena:
         return list(self.segments.keys())[0] 
         
 
-    def clearDeadTributes(self, game):
+    def clearDeadTributes(self, game, gamemaker_kill=False):
         new_list = []
         for tribute in self.tributes:
             pos = tribute.pos 
@@ -185,12 +184,15 @@ class Arena:
                 print(f"Tribute {tribute.letter} has died")
                 self.restoreOldCellData(tribute, pos)
                 tribute.pos = None
-                currentDeaths = game.deaths_per_day[game.day_count + 1]
-                game.deaths_per_day[game.day_count + 1] = currentDeaths + 1
-                if tribute.recently_attacked:
+                if gamemaker_kill:
+                    game.deaths_by_gamemaker += 1
+                    game.deaths_per_day[game.day_count + 1]["gamemaker"] += 1
+                elif tribute.recently_attacked:
                     game.deaths_by_combat += 1
+                    game.deaths_per_day[game.day_count + 1]["combat"] += 1
                 else:
                     game.deaths_by_decay += 1
+                    game.deaths_per_day[game.day_count + 1]["decay"] += 1
                 self.num_tributes -= 1
         self.tributes = new_list
 

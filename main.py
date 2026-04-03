@@ -74,6 +74,7 @@ if __name__ == "__main__":
                     all_retaliation_rates.append(retaliation_rate)
 
                     combat_death_rate = game.deaths_by_combat / 23
+                    gamemaker_death_rate = game.deaths_by_gamemaker / 23
                     all_kill_rates.append(combat_death_rate)
 
                     all_day_counts.append(game.day_count)
