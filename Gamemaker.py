@@ -1,4 +1,4 @@
-from config import BOMB_HALF_DAMAGE, BOMB_CENTER_IND
+from config import BOMB_HALF_DAMAGE, BOMB_CENTER_IND, WALL_TRIGGER_DISTANCE
 from collections import Counter
 
 class Gamemaker:
@@ -22,7 +22,14 @@ class Gamemaker:
                 elif game.day_count > 0 and game.deaths_per_day.get(game.day_count, 0) == 0:
                     self.arena.bomb.turn_deployed = game.turn_count
                     self.deployBomb()
+
         # perhaps if not greater than 2, we do a wall instead?
+
+        if game.day_count >= 2:
+            result = self.evaluateAndShrinkArena()
+            game.placed_wall_today = result
+            
+
             
 
 
@@ -96,26 +103,38 @@ class Gamemaker:
     ========================
     '''
 
-    def shrinkArena(self):
-        min_row = self.getShrinkRow()
+    def evaluateAndShrinkArena(self):
+        min_row, max_row = self.getShrinkRow()
         min_col, max_col = self.getShrinkColumns()
 
-        for i in range(self.size):
-            for j in range(self.size):
-                if i < min_row:
+        spread = (max_col - min_col + max_row - min_row) / len(self.arena.tributes)
+        if spread > WALL_TRIGGER_DISTANCE:
+            self.shrinkArena(min_row, max_row, min_col, max_col)
+            print("placed wall") # temp DEBUG
+            return True
+
+
+    def shrinkArena(self, min_row, max_row, min_col, max_col):
+
+        for i in range(self.arena.size):
+            for j in range(self.arena.size):
+                if i < min_row or i > max_row:
                     self.arena.arena_grid[i][j] = 8
                 if j < min_col or j > max_col:
                     self.arena.arena_grid[i][j] = 8
 
 
     def getShrinkColumns(self):
-        min = min(tribute.pos[1] for tribute in self.arena.tributes)
-        max = max(tribute.pos[1] for tribute in self.arena.tributes)
+        min_col = min(tribute.pos[1] for tribute in self.arena.tributes)
+        max_col = max(tribute.pos[1] for tribute in self.arena.tributes)
 
-        return min, max
+        return min_col, max_col
              
 
     def getShrinkRow(self):
-        return min(tribute.pos[0] for tribute in self.arena.tributes)
+        min_row = min(tribute.pos[0] for tribute in self.arena.tributes)
+        max_row = max(tribute.pos[0] for tribute in self.arena.tributes)
+        
+        return min_row, max_row
 
     

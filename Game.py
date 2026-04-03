@@ -28,7 +28,7 @@ class Game():
         self.deaths_by_gamemaker = 0
         self.death_log = []
         self.deaths_per_day = {}
-
+        self.placed_wall_today = False
         self.action_counts = {i: 0 for i in range(7)}
 
 
@@ -176,6 +176,7 @@ class Game():
             self.turn_count = 0
             self.day_count += 1
             self.arena.bomb.wasDeployedToday = False
+            self.placed_wall_today = False
             if progress is not None:
                 progress.update(1)
             if len(self.arena.tributes) <= 1:
