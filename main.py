@@ -52,6 +52,7 @@ if __name__ == "__main__":
             all_retaliation_rates = []
             # kills
             all_kill_rates = []
+            all_gm_kill_rates = []
             # game length
             all_day_counts = []
 
@@ -76,6 +77,7 @@ if __name__ == "__main__":
                     combat_death_rate = game.deaths_by_combat / 23
                     gamemaker_death_rate = game.deaths_by_gamemaker / 23
                     all_kill_rates.append(combat_death_rate)
+                    all_gm_kill_rates.append(gamemaker_death_rate)
 
                     all_day_counts.append(game.day_count)
 
@@ -90,6 +92,7 @@ if __name__ == "__main__":
             avg_refills = sum(all_refills) / episodes
             avg_retal_rate = round((sum(all_retaliation_rates) / episodes) * 100, 2)
             avg_kill_rate = round((sum(all_kill_rates) / episodes) * 100, 2)
+            avg_gm_kill_rate = round((sum(all_gm_kill_rates) / episodes) * 100, 2)
             avg_days = sum(all_day_counts) / episodes
 
 
@@ -113,6 +116,7 @@ refill      {int(avg_refills)}
             print(f"Average Rewards: {round(avg_rewards, 2)}" ) 
             print(f"Retaliation Rate: {avg_retal_rate}%")
             print(f"Death by Combat Rate: {avg_kill_rate}%")
+            print(f"Death by Gamemakert Rate: {avg_gm_kill_rate}%")
             print(f"Average length: {round(avg_days)} days")
 
 
