@@ -212,6 +212,13 @@ class GameEnv(gym.Env):
                 
                 print(f"=== DAY {self.game.day_count + 1} ===")
 
+        if self.current_tribute_index >= len(self.arena.tributes):
+            result = self.check_game_over(obs, reward)
+            if result is not None:
+                return result
+            self.current_tribute_index = 0
+
+
         self.tribute = self.arena.tributes[self.current_tribute_index]
 
         obs = {

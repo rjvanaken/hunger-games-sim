@@ -27,7 +27,7 @@ class Game():
         self.deaths_by_decay = 0
         self.deaths_by_gamemaker = 0
         self.death_log = []
-        self.deaths_per_day = {}
+        self.deaths_per_day = {1: {"decay": 0, "combat": 0, "gamemaker": 0}}
         self.action_counts = {i: 0 for i in range(7)}
 
 

@@ -220,23 +220,15 @@ def moveMask(tribute, direction):
     posC = tribute.pos[1]
     if direction.lower() == 'u' or direction.lower() == 'up':
        if tribute.canMoveTo((posR - 1, posC)):
-           if tribute.last_move == 1:
-               return False
            return True
     elif direction.lower() == 'd' or direction.lower() == 'down':
        if tribute.canMoveTo((posR + 1, posC)):
-           if tribute.last_move == 0:
-               return False
            return True
     elif direction.lower() == 'l' or direction.lower() == 'left':
        if tribute.canMoveTo((posR, posC - 1)):
-           if tribute.last_move == 3:
-               return False
            return True
     elif direction.lower() == 'r' or direction.lower() == 'right':
        if tribute.canMoveTo((posR, posC + 1)):
-           if tribute.last_move == 2:
-               return False
            return True
     return False
 

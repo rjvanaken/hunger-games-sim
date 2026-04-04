@@ -21,7 +21,7 @@ class Gamemaker:
                     return
         
             # apply damage - function blocks applying unless isDeployed
-            self.applyHazardDamage()
+            self.applyHazardDamage(game)
                 
             if self.arena.bomb.wasDeployedToday or self.arena.hazard.wasDeployedToday:
                 return
@@ -110,7 +110,7 @@ class Gamemaker:
     '''
 
 
-    def applyHazardDamage(self):
+    def applyHazardDamage(self, game):
         if self.arena.hazard.isDeployed:
             for tribute in self.arena.tributes:
                 partial_damage = False
@@ -134,7 +134,7 @@ class Gamemaker:
  
                     #may figure out how to use the hazard count later, leaving for now
                         
-        self.arena.clearDeadTributes(self, gamemaker_kill=True)
+        self.arena.clearDeadTributes(game, gamemaker_kill=True)
 
 
         
