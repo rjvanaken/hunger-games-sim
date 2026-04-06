@@ -15,7 +15,7 @@ class GameEnv(gym.Env):
     def __init__(self, size):    
         super().__init__()
             
-        self.game = Game(size=48, robot=True)
+        self.game = Game(size=48, robot=True, train=True)
         self.arena = self.game.arena
         self.gamemaker = self.game.gamemaker
         self.tribute = None

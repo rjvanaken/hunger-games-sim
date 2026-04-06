@@ -28,7 +28,8 @@ class Gamemaker:
             
             if len(self.arena.tributes) > 2:
                 if self.arena.bomb.day_deployed is None or game.day_count - self.arena.bomb.day_deployed > 1:
-                    if game.deaths_per_day.get(game.day_count, {}).get("combat", 0) == 0:
+                    day_deaths = game.deaths_per_day.get(game.day_count, {})
+                    if day_deaths.get("combat", 0) + day_deaths.get("decay", 0) == 0:
                         self.arena.bomb.turn_deployed = game.turn_count
                         self.deployBomb(game)
                         return
