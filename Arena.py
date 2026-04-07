@@ -20,7 +20,7 @@ class Arena:
         self.mutts = []
         self.hazards = []
         self.bomb = Intervention(Intervention.Type.BOMB, positions=[], damage=BOMB_HALF_DAMAGE)
-        self.hazard = Intervention(Intervention.Type.HAZARD, positions=[], damage=HAZARD_DAMAGE)
+        self.hazard = Intervention(Intervention.Type.HAZARD, positions=[], damage=HAZARD_DAMAGE, pos=None)
 
 
 
@@ -270,8 +270,12 @@ class Arena:
         # restore old cell - if it had a resource put it back, otherwise 0
         row, col = pos
         resource = self.getResourceAt(pos)
+
         
         if pos in self.hazard.positions:
+            self.arena_grid[row][col] = Intervention.Type.HAZARD.value
+
+        elif any(h.pos == pos for h in self.hazards):
             self.arena_grid[row][col] = Intervention.Type.HAZARD.value
             
         elif resource:
