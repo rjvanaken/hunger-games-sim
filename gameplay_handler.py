@@ -332,10 +332,38 @@ def setValuesBeforeTurn(tribute, arena):
     segment = tribute.segment
     arena.updateSegmentData(tribute, segment)
     tribute.updateStatsBeforeTurn() # right now, recalcs strength - mutt logic to be added either here or there
-    tribute.updateKnowledge(arena)
-    handleMuttAttack(tribute, arena)
+    if tribute.isAlive:
+        applyHazardDamage(tribute, arena)
+        if not tribute.isAlive:
+            tribute.hazard_death = True
+    if tribute.isAlive:
+        tribute.updateKnowledge(arena)
+        handleMuttAttack(tribute, arena)
+        
+    
 
+def applyHazardDamage(tribute, arena):
+    full_damage = False
+    partial_damage = False
+    row, col = tribute.pos
+    full = [(row + 1, col), (row - 1, col), (row, col + 1), (row, col - 1)]
+    partial = [(row + 2, col), (row - 2, col), (row, col + 2), (row, col - 2)]
+    
+    all_hazard_positions = set(arena.hazard.positions)
+    for hazard in arena.hazards:
+        if hazard.pos is not None:
+            all_hazard_positions.add(hazard.pos)
 
+    full_damage = any(pos in all_hazard_positions for pos in full)
+    partial_damage = not full_damage and any(pos in all_hazard_positions for pos in partial)
+
+    if full_damage:
+        tribute.health -= HAZARD_DAMAGE
+        print(f"full damage applied to {tribute.letter}")
+
+    elif partial_damage:
+        tribute.health -= HAZARD_DAMAGE_PARTIAL
+        print(f"Partial damage applied to {tribute.letter}")
 
 
 def cleanUpAfterTurn(game, arena):

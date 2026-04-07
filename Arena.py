@@ -185,7 +185,7 @@ class Arena:
                 print(f"Tribute {tribute.letter} has died")
                 self.restoreOldCellData(tribute, pos)
                 tribute.pos = None
-                if gamemaker_kill:
+                if gamemaker_kill or tribute.hazard_death:
                     game.deaths_by_gamemaker += 1
                     game.deaths_per_day[game.day_count + 1]["gamemaker"] += 1
                 elif tribute.recently_attacked:

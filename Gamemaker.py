@@ -11,8 +11,8 @@ class Gamemaker:
 
 
     def assessInterference(self, game):
-
         if game.day_count > 0:    
+
             if self.arena.bomb.isDeployed:
                 if game.turn_count - self.arena.bomb.turn_deployed == 2:
                     print("detonate bomb")
@@ -20,8 +20,6 @@ class Gamemaker:
                     self.arena.clearDeadTributes(game, gamemaker_kill=True)
                     return
         
-            # apply damage - function blocks applying unless isDeployed
-            self.applyHazardDamage(game)
                 
             if self.arena.bomb.wasDeployedToday or self.arena.hazard.wasDeployedToday:
                 return
@@ -110,32 +108,6 @@ class Gamemaker:
     ========================
     '''
 
-
-    def applyHazardDamage(self, game):
-        if self.arena.hazard.isDeployed:
-            for tribute in self.arena.tributes:
-                partial_damage = False
-                full_damage = False
-                row, col = tribute.pos
-                full = [(row + 1, col), (row - 1, col), (row, col + 1), (row, col - 1)]
-                partial = [(row + 2, col), (row - 2, col), (row, col + 2), (row, col - 2)]
-                
-                full_damage = any(pos in self.arena.hazard.positions for pos in full)
-                partial_damage = not full_damage and any(pos in self.arena.hazard.positions for pos in partial)
-                
-                if full_damage:
-                    tribute.health -= HAZARD_DAMAGE
-                    tribute.hazard_damage += HAZARD_DAMAGE
-                    print(f"full damage applied to {tribute.letter}")
-
-                elif partial_damage:
-                    tribute.health -= HAZARD_DAMAGE_PARTIAL
-                    tribute.hazard_damage += HAZARD_DAMAGE_PARTIAL
-                    print(f"Partial damage applied to {tribute.letter}")
- 
-                    #may figure out how to use the hazard count later, leaving for now
-                        
-        self.arena.clearDeadTributes(game, gamemaker_kill=True)
 
 
         

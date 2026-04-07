@@ -52,7 +52,7 @@ class GameEnv(gym.Env):
         return None
 
     def reset(self, **kwargs):
-        self.game = Game(size=48, robot=True)
+        self.game = Game(size=48, robot=True, train=True)
         self.arena = self.game.arena
         self.gamemaker = self.game.gamemaker
         self.arena.clearDeadTributes(self.game)
@@ -89,15 +89,15 @@ class GameEnv(gym.Env):
             "known_water_col": gh.getKnownWater(self.tribute)[1],
             "recently_attacked": self.tribute.recently_attacked
         }
+        gh.setValuesBeforeTurn(self.tribute, self.arena)
+        
         result = self.check_game_over(obs, reward)
         if result is not None:
             return result
 
         if action not in self.valid_actions:
             return obs, -1, False, False, {}
-    
 
-        gh.setValuesBeforeTurn(self.tribute, self.arena)
 
         if action == 0:
             direction = gh.getRandomValidMove(self.tribute, self.arena)
