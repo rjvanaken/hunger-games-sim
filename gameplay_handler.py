@@ -328,6 +328,7 @@ def getKnownWater(tribute):
     return 0, 0  # none yet
 
 def setValuesBeforeTurn(tribute, arena):
+    tribute.near_hazard = False
     tribute.segment = arena.getSegmentFromPos(tribute.pos)
     segment = tribute.segment
     arena.updateSegmentData(tribute, segment)
@@ -344,7 +345,6 @@ def setValuesBeforeTurn(tribute, arena):
 
 def applyHazardDamage(tribute, arena):
     full_damage = False
-    partial_damage = False
     row, col = tribute.pos
     full = [(row + 1, col), (row - 1, col), (row, col + 1), (row, col - 1)]
     
@@ -356,6 +356,7 @@ def applyHazardDamage(tribute, arena):
 
     if full_damage:
         tribute.health -= HAZARD_DAMAGE
+        tribute.near_hazard = True
         print(f"full damage applied to {tribute.letter}")
 
 

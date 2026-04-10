@@ -91,9 +91,13 @@ class GameEnv(gym.Env):
         }
         gh.setValuesBeforeTurn(self.tribute, self.arena)
         
+        if self.arena.tribute.near_hazard:
+            reward -= NEAR_HAZARD_PENALTY
+        
         result = self.check_game_over(obs, reward)
         if result is not None:
             return result
+        
 
         if action not in self.valid_actions:
             return obs, -1, False, False, {}
@@ -107,7 +111,7 @@ class GameEnv(gym.Env):
         elif action == 1:
             health_before = self.tribute.health
             kills_before = self.tribute.num_kills
-            gh.handleAttack(self.tribute, self.arena, print_moves=True)
+            gh.handleAttack(self.tribute, self.arena, print_moves=False)
             reward += ATTACK_REWARD
             if self.tribute.recently_attacked:
                 self.game.retaliation_count += 1
@@ -120,14 +124,29 @@ class GameEnv(gym.Env):
                 reward += WIN_ATTACK_REWARD
 
         elif action == 2:
+            very_hungry = False
             capacity_before = self.tribute.capacity
             weapon_before = self.tribute.weapon_value
+            if self.tribute.hunger < HUNGER_WARNING_THRESHOLD:
+                very_hungry = True
             food_before = self.tribute.getFood()
             result = gh.handlePickup(self.tribute, self.arena)
             reward += PICKUP_REWARD
             if result == 1 and self.tribute.getFood() > food_before:
-                reward += FOOD_PICKUP_REWARD
-            
+                if very_hungry:
+                    reward += FOOD_PICKUP_REWARD
+            if result == 1 and self.tribute.capacity > capacity_before:
+                if self.tribute.capacity - capacity_before == LARGE_CAPACITY:
+                    reward += LARGE_BACKPACK_REWARD
+                elif self.tribute.capacity - capacity_before == SMALL_CAPACITY:
+                    reward += SMALL_BACKPACK_REWARD
+            elif result == 1 and self.tribute.weapon_value > weapon_before:
+                if self.tribute.weapon_value - weapon_before == STRONG_WEAPON:
+                    reward += STRONG_WEAPON_REWARD
+                elif self.tribute.weapon_value - weapon_before == WEAK_WEAPON:
+                    reward += WEAK_WEAPON_REWARD
+                
+
 
         elif action == 3:
             very_hungry = False
