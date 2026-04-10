@@ -12,12 +12,17 @@ pip install gymnasium stable-baselines3 tqdm
 The model has been trained and can be run with the existing model or training can be executed.
 
 ### Train the Model
-To train the model, run:
+To train the model from the start with survival and gamemaker bombs, run:
 ```
 python main.py --train
 ```
 It will output a `results.txt` file that will be overwritten when it gets too long
 
+To fine tune train the model with the addition of the hazardous wall, run:
+```
+python main.py --train --tune
+```
+It will output a `results_hazard.txt` file that will be overwritten when it gets too long
 
 ### Run with the Model
 You can run it with the model in 2 different ways:

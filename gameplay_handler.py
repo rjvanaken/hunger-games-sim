@@ -147,8 +147,7 @@ def getRandomValidMove(tribute, arena):
     if not dirs:
         return None
     move = random.choice(dirs)
-    tribute.last_move = move
-    
+    tribute.last_move = tribute.move_map[move]
     return move
 
 
@@ -187,13 +186,13 @@ def checkNeighborsFor(tribute, arena, type_num=-1, find_tribute=False):
         (tRow, tCol + 1),
         (tRow, tCol - 1)
     ]
-
         for row, col in neighbors:
-            cell = arena.arena_grid[row][col]
-            if isinstance(cell, str):
-                for target in arena.tributes:
-                    if target.pos == (row, col) and target != tribute and target.isAlive:
-                        return target
+            if 0 <= row < arena.size and 0 <= col < arena.size:
+                cell = arena.arena_grid[row][col]
+                if isinstance(cell, str):
+                    for target in arena.tributes:
+                        if target.pos == (row, col) and target != tribute and target.isAlive:
+                            return target
                     
 
     else:
@@ -221,23 +220,15 @@ def moveMask(tribute, direction):
     posC = tribute.pos[1]
     if direction.lower() == 'u' or direction.lower() == 'up':
        if tribute.canMoveTo((posR - 1, posC)):
-           if tribute.last_move == 1:
-               return False
            return True
     elif direction.lower() == 'd' or direction.lower() == 'down':
        if tribute.canMoveTo((posR + 1, posC)):
-           if tribute.last_move == 0:
-               return False
            return True
     elif direction.lower() == 'l' or direction.lower() == 'left':
        if tribute.canMoveTo((posR, posC - 1)):
-           if tribute.last_move == 3:
-               return False
            return True
     elif direction.lower() == 'r' or direction.lower() == 'right':
        if tribute.canMoveTo((posR, posC + 1)):
-           if tribute.last_move == 2:
-               return False
            return True
     return False
 
@@ -341,10 +332,31 @@ def setValuesBeforeTurn(tribute, arena):
     segment = tribute.segment
     arena.updateSegmentData(tribute, segment)
     tribute.updateStatsBeforeTurn() # right now, recalcs strength - mutt logic to be added either here or there
-    tribute.updateKnowledge(arena)
-    handleMuttAttack(tribute, arena)
+    if tribute.isAlive:
+        applyHazardDamage(tribute, arena)
+        if not tribute.isAlive:
+            tribute.hazard_death = True
+    if tribute.isAlive:
+        tribute.updateKnowledge(arena)
+        handleMuttAttack(tribute, arena)
+        
+    
 
+def applyHazardDamage(tribute, arena):
+    full_damage = False
+    partial_damage = False
+    row, col = tribute.pos
+    full = [(row + 1, col), (row - 1, col), (row, col + 1), (row, col - 1)]
+    
+    all_hazard_positions = set(arena.hazard.positions)
+    for hazard in arena.hazards:
+        if hazard.pos is not None:
+            all_hazard_positions.add(hazard.pos)
+    full_damage = any(pos in all_hazard_positions for pos in full)
 
+    if full_damage:
+        tribute.health -= HAZARD_DAMAGE
+        print(f"full damage applied to {tribute.letter}")
 
 
 def cleanUpAfterTurn(game, arena):

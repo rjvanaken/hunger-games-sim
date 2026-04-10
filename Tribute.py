@@ -112,6 +112,8 @@ class Tribute(Fighter):
         self.turn_count = 0
         self.last_move = None
         self.recently_attacked = 0
+        self.move_map = {'up' : 0, 'down' : 1, 'left' : 2, 'right' : 3}
+        self.hazard_death = False
         
 
         # somehow need to figure out how strength will be impacted by low health and how that will change, etc.

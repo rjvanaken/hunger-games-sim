@@ -66,6 +66,10 @@ VERY_THIRSTY_BONUS = 1.0
 # Gamemaker influence
 BOMB_HALF_DAMAGE = 15 #todo adjust
 BOMB_CENTER_IND = [5, 6, 9, 10]
+HAZARD_TRIGGER_DISTANCE = 10 #todo adjust
+HAZARD_DAMAGE = 4 #TODO adjust
+HAZARD_DAMAGE_PARTIAL = 1.5 #TODO adjust
+
 
 
 # test

@@ -1,9 +1,8 @@
 import os
 
-from config import HUNGER_WARNING_THRESHOLD, THIRST_WARNING_THRESHOLD
+from config import HUNGER_WARNING_THRESHOLD, THIRST_WARNING_THRESHOLD, MAIN_SAVE, TUNE_SAVE
 import gameplay_handler as gh
 from stable_baselines3 import PPO
-import numpy as np
 import os
 
 class Player:
@@ -123,7 +122,7 @@ class HumanPlayer(Player):
 
 
 class BotPlayer(Player):
-    def __init__(self, tribute, arena, model_path="hunger_games_model"):
+    def __init__(self, tribute, arena, model_path=TUNE_SAVE):
         super().__init__(tribute, arena)
         self.model = PPO.load(model_path) if os.path.exists(model_path + ".zip") else None
         self.valid_actions = set()

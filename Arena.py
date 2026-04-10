@@ -13,7 +13,6 @@ class Arena:
         self.arena_grid = [[0 for _ in range(size)] for _ in range(size)]  # Start empty
         # x, y are bottom left corner of cornucopia
         self.num_tributes = 24
-        
         self.resources = []
         self.obstacles = []
         self.tributes = []
@@ -21,6 +20,7 @@ class Arena:
         self.mutts = []
         self.hazards = []
         self.bomb = Intervention(Intervention.Type.BOMB, positions=[], damage=BOMB_HALF_DAMAGE)
+        self.hazard = Intervention(Intervention.Type.HAZARD, positions=[], damage=HAZARD_DAMAGE, pos=None)
 
 
 
@@ -175,7 +175,7 @@ class Arena:
         return list(self.segments.keys())[0] 
         
 
-    def clearDeadTributes(self, game):
+    def clearDeadTributes(self, game, gamemaker_kill=False):
         new_list = []
         for tribute in self.tributes:
             pos = tribute.pos 
@@ -185,12 +185,15 @@ class Arena:
                 print(f"Tribute {tribute.letter} has died")
                 self.restoreOldCellData(tribute, pos)
                 tribute.pos = None
-                currentDeaths = game.deaths_per_day[game.day_count + 1]
-                game.deaths_per_day[game.day_count + 1] = currentDeaths + 1
-                if tribute.recently_attacked:
+                if gamemaker_kill or tribute.hazard_death:
+                    game.deaths_by_gamemaker += 1
+                    game.deaths_per_day[game.day_count + 1]["gamemaker"] += 1
+                elif tribute.recently_attacked:
                     game.deaths_by_combat += 1
+                    game.deaths_per_day[game.day_count + 1]["combat"] += 1
                 else:
                     game.deaths_by_decay += 1
+                    game.deaths_per_day[game.day_count + 1]["decay"] += 1
                 self.num_tributes -= 1
         self.tributes = new_list
 
@@ -264,11 +267,26 @@ class Arena:
 
 
     def restoreOldCellData(self, tribute, pos):
-        resource = self.getResourceAt(pos)
         # restore old cell - if it had a resource put it back, otherwise 0
-        self.arena_grid[pos[0]][pos[1]] = resource.type.value if resource else 0
-        if tribute.isAlive:
-            self.arena_grid[tribute.pos[0]][tribute.pos[1]] = tribute.letter
+        row, col = pos
+        resource = self.getResourceAt(pos)
+
+        
+        if pos in self.hazard.positions:
+            self.arena_grid[row][col] = Intervention.Type.HAZARD.value
+
+        elif any(h.pos == pos for h in self.hazards):
+            self.arena_grid[row][col] = Intervention.Type.HAZARD.value
+            
+        elif resource:
+            self.arena_grid[row][col] = resource.type.value
+        
+        else:
+            self.arena_grid[row][col] = 0
+
+        if tribute:
+            if tribute.isAlive:
+                self.arena_grid[tribute.pos[0]][tribute.pos[1]] = tribute.letter
 
     def getTarget(self, tribute, attack=False):
         target = None
@@ -320,6 +338,12 @@ class Arena:
                     tribute = next((t for t in self.tributes if t.letter == cell_value), None)
                     ch = cell_value
                     color = (255, 220, 50) if tribute else (150, 150, 150)
+                elif cell_value == 2:
+                    ch = '░'
+                    color = (255, 105, 180)  # pink storm
+                elif cell_value == 4:
+                    ch = '*'
+                    color = (255, 140, 0)  # orange bomb
                 else:
                     ch = str(cell_value)
                     color = (80, 80, 80)  # walls, terrain numbers, etc.
