@@ -121,12 +121,10 @@ class Game():
     def print_results(self):
         print("____________________")
         print("GAME OVER")
-        print("____________________\n\n")
-        action_names = {0: 'move', 1: 'attack', 2: 'pickup', 3: 'eat', 4: 'drink', 5: 'medical', 6: 'refill'}
-        print(f"{'Action':<10} {'Count':<10}")
-        print("-" * 20)
-        for k, v in self.action_counts.items():
-            print(f"{action_names[k]:<10} {v:<10}")
+        print("____________________\n")
+        print(f"Days: {self.day_count + 1}\n")
+
+        self.print_action_table()
         self.action_counts = {i: 0 for i in range(7)}
         print("\nDEATHS")
         print(f"Combat: {self.deaths_by_combat}")
@@ -134,6 +132,13 @@ class Game():
         print(f"Gamemaker: {self.deaths_by_gamemaker}")
         print("\n\n")
 
+
+    def print_action_table(self):
+        action_names = {0: 'move', 1: 'attack', 2: 'pickup', 3: 'eat', 4: 'drink', 5: 'medical', 6: 'refill'}
+        print(f"{'ACTION':<10} {'COUNT':<10}")
+        print("-" * 30)
+        for k, v in self.action_counts.items():
+            print(f"{action_names[k]:<10} {v:<10}")
 
 
 
@@ -196,25 +201,28 @@ class Game():
             self.death_log = []
 
         if save_frames and frames:
-            frames[0].save("games.gif", save_all=True, append_images=frames[1:], duration=300, loop=0)
+            frames[0].save("games.gif", save_all=True, append_images=frames[1:], duration=GIF_DURATION, loop=0)
 
-        print("\nTHE GAMES ARE OVER! Congratulations to our victor!")
+        print("\n\nTHE GAMES ARE OVER! Congratulations to our victor!")
         self.printGameResults()
 
     def printGameResults(self):
         print("-" * 30)
-        print(" VICTOR")
+        print("VICTOR")
         print("-" * 30)
-        print(f"  Name:        Tribute {self.winner.letter}")
-        print(f"  District:    {self.winner.district}")
-        print(f"  Gender:      {self.winner.gender.capitalize()}")
+        print(f"Name:        Tribute {self.winner.letter}")
+        print(f"District:    {self.winner.district}")
+        print(f"Gender:      {self.winner.gender.capitalize()}")
         print("-" * 30)
-        print(" GAME STATS")
+        print("GAME STATS")
         print("-" * 30)
-        print(f"  Days:        {self.day_count}")
-        print(f"  Gamemaker Kills:        {self.deaths_by_gamemaker}")
-        print(f"  Decay Kills:        {self.deaths_by_decay}")
-        print(f"  Combat Kills:        {self.deaths_by_combat}")
+        print(f"Days:               {self.day_count}")
+        print(f"Gamemaker Kills:    {self.deaths_by_gamemaker}")
+        print(f"Decay Kills:        {self.deaths_by_decay}")
+        print(f"Combat Kills:       {self.deaths_by_combat}")
+        print("-" * 30)
+        self.print_action_table()
+        print("-" * 30)
             # print(f"  Drama Score: {self.drama}")
 
 
@@ -392,7 +400,7 @@ class Game():
             hazard_positions = [
             (5, 15), (5, 28), (17, 4), (17, 41),
             (32, 4), (32, 41), (42, 15), (42, 28),
-            (10, 17), (15, 17), (26, 17), (33, 17),
+            (10, 17), (15, 17), (26, 16), (33, 17),
             (37, 15), (37, 32), (43, 15), (43, 32),
             ]
 

@@ -140,12 +140,28 @@ class Gamemaker:
         min_col = min(tribute.pos[1] for tribute in self.arena.tributes)
         max_col = max(tribute.pos[1] for tribute in self.arena.tributes)
 
+        min_col -= 2
+        max_col += 2
+
+        if min_col < 0: 
+            min_col = 0
+        if max_col > self.arena.size - 1:
+            max_col = self.arena.size - 1
+
         return min_col, max_col
              
 
     def getShrinkRow(self):
         min_row = min(tribute.pos[0] for tribute in self.arena.tributes)
         max_row = max(tribute.pos[0] for tribute in self.arena.tributes)
+
+        min_row -= 2
+        max_row += 2
+
+        if min_row < 0: 
+            min_row = 0
+        if max_row > self.arena.size - 1:
+            max_row = self.arena.size - 1
         
         return min_row, max_row
 
