@@ -6,14 +6,14 @@ from GameEnv import GameEnv
 import tests.test_helper as th
 from stable_baselines3 import PPO
 import sys
-from config import TURNS_PER_DAY
+from config import TURNS_PER_DAY, BASE_MODEL, TUNED_MODEL
 from contextlib import redirect_stdout
 from log_helper import TrimmedFile
 
 
 
 timesteps = 50000000
-fine_tune_timesteps = 40000000
+fine_tune_timesteps = 25000000
 episodes = 100
 
 # model params
@@ -110,11 +110,11 @@ if __name__ == "__main__":
 
         # load the existing model and train with the hazard environment
         if fine_tune:
-            with TrimmedFile("results_hazard.txt") as f:
+            with TrimmedFile("results_tune.txt") as f:
                 sys.stdout = f
                 env = GameEnv(size=48)
                 model = PPO.load(
-                    "hunger_games_model", 
+                    BASE_MODEL, 
                     env=env, 
                     verbose=verbose, 
                     n_steps=n_steps, 
@@ -123,7 +123,7 @@ if __name__ == "__main__":
                     learning_rate=learning_rate
                     )
                 model.learn(total_timesteps=fine_tune_timesteps)
-                model.save("hunger_games_model_hazard")
+                model.save(TUNED_MODEL)
                 
         else: 
             with TrimmedFile("results.txt") as f:
@@ -138,7 +138,7 @@ if __name__ == "__main__":
                     learning_rate=learning_rate
                     )
                 model.learn(total_timesteps=timesteps)
-                model.save("hunger_games_model")
+                model.save(BASE_MODEL)
 
         sys.stdout = sys.__stdout__
 

@@ -329,6 +329,7 @@ def getKnownWater(tribute):
 
 def setValuesBeforeTurn(tribute, arena):
     tribute.near_hazard = False
+    tribute.hazard_warning_zone = False
     tribute.segment = arena.getSegmentFromPos(tribute.pos)
     segment = tribute.segment
     arena.updateSegmentData(tribute, segment)
@@ -340,14 +341,15 @@ def setValuesBeforeTurn(tribute, arena):
     if tribute.isAlive:
         tribute.updateKnowledge(arena)
         handleMuttAttack(tribute, arena)
-        
     
+      
 
 def applyHazardDamage(tribute, arena):
     full_damage = False
     row, col = tribute.pos
     full = [(row + 1, col), (row - 1, col), (row, col + 1), (row, col - 1)]
-    
+    warning_zone = [(row + 2, col), (row - 2, col), (row, col + 2), (row, col - 2)]  
+
     all_hazard_positions = set(arena.hazard.positions)
     for hazard in arena.hazards:
         if hazard.pos is not None:
@@ -355,9 +357,15 @@ def applyHazardDamage(tribute, arena):
     full_damage = any(pos in all_hazard_positions for pos in full)
 
     if full_damage:
-        tribute.health -= HAZARD_DAMAGE
+        if arena.hazard.isDeployed:
+            tribute.health -= HAZARD_DAMAGE
+            print(f"full damage applied to {tribute.letter}")
         tribute.near_hazard = True
-        print(f"full damage applied to {tribute.letter}")
+
+    warning = not full_damage and any(pos in all_hazard_positions for pos in warning_zone)
+    if warning:
+        tribute.hazard_warning_zone = True
+
 
 
 def cleanUpAfterTurn(game, arena):
@@ -377,16 +385,23 @@ def getRewardStarters(tribute):
         "health": tribute.health,
         "kills": tribute.num_kills,
         "food": tribute.getFood(),
-        "very_hungry": tribute.hunger < HUNGER_WARNING_THRESHOLD,
-        "very_thirsty": tribute.thirst < THIRST_WARNING_THRESHOLD,
-        "very_low_health": tribute.health < 40
+        "very_hungry": tribute.hunger <= HUNGER_WARNING_THRESHOLD,
+        "very_thirsty": tribute.thirst <= THIRST_WARNING_THRESHOLD,
+        "very_low_health": tribute.health <= HEALTH_THRESHOLD,
+        "weapon" : tribute.weapon_value,
+        "capacity" : tribute.capacity,
+        "was_near_hazard": tribute.near_hazard,
+        "was_in_warning": tribute.hazard_warning_zone
     }
 
 
 def calculateRewards(game, tribute, action, starters):
-    health_before, kills_before, food_before, very_hungry, very_thirsty, very_low_health = starters.values()
-    
+    health_before, kills_before, food_before, very_hungry, very_thirsty, very_low_health, weapon_before, capacity_before, was_near_hazard, was_in_warning = starters.values()
     reward = 0
+    
+    # if len(game.arena.tributes) <= TRIBUTE_PROXIMITY_TRIGGER:
+    #     if isNearAnyTribute(tribute, game.arena): 
+    #         reward += NEAR_TRIBUTE_REWARD
 
     if action == 0:
         reward += MOVE_REWARD
@@ -403,7 +418,18 @@ def calculateRewards(game, tribute, action, starters):
     elif action == 2:
         reward += PICKUP_REWARD
         if tribute.getFood() > food_before:
-            reward += FOOD_PICKUP_REWARD
+            if very_hungry:
+                reward += FOOD_PICKUP_REWARD
+        if tribute.capacity > capacity_before:
+            if tribute.capacity - capacity_before == LARGE_CAPACITY:
+                reward += LARGE_BACKPACK_REWARD
+            elif tribute.capacity - capacity_before == SMALL_CAPACITY:
+                reward += SMALL_BACKPACK_REWARD
+        elif tribute.weapon_value > weapon_before:
+            if tribute.weapon_value - weapon_before == STRONG_WEAPON:
+                reward += STRONG_WEAPON_REWARD
+            elif tribute.weapon_value - weapon_before == WEAK_WEAPON:
+                reward += WEAK_WEAPON_REWARD
     elif action == 3:
         reward += EAT_REWARD
         if very_hungry:
@@ -421,13 +447,24 @@ def calculateRewards(game, tribute, action, starters):
 
 
     if tribute.hunger <= HUNGER_WARNING_THRESHOLD:
-        reward -= 0.1
+        reward -= LOW_HUNGER_PENALTY
     if tribute.thirst <= THIRST_WARNING_THRESHOLD:
-        reward -= 0.1
-    if tribute.health <= 40:
-        reward -= 0.1
+        reward -= LOW_THIRST_PENALTY
+    if tribute.health <= HEALTH_THRESHOLD:
+        reward -= LOW_HEALTH_PENALTY
+
+    # if tribute.hazard_warning_zone and not was_in_warning:
+    #     reward -= ENTERED_WARNING_ZONE_PENALTY
+    # if tribute.near_hazard and was_in_warning:
+    #     reward -= ENTERED_HAZARD_PENALTY
+    # if tribute.hazard_warning_zone and was_near_hazard:
+    #     reward += MOVED_AWAY_FROM_HAZARD_REWARD
+    # if tribute.near_hazard and was_near_hazard:
+    #     reward -= STAYED_NEAR_HAZARD_PENALTY
+
+
     if not tribute.isAlive:
-        reward -= 2.0
+        reward -= DEATH_PENALTY
 
     game.game_rewards += reward
 
@@ -462,3 +499,12 @@ def setupActionMap(tribute, arena, game):
         valid_actions.add(6)
     
     return valid_actions
+
+
+def isNearAnyTribute(tribute, arena, radius=4):
+    for other in arena.tributes:
+        if other != tribute and other.isAlive:
+            dist = abs(tribute.pos[0] - other.pos[0]) + abs(tribute.pos[1] - other.pos[1])
+            if dist <= radius:
+                return True
+    return False

@@ -89,10 +89,12 @@ class GameEnv(gym.Env):
             "known_water_col": gh.getKnownWater(self.tribute)[1],
             "recently_attacked": self.tribute.recently_attacked
         }
-        gh.setValuesBeforeTurn(self.tribute, self.arena)
         
-        if self.arena.tribute.near_hazard:
-            reward -= NEAR_HAZARD_PENALTY
+        was_near_hazard = self.tribute.near_hazard
+        was_in_warning = self.tribute.hazard_warning_zone
+        
+        gh.setValuesBeforeTurn(self.tribute, self.arena)
+
         
         result = self.check_game_over(obs, reward)
         if result is not None:
@@ -101,12 +103,15 @@ class GameEnv(gym.Env):
 
         if action not in self.valid_actions:
             return obs, -1, False, False, {}
-
+        
+        if len(self.arena.tributes) <= TRIBUTE_PROXIMITY_TRIGGER:
+            if gh.isNearAnyTribute(self.tribute, self.arena): 
+                reward += NEAR_TRIBUTE_REWARD
 
         if action == 0:
             direction = gh.getRandomValidMove(self.tribute, self.arena)
             gh.handleSingleMove(self.tribute, direction, self.arena)
-            reward += 0.001
+            reward += MOVE_REWARD
 
         elif action == 1:
             health_before = self.tribute.health
@@ -132,15 +137,15 @@ class GameEnv(gym.Env):
             food_before = self.tribute.getFood()
             result = gh.handlePickup(self.tribute, self.arena)
             reward += PICKUP_REWARD
-            if result == 1 and self.tribute.getFood() > food_before:
+            if self.tribute.getFood() > food_before:
                 if very_hungry:
                     reward += FOOD_PICKUP_REWARD
-            if result == 1 and self.tribute.capacity > capacity_before:
+            if self.tribute.capacity > capacity_before:
                 if self.tribute.capacity - capacity_before == LARGE_CAPACITY:
                     reward += LARGE_BACKPACK_REWARD
                 elif self.tribute.capacity - capacity_before == SMALL_CAPACITY:
                     reward += SMALL_BACKPACK_REWARD
-            elif result == 1 and self.tribute.weapon_value > weapon_before:
+            elif self.tribute.weapon_value > weapon_before:
                 if self.tribute.weapon_value - weapon_before == STRONG_WEAPON:
                     reward += STRONG_WEAPON_REWARD
                 elif self.tribute.weapon_value - weapon_before == WEAK_WEAPON:
@@ -150,7 +155,7 @@ class GameEnv(gym.Env):
 
         elif action == 3:
             very_hungry = False
-            if self.tribute.hunger < HUNGER_WARNING_THRESHOLD:
+            if self.tribute.hunger <= HUNGER_WARNING_THRESHOLD:
                 very_hungry = True
             gh.handleEatFood(self.tribute)
             reward += EAT_REWARD
@@ -159,7 +164,7 @@ class GameEnv(gym.Env):
 
         elif action == 4:
             very_thirsty = False
-            if self.tribute.thirst < THIRST_WARNING_THRESHOLD:
+            if self.tribute.thirst <= THIRST_WARNING_THRESHOLD:
                 very_thirsty = True
             gh.handleDrinkWater(self.tribute, self.arena)
             reward += DRINK_REWARD
@@ -168,7 +173,7 @@ class GameEnv(gym.Env):
 
         elif action == 5:
             very_low_health = False
-            if self.tribute.health < 40:
+            if self.tribute.health <= HEALTH_THRESHOLD:
                 very_low_health = True
             gh.handleUseMedical(self.tribute)
             reward += MEDICAL_REWARD
@@ -181,17 +186,28 @@ class GameEnv(gym.Env):
 
         self.game.action_counts[action] += 1
 
+        # after action, before next turn:
         if self.tribute.hunger <= HUNGER_WARNING_THRESHOLD:
-            reward -= 0.1
+            reward -= LOW_HUNGER_PENALTY
         if self.tribute.thirst <= THIRST_WARNING_THRESHOLD:
-            reward -= 0.1
-        if self.tribute.health <= 40:
-            reward -= 0.1
+            reward -= LOW_THIRST_PENALTY
+        if self.tribute.health <= HEALTH_THRESHOLD:
+            reward -= LOW_HEALTH_PENALTY
+
+        
+        if self.tribute.hazard_warning_zone and not was_in_warning:
+            reward -= ENTERED_WARNING_ZONE_PENALTY
+        if self.tribute.near_hazard and was_in_warning:
+            reward -= ENTERED_HAZARD_PENALTY
+        if self.tribute.hazard_warning_zone and was_near_hazard:
+            reward += MOVED_AWAY_FROM_HAZARD_REWARD
+        if self.tribute.near_hazard and was_near_hazard:
+            reward -= STAYED_NEAR_HAZARD_PENALTY
 
 
         if not self.tribute.isAlive:
             # print(f"Tribute {self.tribute.letter} died")
-            reward -= 2.0
+            reward -= DEATH_PENALTY
 
         self.game.game_rewards += reward
 

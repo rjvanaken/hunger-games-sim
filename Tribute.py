@@ -114,6 +114,8 @@ class Tribute(Fighter):
         self.recently_attacked = 0
         self.move_map = {'up' : 0, 'down' : 1, 'left' : 2, 'right' : 3}
         self.hazard_death = False
+        self.near_hazard = False
+        self.hazard_warning_zone = False
         
 
         # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
@@ -308,7 +310,7 @@ class Tribute(Fighter):
         cell = self.arenaKnowledge[pos[0]][pos[1]]
         if isinstance(cell, str):
             return True  # tribute on cell, walkable
-        if int(cell) not in [8, 1]:
+        if int(cell) not in [8, 1, 2]:
             return True
         return False
         

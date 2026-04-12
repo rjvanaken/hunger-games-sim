@@ -34,6 +34,8 @@ class Gamemaker:
 
             if game.day_count >= 2:
                 result = self.evaluateAndShrinkArena()
+                if self.arena.hazard.isDeployed == False:
+                    self.arena.hazard.isDeployed = True
                 self.arena.hazard.wasDeployedToday = result
 
                 
@@ -140,8 +142,8 @@ class Gamemaker:
         min_col = min(tribute.pos[1] for tribute in self.arena.tributes)
         max_col = max(tribute.pos[1] for tribute in self.arena.tributes)
 
-        min_col -= 2
-        max_col += 2
+        min_col -= 3
+        max_col += 3
 
         if min_col < 0: 
             min_col = 0
@@ -155,8 +157,8 @@ class Gamemaker:
         min_row = min(tribute.pos[0] for tribute in self.arena.tributes)
         max_row = max(tribute.pos[0] for tribute in self.arena.tributes)
 
-        min_row -= 2
-        max_row += 2
+        min_row -= 3
+        max_row += 3
 
         if min_row < 0: 
             min_row = 0
