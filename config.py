@@ -75,11 +75,10 @@ LOW_HUNGER_PENALTY = 0.1
 LOW_THIRST_PENALTY = 0.1
 LOW_HEALTH_PENALTY = 0.1
 
-# not trained with
-ENTERED_WARNING_ZONE_PENALTY = 1.0 # small negative
-ENTERED_HAZARD_PENALTY = 2.0 # large negative
-MOVED_AWAY_FROM_HAZARD_REWARD = 3.0 # positive
-STAYED_NEAR_HAZARD_PENALTY = 2.0 # medium negative
+ENTERED_WARNING_ZONE_PENALTY = 1.0 # not trained with
+ENTERED_HAZARD_PENALTY = 2.0 # not trained with
+MOVED_AWAY_FROM_HAZARD_REWARD = 3.0 # not trained with
+STAYED_NEAR_HAZARD_PENALTY = 2.0 # not trained with
 
 
 # Gamemaker influence
@@ -88,7 +87,7 @@ BOMB_CENTER_IND = [5, 6, 9, 10]
 HAZARD_TRIGGER_DISTANCE = 10 
 HAZARD_DAMAGE = 0.5 
 HAZARD_DAMAGE_PARTIAL = 0.75 
-TRIBUTE_PROXIMITY_TRIGGER = 6
+TRIBUTE_PROXIMITY_TRIGGER = 6 # no
 
 
 
@@ -111,6 +110,8 @@ RESET = '\033[0m'
 GIF_DURATION = 120
 
 # Model paths
+# BASE_MODEL = "hunger_games_model"
+# TUNED_MODEL = "hunger_games_model_tuned"
+TUNED_MODEL = "hunger_games_model_tuned"
 BASE_MODEL = "hunger_games_model"
-TUNED_MODEL = "hunger_games_model_tuned" 
 PLAY_MODEL = TUNED_MODEL

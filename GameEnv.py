@@ -104,9 +104,9 @@ class GameEnv(gym.Env):
         if action not in self.valid_actions:
             return obs, -1, False, False, {}
         
-        if len(self.arena.tributes) <= TRIBUTE_PROXIMITY_TRIGGER:
-            if gh.isNearAnyTribute(self.tribute, self.arena): 
-                reward += NEAR_TRIBUTE_REWARD
+        # if len(self.arena.tributes) <= TRIBUTE_PROXIMITY_TRIGGER:
+        #     if gh.isNearAnyTribute(self.tribute, self.arena): 
+        #         reward += NEAR_TRIBUTE_REWARD
 
         if action == 0:
             direction = gh.getRandomValidMove(self.tribute, self.arena)
@@ -195,14 +195,19 @@ class GameEnv(gym.Env):
             reward -= LOW_HEALTH_PENALTY
 
         
-        if self.tribute.hazard_warning_zone and not was_in_warning:
-            reward -= ENTERED_WARNING_ZONE_PENALTY
-        if self.tribute.near_hazard and was_in_warning:
+        # if self.tribute.hazard_warning_zone and not was_in_warning:
+        #     reward -= ENTERED_WARNING_ZONE_PENALTY
+        # if self.tribute.near_hazard and was_in_warning:
+        #     reward -= ENTERED_HAZARD_PENALTY
+        # if self.tribute.hazard_warning_zone and was_near_hazard:
+        #     reward += MOVED_AWAY_FROM_HAZARD_REWARD
+        # if self.tribute.near_hazard and was_near_hazard:
+        #     reward -= STAYED_NEAR_HAZARD_PENALTY
+
+        if self.tribute.near_hazard:
             reward -= ENTERED_HAZARD_PENALTY
-        if self.tribute.hazard_warning_zone and was_near_hazard:
+        if not self.tribute.near_hazard and was_near_hazard:
             reward += MOVED_AWAY_FROM_HAZARD_REWARD
-        if self.tribute.near_hazard and was_near_hazard:
-            reward -= STAYED_NEAR_HAZARD_PENALTY
 
 
         if not self.tribute.isAlive:

@@ -21,7 +21,7 @@ class Gamemaker:
                     return
         
                 
-            if self.arena.bomb.wasDeployedToday or self.arena.hazard.wasDeployedToday:
+            if self.arena.bomb.wasDeployedToday:
                 return
             
             if len(self.arena.tributes) > 2:
@@ -32,11 +32,11 @@ class Gamemaker:
                         self.deployBomb(game)
                         return
 
-            if game.day_count >= 2:
-                result = self.evaluateAndShrinkArena()
-                if self.arena.hazard.isDeployed == False:
-                    self.arena.hazard.isDeployed = True
-                self.arena.hazard.wasDeployedToday = result
+            # if game.day_count >= 2:
+            #     result = self.evaluateAndShrinkArena()
+            #     if self.arena.hazard.isDeployed == False:
+            #         self.arena.hazard.isDeployed = True
+            #     self.arena.hazard.wasDeployedToday = result
 
                 
 

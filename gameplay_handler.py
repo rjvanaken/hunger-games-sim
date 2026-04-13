@@ -334,10 +334,10 @@ def setValuesBeforeTurn(tribute, arena):
     segment = tribute.segment
     arena.updateSegmentData(tribute, segment)
     tribute.updateStatsBeforeTurn() # right now, recalcs strength - mutt logic to be added either here or there
-    if tribute.isAlive:
-        applyHazardDamage(tribute, arena)
-        if not tribute.isAlive:
-            tribute.hazard_death = True
+    # if tribute.isAlive:
+    #     applyHazardDamage(tribute, arena)
+    #     if not tribute.isAlive:
+    #         tribute.hazard_death = True
     if tribute.isAlive:
         tribute.updateKnowledge(arena)
         handleMuttAttack(tribute, arena)
