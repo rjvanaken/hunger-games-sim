@@ -30,6 +30,7 @@ class Game():
         self.death_log = []
         self.deaths_per_day = {1: {"decay": 0, "combat": 0, "gamemaker": 0}}
         self.action_counts = {i: 0 for i in range(7)}
+        self.cornucopia_pickups = 0
 
 
 
@@ -200,6 +201,10 @@ class Game():
                 print(msg)
             self.death_log = []
 
+        for pos in self.arena.cornucopia:
+            if not any(resource.pos == pos for resource in self.arena.resources):
+                self.cornucopia_pickups += 1
+
         if save_frames and frames:
             frames[0].save("games.gif", save_all=True, append_images=frames[1:], duration=GIF_DURATION, loop=0)
 
@@ -210,9 +215,12 @@ class Game():
         print("-" * 30)
         print("VICTOR")
         print("-" * 30)
-        print(f"Name:        Tribute {self.winner.letter}")
-        print(f"District:    {self.winner.district}")
-        print(f"Gender:      {self.winner.gender.capitalize()}")
+        if len(self.arena.tributes) == 1:
+            print(f"Name:        Tribute {self.winner.letter}")
+            print(f"District:    {self.winner.district}")
+            print(f"Gender:      {self.winner.gender.capitalize()}")
+        else:
+            print("No victor")
         print("-" * 30)
         print("GAME STATS")
         print("-" * 30)

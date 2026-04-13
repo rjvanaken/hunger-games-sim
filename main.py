@@ -14,7 +14,7 @@ from log_helper import TrimmedFile
 
 timesteps = 50000000
 fine_tune_timesteps = 25000000
-episodes = 100
+episodes = 3000
 
 # model params
 verbose = 1
@@ -39,7 +39,9 @@ def collect_game_stats():
 
 def calulate_game_stats():
     retaliation_rate = game.retaliation_count / max(game.action_counts[1], 1)
+    cornucopia_rate = game.cornucopia_pickups / len(game.arena.cornucopia)
     all_retaliation_rates.append(retaliation_rate)
+    all_cornucopia_rates.append(cornucopia_rate)
 
     combat_death_rate = game.deaths_by_combat / 23
     gamemaker_death_rate = game.deaths_by_gamemaker / 23
@@ -63,12 +65,14 @@ def get_averages():
     avg_kill_rate = round((sum(all_kill_rates) / episodes) * 100, 2)
     avg_gm_kill_rate = round((sum(all_gm_kill_rates) / episodes) * 100, 2)
     avg_days = sum(all_day_counts) / episodes
+    avg_cornucopia_rate = round((sum(all_cornucopia_rates) / episodes) * 100, 2)
+    
 
-    return avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days
+    return avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate
 
 
 def print_eval_results():
-            avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days = get_averages()
+            avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate = get_averages()
             print("=" * 30)
             print("ACTION DISTRIBUTION")
             print("=" * 30)
@@ -91,6 +95,7 @@ refill      {int(avg_refills)}
             print(f"Average Length: {round(avg_days)} days")
             print(f"-" * 30)
             print(f"Retaliation Rate: {avg_retal_rate}%")
+            print(f"Cornucopia Pickup Rate: {avg_cornucopia_rate}%")
             print(f"Death by Combat Rate: {avg_kill_rate}%")
             print(f"Death by Gamemaker Rate: {avg_gm_kill_rate}%")
             print("\n")
@@ -148,7 +153,7 @@ if __name__ == "__main__":
     elif mode in ("--robot", "--eval"):
         # rewards
         all_rewards = []
-        # action distribution
+        # actions
         all_moves = []
         all_attacks = []
         all_pickups = []
@@ -156,6 +161,7 @@ if __name__ == "__main__":
         all_drinks = []
         all_meds = []
         all_refills = []
+        all_cornucopia_rates = []
         # retaliation
         all_retaliation_rates = []
         # kills
@@ -175,8 +181,7 @@ if __name__ == "__main__":
                     game = Game(size=48, robot=True, train=False, test=False)
                     game.run(display, colors, save_frames=False)
                     collect_game_stats()
-            
-            calulate_game_stats()
+                    calulate_game_stats()
             get_averages()
             print_eval_results()
 
