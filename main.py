@@ -6,7 +6,7 @@ from GameEnv import GameEnv
 import tests.test_helper as th
 from stable_baselines3 import PPO
 import sys
-from config import TURNS_PER_DAY, BASE_MODEL, TUNED_MODEL
+from config import TURNS_PER_DAY, BASE_MODEL, TUNED_MODEL, PLAY_MODEL
 from contextlib import redirect_stdout
 from log_helper import TrimmedFile
 
@@ -41,9 +41,11 @@ learning_rate = 0.00003
 
 
 def collect_game_stats():
-    """Append per-episode action counts and rewards to their respective tracking lists."""
+    """Append per-episode action counts, rewards, game length, and loop end conditions to their respective tracking lists."""
 
     all_rewards.append(game.game_rewards)
+    all_end_conditions.append(game.end_condition)
+    all_day_counts.append(game.day_count)
     all_moves.append(game.action_counts[0])
     all_attacks.append(game.action_counts[1])
     all_pickups.append(game.action_counts[2])
@@ -51,6 +53,7 @@ def collect_game_stats():
     all_drinks.append(game.action_counts[4])
     all_meds.append(game.action_counts[5])
     all_refills.append(game.action_counts[6])
+
 
 def calulate_game_stats():
 
@@ -60,6 +63,7 @@ def calulate_game_stats():
     
     - Retaliation rate: fraction of attacks that were responses to being attacked first.
     - Cornucopia rate: fraction of cornucopia items picked up out of total available.
+    - End conditions: what caused the loop to end
     """
 
     retaliation_rate = game.retaliation_count / max(game.action_counts[1], 1)
@@ -67,13 +71,12 @@ def calulate_game_stats():
     all_retaliation_rates.append(retaliation_rate)
     all_cornucopia_rates.append(cornucopia_rate)
 
-    
     combat_death_rate = game.deaths_by_combat / 23
     gamemaker_death_rate = game.deaths_by_gamemaker / 23
     all_kill_rates.append(combat_death_rate)
     all_gm_kill_rates.append(gamemaker_death_rate)
 
-    all_day_counts.append(game.day_count)
+
 
 def get_averages():
     
@@ -91,18 +94,23 @@ def get_averages():
     avg_gm_kill_rate = round((sum(all_gm_kill_rates) / episodes) * 100, 2)
     avg_days = sum(all_day_counts) / episodes
     avg_cornucopia_rate = round((sum(all_cornucopia_rates) / episodes) * 100, 2)
+    avg_winner_ends = round((all_end_conditions.count('winner') / episodes) * 100, 2)
+    avg_mutual_decay_ends = round((all_end_conditions.count('mutual_decay') / episodes) * 100, 2)
+    avg_cap_ends = round((all_end_conditions.count('cap') / episodes) * 100, 2)
     
 
-    return avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate
-
+    return avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate, avg_winner_ends, avg_mutual_decay_ends, avg_cap_ends
 
 def print_eval_results():
+            
             """Print the results of running in --eval mode."""
+            length = 37
+            print(f"\nMODEL: {PLAY_MODEL}.zip")
 
-            avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate = get_averages()
-            print("=" * 30)
+            avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate, avg_winner_ends, avg_mutual_decay_ends, avg_cap_ends = get_averages()
+            print("=" * length)
             print("ACTION DISTRIBUTION")
-            print("=" * 30)
+            print("=" * length)
             print(f'''move        {int(avg_moves)}
 attack      {int(avg_attacks)}
 pickup      {int(avg_pickups)}
@@ -114,17 +122,26 @@ refill      {int(avg_refills)}
     
 
             # print results
-            print("=" * 30)
+            print("=" * length)
             print("GAME STATS")
-            print("=" * 30)
+            print("=" * length)
             print(f"Average Rewards: {round(avg_rewards, 2)}" ) 
             print(f"Average Rewards Per Tribute: {round(avg_rewards_per_tribute, 2)}" ) 
             print(f"Average Length: {round(avg_days)} days")
-            print(f"-" * 30)
+            print(f"-" * length)
             print(f"Retaliation Rate: {avg_retal_rate}%")
             print(f"Cornucopia Pickup Rate: {avg_cornucopia_rate}%")
             print(f"Death by Combat Rate: {avg_kill_rate}%")
-            print(f"Death by Gamemaker Rate: {avg_gm_kill_rate}%")
+            print(f"Death by Gamemaker Rate: {avg_gm_kill_rate}%\n")
+            
+            print("=" * length)
+            print("END CONDITIONS")
+            print("=" * length)
+            print(f"✨ Winner Rate: {avg_winner_ends}%")
+            print(f"👍 Mutual Decay Rate: {avg_mutual_decay_ends}%")
+            print(f"-" * length)
+            print(f"❌ Cap Rate: {avg_cap_ends}%")
+            print("=" * length)
             print("\n")
 
 
@@ -195,8 +212,9 @@ if __name__ == "__main__":
         # kills
         all_kill_rates = []
         all_gm_kill_rates = []
-        # game length
+        # game details
         all_day_counts = []
+        all_end_conditions = []
         
         # IF EVAL MODE - BATCH RUN
         if mode == "--eval":

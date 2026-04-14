@@ -31,6 +31,7 @@ class Game():
         self.deaths_per_day = {1: {"decay": 0, "combat": 0, "gamemaker": 0}}
         self.action_counts = {i: 0 for i in range(7)}
         self.cornucopia_pickups = 0
+        self.end_condition = None # "cap", "winner", "mutual_decay"
 
 
 
@@ -208,14 +209,26 @@ class Game():
         if save_frames and frames:
             frames[0].save("games.gif", save_all=True, append_images=frames[1:], duration=GIF_DURATION, loop=0)
 
-        print("\n\nTHE GAMES ARE OVER! Congratulations to our victor!")
+        end_statement = ""
+        if len(self.arena.tributes) == 1:
+            self.end_condition = "winner"
+            end_statement = " Congratulations to our victor!"
+        elif len(self.arena.tributes) > 1:
+            self.end_condition = "cap"
+        elif len(self.arena.tributes) < 1:
+            self.end_condition = "mutual_decay"
+        else:
+            self.end_condition = "none" # for preacaution
+
+        
+        print(f"\n\nTHE GAMES ARE OVER!{end_statement}")
         self.printGameResults()
 
     def printGameResults(self):
         print("-" * 30)
         print("VICTOR")
         print("-" * 30)
-        if len(self.arena.tributes) == 1:
+        if self.end_condition == "winner":
             print(f"Name:        Tribute {self.winner.letter}")
             print(f"District:    {self.winner.district}")
             print(f"Gender:      {self.winner.gender.capitalize()}")
