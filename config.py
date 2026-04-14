@@ -111,7 +111,6 @@ GIF_DURATION = 120
 
 # Model paths
 # BASE_MODEL = "hunger_games_model"
-# TUNED_MODEL = "hunger_games_model_tuned"
 TUNED_MODEL = "hunger_games_model_tuned"
 BASE_MODEL = "hunger_games_model"
-PLAY_MODEL = TUNED_MODEL
+PLAY_MODEL = BASE_MODEL

@@ -28,7 +28,7 @@ CITATIONS:
 
 timesteps = 50000000
 fine_tune_timesteps = 25000000
-episodes = 3000
+episodes = 15
 
 # model params
 verbose = 1
