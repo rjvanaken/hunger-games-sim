@@ -5,7 +5,7 @@ May the odds be ever in your favor
 ## Dependencies
 
 ```
-pip install gymnasium stable-baselines3 tqdm
+pip install numpy gymnasium stable-baselines3 pillow tqdm
 ```
 
 ## Running Modes

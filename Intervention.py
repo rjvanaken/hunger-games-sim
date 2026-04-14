@@ -1,10 +1,11 @@
-from enum import Enum
-from config import BOMB_HALF_DAMAGE
-
 """
 Intervention.py - defines the Intervention class, representing gamemaker interventions
 (hazards and bombs) that can be deployed into the arena during a game.
 """
+
+from enum import Enum
+from config import BOMB_HALF_DAMAGE
+
 
 class Intervention:
 
