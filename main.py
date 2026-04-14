@@ -10,6 +10,20 @@ from config import TURNS_PER_DAY, BASE_MODEL, TUNED_MODEL
 from contextlib import redirect_stdout
 from log_helper import TrimmedFile
 
+"""
+main.py - Entry point for the Hunger Games RL simulation.
+
+Supports four runtime modes (passed as command-line arguments):
+  --train   : Train a new PPO model from scratch, or fine-tune an existing one by adding on --tune
+  --eval    : Batch-run the trained model over many episodes and print aggregate stats
+  --robot   : Run a single episode with the trained model (default mode)
+  --play    : (Experimental) Human-playable mode
+
+CITATIONS:
+    - stable-baselines3: used for PPO training and inference
+"""
+
+
 
 
 timesteps = 50000000
@@ -27,6 +41,7 @@ learning_rate = 0.00003
 
 
 def collect_game_stats():
+    """Append per-episode action counts and rewards to their respective tracking lists."""
 
     all_rewards.append(game.game_rewards)
     all_moves.append(game.action_counts[0])
@@ -38,11 +53,21 @@ def collect_game_stats():
     all_refills.append(game.action_counts[6])
 
 def calulate_game_stats():
+
+    """
+    Compute derived per-episode statistics (retaliation rate, cornucopia pickup rate,
+    cause-of-death breakdown) and append them to their tracking lists.
+    
+    - Retaliation rate: fraction of attacks that were responses to being attacked first.
+    - Cornucopia rate: fraction of cornucopia items picked up out of total available.
+    """
+
     retaliation_rate = game.retaliation_count / max(game.action_counts[1], 1)
     cornucopia_rate = game.cornucopia_pickups / len(game.arena.cornucopia)
     all_retaliation_rates.append(retaliation_rate)
     all_cornucopia_rates.append(cornucopia_rate)
 
+    
     combat_death_rate = game.deaths_by_combat / 23
     gamemaker_death_rate = game.deaths_by_gamemaker / 23
     all_kill_rates.append(combat_death_rate)
@@ -51,7 +76,7 @@ def calulate_game_stats():
     all_day_counts.append(game.day_count)
 
 def get_averages():
-    # get averages
+    
     avg_rewards = sum(all_rewards) / episodes
     avg_rewards_per_tribute = (sum(all_rewards) / episodes) / 24
     avg_moves = sum(all_moves) / episodes
@@ -72,6 +97,8 @@ def get_averages():
 
 
 def print_eval_results():
+            """Print the results of running in --eval mode."""
+
             avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate = get_averages()
             print("=" * 30)
             print("ACTION DISTRIBUTION")
@@ -113,7 +140,7 @@ if __name__ == "__main__":
     
     if mode == "--train":
 
-        # load the existing model and train with the hazard environment
+        # load the existing model and fine-tune it
         if fine_tune:
             with TrimmedFile("results_tune.txt") as f:
                 sys.stdout = f
@@ -131,6 +158,7 @@ if __name__ == "__main__":
                 model.save(TUNED_MODEL)
                 
         else: 
+            # run training from scratch
             with TrimmedFile("results.txt") as f:
                 sys.stdout = f
                 env = GameEnv(size=48)
@@ -186,8 +214,6 @@ if __name__ == "__main__":
             print_eval_results()
 
 
-
-        # IF NOT EVAL MODE - robot and single run, run with --robot
 
         else:
             game = Game(size=48, robot=True, train=False, test=False)

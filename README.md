@@ -22,7 +22,7 @@ To fine tune train the model with the addition of the hazardous wall, run:
 ```
 python main.py --train --tune
 ```
-It will output a `results_hazard.txt` file that will be overwritten when it gets too long
+It will output a `results_tune.txt` file that will be overwritten when it gets too long
 
 ### Run with the Model
 You can run it with the model in 2 different ways:

@@ -1,8 +1,18 @@
 MAX_LINES = 800000
 TRIM_THRESHOLD = 900000
 
+"""
+log_helper.py - Defines the TrimmedFile class, which assists in writing training results to a 
+file, trimming from the top when it exceeds a size threshold.
+"""
+
 
 class TrimmedFile:
+    """
+    Wraps a file for writing training logs. Automatically trims the file 
+    back to MAX_LINES when it exceeds TRIM_THRESHOLD lines, preventing 
+    runaway log sizes during long training runs.
+    """
     def __init__(self, path):
         self.path = path
         self._count = 0
