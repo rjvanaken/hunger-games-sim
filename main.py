@@ -6,15 +6,29 @@ from GameEnv import GameEnv
 import tests.test_helper as th
 from stable_baselines3 import PPO
 import sys
-from config import TURNS_PER_DAY
+from config import TURNS_PER_DAY, BASE_MODEL, TUNED_MODEL
 from contextlib import redirect_stdout
 from log_helper import TrimmedFile
+
+"""
+main.py - Entry point for the Hunger Games RL simulation.
+
+Supports four runtime modes (passed as command-line arguments):
+  --train   : Train a new PPO model from scratch, or fine-tune an existing one by adding on --tune
+  --eval    : Batch-run the trained model over many episodes and print aggregate stats
+  --robot   : Run a single episode with the trained model (default mode)
+  --play    : (Experimental) Human-playable mode
+
+CITATIONS:
+    - stable-baselines3: used for PPO training and inference
+"""
+
 
 
 
 timesteps = 50000000
-fine_tune_timesteps = 40000000
-episodes = 100
+fine_tune_timesteps = 25000000
+episodes = 15
 
 # model params
 verbose = 1
@@ -27,6 +41,7 @@ learning_rate = 0.00003
 
 
 def collect_game_stats():
+    """Append per-episode action counts and rewards to their respective tracking lists."""
 
     all_rewards.append(game.game_rewards)
     all_moves.append(game.action_counts[0])
@@ -38,9 +53,21 @@ def collect_game_stats():
     all_refills.append(game.action_counts[6])
 
 def calulate_game_stats():
-    retaliation_rate = game.retaliation_count / max(game.action_counts[1], 1)
-    all_retaliation_rates.append(retaliation_rate)
 
+    """
+    Compute derived per-episode statistics (retaliation rate, cornucopia pickup rate,
+    cause-of-death breakdown) and append them to their tracking lists.
+    
+    - Retaliation rate: fraction of attacks that were responses to being attacked first.
+    - Cornucopia rate: fraction of cornucopia items picked up out of total available.
+    """
+
+    retaliation_rate = game.retaliation_count / max(game.action_counts[1], 1)
+    cornucopia_rate = game.cornucopia_pickups / len(game.arena.cornucopia)
+    all_retaliation_rates.append(retaliation_rate)
+    all_cornucopia_rates.append(cornucopia_rate)
+
+    
     combat_death_rate = game.deaths_by_combat / 23
     gamemaker_death_rate = game.deaths_by_gamemaker / 23
     all_kill_rates.append(combat_death_rate)
@@ -49,7 +76,7 @@ def calulate_game_stats():
     all_day_counts.append(game.day_count)
 
 def get_averages():
-    # get averages
+    
     avg_rewards = sum(all_rewards) / episodes
     avg_rewards_per_tribute = (sum(all_rewards) / episodes) / 24
     avg_moves = sum(all_moves) / episodes
@@ -63,12 +90,16 @@ def get_averages():
     avg_kill_rate = round((sum(all_kill_rates) / episodes) * 100, 2)
     avg_gm_kill_rate = round((sum(all_gm_kill_rates) / episodes) * 100, 2)
     avg_days = sum(all_day_counts) / episodes
+    avg_cornucopia_rate = round((sum(all_cornucopia_rates) / episodes) * 100, 2)
+    
 
-    return avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days
+    return avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate
 
 
 def print_eval_results():
-            avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days = get_averages()
+            """Print the results of running in --eval mode."""
+
+            avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate = get_averages()
             print("=" * 30)
             print("ACTION DISTRIBUTION")
             print("=" * 30)
@@ -91,6 +122,7 @@ refill      {int(avg_refills)}
             print(f"Average Length: {round(avg_days)} days")
             print(f"-" * 30)
             print(f"Retaliation Rate: {avg_retal_rate}%")
+            print(f"Cornucopia Pickup Rate: {avg_cornucopia_rate}%")
             print(f"Death by Combat Rate: {avg_kill_rate}%")
             print(f"Death by Gamemaker Rate: {avg_gm_kill_rate}%")
             print("\n")
@@ -108,13 +140,13 @@ if __name__ == "__main__":
     
     if mode == "--train":
 
-        # load the existing model and train with the hazard environment
+        # load the existing model and fine-tune it
         if fine_tune:
-            with TrimmedFile("results_hazard.txt") as f:
+            with TrimmedFile("results_tune.txt") as f:
                 sys.stdout = f
                 env = GameEnv(size=48)
                 model = PPO.load(
-                    "hunger_games_model", 
+                    BASE_MODEL, 
                     env=env, 
                     verbose=verbose, 
                     n_steps=n_steps, 
@@ -123,9 +155,10 @@ if __name__ == "__main__":
                     learning_rate=learning_rate
                     )
                 model.learn(total_timesteps=fine_tune_timesteps)
-                model.save("hunger_games_model_hazard")
+                model.save(TUNED_MODEL)
                 
         else: 
+            # run training from scratch
             with TrimmedFile("results.txt") as f:
                 sys.stdout = f
                 env = GameEnv(size=48)
@@ -138,7 +171,7 @@ if __name__ == "__main__":
                     learning_rate=learning_rate
                     )
                 model.learn(total_timesteps=timesteps)
-                model.save("hunger_games_model")
+                model.save(BASE_MODEL)
 
         sys.stdout = sys.__stdout__
 
@@ -148,7 +181,7 @@ if __name__ == "__main__":
     elif mode in ("--robot", "--eval"):
         # rewards
         all_rewards = []
-        # action distribution
+        # actions
         all_moves = []
         all_attacks = []
         all_pickups = []
@@ -156,6 +189,7 @@ if __name__ == "__main__":
         all_drinks = []
         all_meds = []
         all_refills = []
+        all_cornucopia_rates = []
         # retaliation
         all_retaliation_rates = []
         # kills
@@ -175,14 +209,11 @@ if __name__ == "__main__":
                     game = Game(size=48, robot=True, train=False, test=False)
                     game.run(display, colors, save_frames=False)
                     collect_game_stats()
-            
-            calulate_game_stats()
+                    calulate_game_stats()
             get_averages()
             print_eval_results()
 
 
-
-        # IF NOT EVAL MODE - robot and single run, run with --robot
 
         else:
             game = Game(size=48, robot=True, train=False, test=False)

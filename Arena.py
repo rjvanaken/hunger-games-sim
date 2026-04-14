@@ -19,6 +19,7 @@ class Arena:
         self.segments = {}
         self.mutts = []
         self.hazards = []
+        self.cornucopia = []
         self.bomb = Intervention(Intervention.Type.BOMB, positions=[], damage=BOMB_HALF_DAMAGE)
         self.hazard = Intervention(Intervention.Type.HAZARD, positions=[], damage=HAZARD_DAMAGE, pos=None)
 
@@ -100,6 +101,7 @@ class Arena:
 
         for resource in self.resources:
             self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
+            self.cornucopia.append(resource.pos)
 
         #todo: add more later, need 4 more spots
 
