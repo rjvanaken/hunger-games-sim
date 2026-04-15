@@ -584,6 +584,7 @@ def calculateRewards(game, tribute, action, starters):
         if tribute.getFood() > food_before:
             if very_hungry:
                 reward += FOOD_PICKUP_REWARD
+                game.desperate_resource_uses += 1
         if tribute.capacity > capacity_before:
             if tribute.capacity - capacity_before == LARGE_CAPACITY:
                 reward += LARGE_BACKPACK_REWARD
@@ -598,14 +599,17 @@ def calculateRewards(game, tribute, action, starters):
         reward += EAT_REWARD
         if very_hungry:
             reward += VERY_HUNGRY_BONUS
+            game.desperate_resource_uses += 1
     elif action == 4:
         reward += DRINK_REWARD
         if very_thirsty:
             reward += VERY_THIRSTY_BONUS
+            game.desperate_resource_uses += 1
     elif action == 5:
         reward += MEDICAL_REWARD
         if very_low_health:
             reward += VERY_LOW_HEALTH_BONUS
+            game.desperate_resource_uses += 1
     elif action == 6:
         reward += REFILL_REWARD
 

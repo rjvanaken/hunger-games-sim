@@ -28,7 +28,7 @@ CITATIONS:
 
 timesteps = 50000000
 fine_tune_timesteps = 25000000
-episodes = 3000
+episodes = 2
 
 # model params
 verbose = 1
@@ -45,7 +45,7 @@ def collect_game_stats():
 
     all_rewards.append(game.game_rewards)
     all_end_conditions.append(game.end_condition)
-    all_day_counts.append(game.day_count)
+    all_day_counts.append(game.day_count + 1)
     all_moves.append(game.action_counts[0])
     all_attacks.append(game.action_counts[1])
     all_pickups.append(game.action_counts[2])
@@ -53,6 +53,11 @@ def collect_game_stats():
     all_drinks.append(game.action_counts[4])
     all_meds.append(game.action_counts[5])
     all_refills.append(game.action_counts[6])
+    all_day1_deaths.append(game.day_one_kills)
+    all_combat_victories.append(game.victory_by_combat)
+    all_exceeded_training_caps.append(game.exceeded_training_cap)
+
+
 
 
 def calulate_game_stats():
@@ -68,14 +73,16 @@ def calulate_game_stats():
 
     retaliation_rate = game.retaliation_count / max(game.action_counts[1], 1)
     cornucopia_rate = game.cornucopia_pickups / len(game.arena.cornucopia)
+    desperate_use_rate = game.desperate_resource_uses / max(game.action_counts[3] + game.action_counts[4] + game.action_counts[5] + game.action_counts[2], 1)
+    all_desperate_use_rates.append(desperate_use_rate)
     all_retaliation_rates.append(retaliation_rate)
     all_cornucopia_rates.append(cornucopia_rate)
 
     combat_death_rate = game.deaths_by_combat / 23
     gamemaker_death_rate = game.deaths_by_gamemaker / 23
+    
     all_kill_rates.append(combat_death_rate)
     all_gm_kill_rates.append(gamemaker_death_rate)
-
 
 
 def get_averages():
@@ -89,6 +96,7 @@ def get_averages():
     avg_drinks = sum(all_drinks) / episodes
     avg_meds = sum(all_meds) / episodes
     avg_refills = sum(all_refills) / episodes
+    avg_day1_deaths = round(sum(all_day1_deaths) / episodes)
     avg_retal_rate = round((sum(all_retaliation_rates) / episodes) * 100, 2)
     avg_kill_rate = round((sum(all_kill_rates) / episodes) * 100, 2)
     avg_gm_kill_rate = round((sum(all_gm_kill_rates) / episodes) * 100, 2)
@@ -96,10 +104,13 @@ def get_averages():
     avg_cornucopia_rate = round((sum(all_cornucopia_rates) / episodes) * 100, 2)
     avg_winner_ends = round((all_end_conditions.count('winner') / episodes) * 100, 2)
     avg_mutual_decay_ends = round((all_end_conditions.count('mutual_decay') / episodes) * 100, 2)
-    avg_cap_ends = round((all_end_conditions.count('cap') / episodes) * 100, 2)
+    avg_combat_victory_rate = round((sum(all_combat_victories) / max(all_end_conditions.count('winner'), 1)) * 100, 2)
+    exceeded_training_cap_rate = round((sum(all_exceeded_training_caps) / episodes) * 100, 2)
+    avg_desperate_use_rates = round((sum(all_desperate_use_rates) / episodes) * 100, 2)
     
 
-    return avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate, avg_winner_ends, avg_mutual_decay_ends, avg_cap_ends
+
+    return avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate, avg_winner_ends, avg_mutual_decay_ends, avg_day1_deaths, avg_combat_victory_rate, exceeded_training_cap_rate, avg_desperate_use_rates
 
 def print_eval_results():
             
@@ -107,7 +118,7 @@ def print_eval_results():
             length = 37
             print(f"\nMODEL: {PLAY_MODEL}.zip")
 
-            avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate, avg_winner_ends, avg_mutual_decay_ends, avg_cap_ends = get_averages()
+            avg_rewards, avg_rewards_per_tribute, avg_moves, avg_attacks, avg_pickups, avg_eats, avg_drinks, avg_meds, avg_refills, avg_retal_rate, avg_kill_rate, avg_gm_kill_rate, avg_days, avg_cornucopia_rate, avg_winner_ends, avg_mutual_decay_ends, avg_day1_deaths, avg_combat_victory_rate, exceeded_training_cap_rate, avg_desperate_use_rates = get_averages()
             print("=" * length)
             print("ACTION DISTRIBUTION")
             print("=" * length)
@@ -121,6 +132,11 @@ refill      {int(avg_refills)}
                   ''')
     
 
+            
+            
+            
+            
+
             # print results
             print("=" * length)
             print("GAME STATS")
@@ -128,11 +144,16 @@ refill      {int(avg_refills)}
             print(f"Average Rewards: {round(avg_rewards, 2)}" ) 
             print(f"Average Rewards Per Tribute: {round(avg_rewards_per_tribute, 2)}" ) 
             print(f"Average Length: {round(avg_days)} days")
+            print(f"Average Day 1 Deaths: {avg_day1_deaths}" ) #TODO 
+            
             print(f"-" * length)
             print(f"Retaliation Rate: {avg_retal_rate}%")
             print(f"Cornucopia Pickup Rate: {avg_cornucopia_rate}%")
             print(f"Death by Combat Rate: {avg_kill_rate}%")
-            print(f"Death by Gamemaker Rate: {avg_gm_kill_rate}%\n")
+            print(f"Death by Gamemaker Rate: {avg_gm_kill_rate}%")
+            print(f"-" * length)
+            print(f"Combat Victory Rate: {avg_combat_victory_rate}%" ) #TODO 
+            print(f"Desperate Resource Use Rate: {avg_desperate_use_rates}%\n" ) #TODO
             
             print("=" * length)
             print("END CONDITIONS")
@@ -140,10 +161,19 @@ refill      {int(avg_refills)}
             print(f"✨ Winner Rate: {avg_winner_ends}%")
             print(f"👍 Mutual Decay Rate: {avg_mutual_decay_ends}%")
             print(f"-" * length)
-            print(f"❌ Cap Rate: {avg_cap_ends}%")
+            print(f"❌ Passed Training Cap Rate: {exceeded_training_cap_rate}%") # make it training cap, use new flag #TODO
             print("=" * length)
             print("\n")
 
+
+'''
+TO ADD:
+- rate of using resources when in desperate need
+- somethig with picking up when hungry
+- number of deaths on day 1
+- rate of exceeding training cap
+- rate of "victory by combat"
+'''
 
 
 
@@ -207,6 +237,7 @@ if __name__ == "__main__":
         all_meds = []
         all_refills = []
         all_cornucopia_rates = []
+        all_desperate_use_rates = []
         # retaliation
         all_retaliation_rates = []
         # kills
@@ -215,6 +246,10 @@ if __name__ == "__main__":
         # game details
         all_day_counts = []
         all_end_conditions = []
+        all_day1_deaths = []
+        all_combat_victories = []
+        all_exceeded_training_caps = []
+
         
         # IF EVAL MODE - BATCH RUN
         if mode == "--eval":
@@ -228,7 +263,6 @@ if __name__ == "__main__":
                     game.run(display, colors, save_frames=False)
                     collect_game_stats()
                     calulate_game_stats()
-            get_averages()
             print_eval_results()
 
 

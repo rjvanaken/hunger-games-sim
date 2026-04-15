@@ -32,6 +32,10 @@ class Game():
         self.action_counts = {i: 0 for i in range(7)}
         self.cornucopia_pickups = 0
         self.end_condition = None # "cap", "winner", "mutual_decay"
+        self.exceeded_training_cap = False
+        self.victory_by_combat = False
+        self.day_one_kills = 0
+        self.desperate_resource_uses = 0
 
 
 
@@ -180,6 +184,8 @@ class Game():
                     if len(self.arena.tributes) <= 1:
                         if len(self.arena.tributes) == 1:
                             self.winner = self.arena.tributes[0]
+                            if self.winner == player.tribute:
+                                self.victory_by_combat = True
                         break
                 if len(self.arena.tributes) <= 1:
                     break
@@ -187,10 +193,16 @@ class Game():
                 # at the end of a round, assess interference
                 self.gamemaker.assessInterference(self)
 
-            self.turn_count = 0
-            self.day_count += 1
             self.arena.bomb.wasDeployedToday = False
             self.arena.hazard.wasDeployedToday = False
+
+            self.turn_count = 0
+            self.day_count += 1
+            if self.day_count >= 10: # ON day 11 because index 0 start
+                self.exceeded_training_cap = True
+            if self.day_count >= 15:
+                self.end_condition = "cap"
+                break
             if progress is not None:
                 progress.update(1)
             if len(self.arena.tributes) <= 1:
@@ -237,7 +249,7 @@ class Game():
         print("-" * 30)
         print("GAME STATS")
         print("-" * 30)
-        print(f"Days:               {self.day_count}")
+        print(f"Days:               {self.day_count + 1}")
         print(f"Gamemaker Kills:    {self.deaths_by_gamemaker}")
         print(f"Decay Kills:        {self.deaths_by_decay}")
         print(f"Combat Kills:       {self.deaths_by_combat}")
