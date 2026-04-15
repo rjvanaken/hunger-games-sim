@@ -1,8 +1,18 @@
+"""
+Gamemaker.py - defines the Gamemaker class, an object that interferes with the games to make them more
+exciting when things have slowed down. Can add a bomb and detonate it in the arena
+"""
+
+
 from Intervention import Intervention
 from config import BOMB_HALF_DAMAGE, BOMB_CENTER_IND, HAZARD_DAMAGE, HAZARD_DAMAGE_PARTIAL, HAZARD_TRIGGER_DISTANCE
 from collections import Counter
 
 class Gamemaker:
+    """
+    Represents the Gamemaker class, which assesses interference in every turn loop and deploys a bomb
+    if conditions allow
+    """
 
     def __init__(self, arena):
         self.arena = arena
@@ -11,6 +21,12 @@ class Gamemaker:
 
 
     def assessInterference(self, game):
+        """
+        Checks the conditions of the arena and deploys a bomb if one has not been deployed 
+        on the current day and if there were no deaths the previous day
+        """
+
+
         if game.day_count > 0:    
 
             if self.arena.bomb.isDeployed:
@@ -40,18 +56,6 @@ class Gamemaker:
 
                 
 
-
-
-    '''
-    ========================
-    TRIGGER MUTT
-    ========================
-    '''
-
-
-    def activateMutt(mutt):
-        mutt.isDormant = False
-
             
     '''
     ========================
@@ -60,6 +64,10 @@ class Gamemaker:
     '''
 
     def deployBomb(self, game):
+        """
+        Puts a bomb in a segment and sets the deploy flag to true.
+        """
+
         self.arena.bomb.day_deployed = game.day_count
         self.arena.bomb.wasDeployedToday = True
         # get target segment
@@ -80,6 +88,10 @@ class Gamemaker:
             
     
     def detonate(self):
+        """
+        Detonates the bomb, giving damage to any tribute in the bomb's segment
+        """
+
         if self.arena.bomb.isDeployed:
             segment = self.arena.bomb.segment
             for i, pos in enumerate(self.arena.segments[segment]):
@@ -98,6 +110,11 @@ class Gamemaker:
         
 
     def findDenseSegment(self):
+        """
+        Returns the segment with the highest concentration of tributes.
+        If all segments contain the same number, picks one at random
+        """
+
         all_segments = [tribute.segment for tribute in self.arena.tributes]
         tribute_segments = [s for s in all_segments if s is not None]
         if len(tribute_segments) <= 1:
@@ -106,65 +123,65 @@ class Gamemaker:
 
     '''
     ========================
-    THE STORM IS COMING
+    HAZARDS
     ========================
     '''
 
 
 
         
-    def evaluateAndShrinkArena(self):
-        min_row, max_row = self.getShrinkRow()
-        min_col, max_col = self.getShrinkColumns()
+    # def evaluateAndShrinkArena(self):
+    #     min_row, max_row = self.getShrinkRow()
+    #     min_col, max_col = self.getShrinkColumns()
 
-        spread = (max_col - min_col + max_row - min_row) / len(self.arena.tributes)
-        if spread > HAZARD_TRIGGER_DISTANCE:
-            self.shrinkArena(min_row, max_row, min_col, max_col)
-            print("placed wall") # temp DEBUG
-            return True
-
-
-    def shrinkArena(self, min_row, max_row, min_col, max_col):
-
-        for i in range(self.arena.size):
-            for j in range(self.arena.size):
-                if i < min_row or i > max_row:
-                    self.arena.hazard.positions.append((i, j))
-                    self.arena.arena_grid[i][j] = Intervention.Type.HAZARD.value
-                if j < min_col or j > max_col:
-                    self.arena.hazard.positions.append((i, j))
-                    self.arena.arena_grid[i][j] = Intervention.Type.HAZARD.value
-
-        self.arena.hazard.positions = list(set(self.arena.hazard.positions))
+    #     spread = (max_col - min_col + max_row - min_row) / len(self.arena.tributes)
+    #     if spread > HAZARD_TRIGGER_DISTANCE:
+    #         self.shrinkArena(min_row, max_row, min_col, max_col)
+    #         print("placed wall") # temp DEBUG
+    #         return True
 
 
-    def getShrinkColumns(self):
-        min_col = min(tribute.pos[1] for tribute in self.arena.tributes)
-        max_col = max(tribute.pos[1] for tribute in self.arena.tributes)
+    # def shrinkArena(self, min_row, max_row, min_col, max_col):
 
-        min_col -= 3
-        max_col += 3
+    #     for i in range(self.arena.size):
+    #         for j in range(self.arena.size):
+    #             if i < min_row or i > max_row:
+    #                 self.arena.hazard.positions.append((i, j))
+    #                 self.arena.arena_grid[i][j] = Intervention.Type.HAZARD.value
+    #             if j < min_col or j > max_col:
+    #                 self.arena.hazard.positions.append((i, j))
+    #                 self.arena.arena_grid[i][j] = Intervention.Type.HAZARD.value
 
-        if min_col < 0: 
-            min_col = 0
-        if max_col > self.arena.size - 1:
-            max_col = self.arena.size - 1
+    #     self.arena.hazard.positions = list(set(self.arena.hazard.positions))
 
-        return min_col, max_col
+
+    # def getShrinkColumns(self):
+    #     min_col = min(tribute.pos[1] for tribute in self.arena.tributes)
+    #     max_col = max(tribute.pos[1] for tribute in self.arena.tributes)
+
+    #     min_col -= 3
+    #     max_col += 3
+
+    #     if min_col < 0: 
+    #         min_col = 0
+    #     if max_col > self.arena.size - 1:
+    #         max_col = self.arena.size - 1
+
+    #     return min_col, max_col
              
 
-    def getShrinkRow(self):
-        min_row = min(tribute.pos[0] for tribute in self.arena.tributes)
-        max_row = max(tribute.pos[0] for tribute in self.arena.tributes)
+    # def getShrinkRow(self):
+    #     min_row = min(tribute.pos[0] for tribute in self.arena.tributes)
+    #     max_row = max(tribute.pos[0] for tribute in self.arena.tributes)
 
-        min_row -= 3
-        max_row += 3
+    #     min_row -= 3
+    #     max_row += 3
 
-        if min_row < 0: 
-            min_row = 0
-        if max_row > self.arena.size - 1:
-            max_row = self.arena.size - 1
+    #     if min_row < 0: 
+    #         min_row = 0
+    #     if max_row > self.arena.size - 1:
+    #         max_row = self.arena.size - 1
         
-        return min_row, max_row
+    #     return min_row, max_row
 
     

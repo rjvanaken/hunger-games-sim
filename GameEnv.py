@@ -1,3 +1,8 @@
+"""
+GameEnv.py - defines the GameEnv class, a gymnasium environment wrapper
+around the Game class used for PPO training with stable-baselines3.
+"""
+
 from Arena import Arena
 from Game import Game
 from Tribute import Tribute
@@ -10,6 +15,9 @@ import numpy as np
 import gameplay_handler as gh
 
 class GameEnv(gym.Env):
+    """
+    Represents the GameEnv class, a gymnasium environment for model training
+    """
     
     def __init__(self, size):    
         super().__init__()
@@ -23,8 +31,6 @@ class GameEnv(gym.Env):
  
         self.arena.clearDeadTributes(self.game)
         self.arena.displayArena()
-
-        VIEW_RADIUS = 2
 
         self.action_space = spaces.Discrete(7)
 
@@ -43,6 +49,10 @@ class GameEnv(gym.Env):
 
 
     def check_game_over(self, obs, reward):
+        """
+        Checks if the game is over by checking if there is at most 1 tribute left alive in the arena
+        Prints the results and returns the terminal step tuple if the game is over, otherwise None.
+        """
         if len(self.arena.tributes) <= 1:
             if len(self.arena.tributes) == 1:
                 print(f"Tribute {self.arena.tributes[0].letter} wins!!")
@@ -51,6 +61,10 @@ class GameEnv(gym.Env):
         return None
 
     def reset(self, **kwargs):
+
+        """
+        Resets the environment between episodes. Returns the observation
+        """
         self.game = Game(size=48, robot=True, train=True)
         self.arena = self.game.arena
         self.gamemaker = self.game.gamemaker
@@ -73,6 +87,14 @@ class GameEnv(gym.Env):
         return obs, {}
 
     def step(self, action):
+        """
+        Executes one step in the training environment for the current tribute.
+        Takes the given action, calculates rewards based on outcome, advances to the 
+        next tribute's turn, and handles day transitions and game-over conditions.
+
+        Returns the standard Gymnasium step tuple: (obs, reward, terminated, truncated, info)
+        """
+
         reward = 0
         terminated = False
         self.valid_actions = gh.setupActionMap(self.tribute, self.arena, self.game)
