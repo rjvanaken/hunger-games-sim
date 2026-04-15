@@ -157,6 +157,8 @@ class Tribute(Fighter):
             raw_strength += CAREER_BONUS
         if self.gender == 'male':
             raw_strength += MALE_BONUS
+
+        return raw_strength
     
 
     def getRandomSpeed(self):
