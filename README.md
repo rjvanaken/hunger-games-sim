@@ -29,7 +29,7 @@ You can run it with the model in 2 different ways:
 
 #### Evaluation Mode
 
-To run the simulator and evaluate the model over 10k episodes:
+To run the simulator and evaluate the model over a number of episodes (alter the value at the top of main):
 ```
 python main.py --eval
 ```
