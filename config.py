@@ -1,3 +1,15 @@
+"""
+config.py - contains all constant values used for the simulator:
+- object values
+- damage
+- warning thresholds
+- decay constants
+- reward values
+- Gamemaker influence constants
+- model paths for execution
+"""
+
+
 # Constant values
 WATER_VALUE = 6
 FOOD_VALUE = 30
