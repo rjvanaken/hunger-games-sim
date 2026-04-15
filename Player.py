@@ -1,3 +1,7 @@
+"""
+Player.py - defines the Player class and the children classes BotPlayer and HumanPlayer
+"""
+
 import os
 
 from config import HUNGER_WARNING_THRESHOLD, THIRST_WARNING_THRESHOLD, PLAY_MODEL
@@ -7,17 +11,28 @@ import os
 
 class Player:
 
+    """
+    Represents the Player class, the parent class of HumanPlayer and BotPlayer
+    The central part of "taking turns" during gameplay
+    """
     def __init__(self, tribute, arena):
         self.tribute = tribute
         self.arena = arena
         tribute.arenaKnowledge = [[0 for _ in range(arena.size)] for _ in range(arena.size)]  # Start empty
 
 class HumanPlayer(Player):
+    """
+    Represents the human player in manual mode
+    """
+
     def __init__(self, tribute, arena):
         super().__init__(tribute, arena)
 
 
     def displayMenu(self):
+            """
+            Displays the action menu for manual mode
+            """
             print(f"\n\nACTION MENU: Tribute '{self.tribute.letter.upper()}'")
             print(
 '''
@@ -38,6 +53,9 @@ class HumanPlayer(Player):
 )
 
     def get_tribute_letter(game, target=False):
+        """
+        Manual mode: get the tribute's letter from user
+        """
         if target == False:
             letter = input(f"Enter a tribute letter (or exit to quit game): ").upper()
         else:
@@ -47,7 +65,9 @@ class HumanPlayer(Player):
 
 
     def take_turn(self):
-        
+        """
+        Manual mode: runs the player's turn loop
+        """
         self.tribute.segment = self.arena.getSegmentFromPos(self.tribute.pos)
         segment = self.tribute.segment
         self.arena.updateSegmentData(self.tribute, segment)
@@ -122,6 +142,12 @@ class HumanPlayer(Player):
 
 
 class BotPlayer(Player):
+
+    """
+    Represents the BotPlayer class, a subclass of Player. 
+    The BotPlayers are initialized with a model.
+    """
+
     def __init__(self, tribute, arena, model_path=PLAY_MODEL):
         super().__init__(tribute, arena)
         self.model = PPO.load(model_path) if os.path.exists(model_path + ".zip") else None
@@ -130,6 +156,12 @@ class BotPlayer(Player):
         
 
     def take_turn(self, game, print_moves=False):
+        """
+        Executes one turn for the BotPlayer using the trained model.
+        """
+
+
+        # set up the observation for the agent
         starters = gh.getRewardStarters(self.tribute)
         while True:
             
@@ -144,6 +176,7 @@ class BotPlayer(Player):
                 "known_water_col": gh.getKnownWater(self.tribute)[1],
                 "recently_attacked": self.tribute.recently_attacked
             }
+            # get the action from the agent
             action, _ = self.model.predict(obs)
             action = int(action)
             success = False
@@ -154,6 +187,8 @@ class BotPlayer(Player):
             else:
                 game.action_counts[action] += 1
 
+
+                # execute the action
                 if action == 0:          
                     direction = gh.getRandomValidMove(self.tribute, self.arena)
                     success = gh.handleSingleMove(self.tribute, direction, self.arena)
