@@ -1,15 +1,3 @@
-from math import floor
-import os
-from tqdm import tqdm
-from Game import Game
-from GameEnv import GameEnv
-import tests.test_helper as th
-from stable_baselines3 import PPO
-import sys
-from config import TURNS_PER_DAY, BASE_MODEL, TUNED_MODEL, PLAY_MODEL
-from contextlib import redirect_stdout
-from log_helper import TrimmedFile
-
 """
 main.py - Entry point for the Hunger Games RL simulation.
 
@@ -22,6 +10,19 @@ Supports four runtime modes (passed as command-line arguments):
 CITATIONS:
     - stable-baselines3: used for PPO training and inference
 """
+
+from math import floor
+import os
+from tqdm import tqdm
+from Game import Game
+from GameEnv import GameEnv
+import tests.test_helper as th
+from stable_baselines3 import PPO
+import sys
+from config import TURNS_PER_DAY, BASE_MODEL, TUNED_MODEL, PLAY_MODEL
+from contextlib import redirect_stdout
+from log_helper import TrimmedFile
+
 
 
 
@@ -86,7 +87,9 @@ def calulate_game_stats():
 
 
 def get_averages():
-    
+    """
+    Calculates the averages for the stats to be reported for eval mode
+    """
     avg_rewards = sum(all_rewards) / episodes
     avg_rewards_per_tribute = (sum(all_rewards) / episodes) / 24
     avg_moves = sum(all_moves) / episodes

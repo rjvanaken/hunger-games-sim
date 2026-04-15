@@ -18,9 +18,7 @@ from PIL import Image, ImageDraw, ImageFont
 class Arena:
 
     """
-    Represents the Arena class, which houses everything that would be used within the Arena environment.
-
-    
+    Represents the Arena class, which houses everything that would be used within the Arena environment.    
     """
     def __init__(self, size):
         self.size = size
