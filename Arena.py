@@ -1,3 +1,13 @@
+"""
+Arena.py - defines the Arena class, which houses all elements of the game. A single arena is created
+per game and is represented as a nested array.
+
+CITATIONS:
+    - Pillow (PIL): used for image processing / frame rendering
+"""
+
+
+
 from Intervention import Intervention
 from Resource import Resource
 import random
@@ -6,6 +16,12 @@ from config import *
 from PIL import Image, ImageDraw, ImageFont
 
 class Arena:
+
+    """
+    Represents the Arena class, which houses everything that would be used within the Arena environment.
+
+    
+    """
     def __init__(self, size):
         self.size = size
         self.center = ((size // 2) - 1, (size // 2) - 1)
@@ -42,6 +58,10 @@ class Arena:
 
 
     def addCornucopia(self):
+
+        """
+            Creates all Resource objects for the cornucopia area and places them inside the arena
+        """
 
         rows = self.center[0] - 2
         cols = self.center[1] - 2
@@ -103,7 +123,7 @@ class Arena:
             self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
             self.cornucopia.append(resource.pos)
 
-        #todo: add more later, need 4 more spots
+
 
     def updateCornucopiaItems(self):
         new_list = []
@@ -187,6 +207,8 @@ class Arena:
                 print(f"Tribute {tribute.letter} has died")
                 self.restoreOldCellData(tribute, pos)
                 tribute.pos = None
+                if game.day_count == 0:
+                    game.day_one_kills += 1
                 if gamemaker_kill or tribute.hazard_death:
                     game.deaths_by_gamemaker += 1
                     game.deaths_per_day[game.day_count + 1]["gamemaker"] += 1
