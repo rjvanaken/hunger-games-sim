@@ -60,7 +60,7 @@ class Arena:
     def addCornucopia(self):
 
         """
-            Creates all Resource objects for the cornucopia area and places them inside the arena
+        Creates all Resource objects for the cornucopia area and places them inside the arena
         """
 
         rows = self.center[0] - 2
@@ -125,15 +125,7 @@ class Arena:
 
 
 
-    def updateCornucopiaItems(self):
-        new_list = []
-        for resource in self.resourses:
-            if resource.isTaken:
-                new_list.append(resource)
-            else:
-                row, col = resource.pos
-                self.arena.arena_grid[row][col] = 0
-        self.resources = new_list
+
 
     def addTrees(self, density=0.3):
         center_row = self.center[0]
@@ -223,6 +215,10 @@ class Arena:
 
 
     def clearDeadMutts(self):
+        """
+        Clears the dead mutts from the Arena 
+        (not currently implemented)
+        """
         new_list = []
         for mutt in self.mutts:
             pos = mutt.pos 
@@ -235,6 +231,20 @@ class Arena:
 
 
     def displayArena(self, colors=False):
+        """
+        Displays the arena in the terminal:
+            - 0: represented by dots in the arena, indicates an empty cell
+            - 1: water source
+            - 2: hazard wall
+            - 3: food item
+            - 4: bomb, represented by an orange * in the arena on detonation
+            - 5: weapons
+            - 6: small backpack
+            - 7: large backpack
+            - 8: tree or obstacle
+            - A-X: the 24 tributes represented by their letter attribute
+        
+        """
         for i in range(self.size):
             for j in range(self.size):
                 cell_value = self.arena_grid[i][j]
@@ -259,6 +269,10 @@ class Arena:
 
 
     def updateSegmentData(self, tribute, segment):
+        """
+        Update the tribute's knowledge of the arena in their current segment with data from the main arena grid
+        """
+
         for (row, col) in self.segments[segment]:
             tribute.arenaKnowledge[row][col] = self.arena_grid[row][col]
 
@@ -266,7 +280,7 @@ class Arena:
 
     def moveTribute(self, tribute, row, col):
         '''
-            Moves the tribute and updates their location in the grid storage
+        Moves the tribute and updates their location in the grid storage
         '''
         # needs to be modified to go TOWARD said location instead
         # of immediately there. The udlr moves will update the grid
@@ -291,6 +305,13 @@ class Arena:
 
 
     def restoreOldCellData(self, tribute, pos):
+        """
+        When a tribute leaves a cell, if there was something else on the cell when they walked onto the cell, 
+        restore that appropriate object.
+        Display Heirarchy: tributes, hazards, resources
+
+        """
+
         # restore old cell - if it had a resource put it back, otherwise 0
         row, col = pos
         resource = self.getResourceAt(pos)
@@ -308,9 +329,12 @@ class Arena:
         else:
             self.arena_grid[row][col] = 0
 
+        # 
         if tribute:
             if tribute.isAlive:
                 self.arena_grid[tribute.pos[0]][tribute.pos[1]] = tribute.letter
+
+
 
     def getTarget(self, tribute, attack=False):
         target = None
@@ -332,13 +356,8 @@ class Arena:
         for tribute in self.tributes:
             if tribute.pos == pos:
                 return tribute
-            else:
-                return None
-
-    def getBombFromSegment(self, segment):
-        if self.bomb.positions[0] in self.arena.segments[segment]:
-            return self.bomb
         return None
+
 
 
     def renderTurnFrames(self, turn_num, day_num):

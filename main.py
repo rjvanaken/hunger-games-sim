@@ -166,15 +166,6 @@ refill      {int(avg_refills)}
             print("\n")
 
 
-'''
-TO ADD:
-- rate of using resources when in desperate need
-- somethig with picking up when hungry
-- number of deaths on day 1
-- rate of exceeding training cap
-- rate of "victory by combat"
-'''
-
 
 
 if __name__ == "__main__":

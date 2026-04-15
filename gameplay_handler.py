@@ -456,7 +456,7 @@ def getLocalView(tribute, arena, radius=2):
 def getKnownWater(tribute):
     
     """
-    Returns the locations of the water sources the tribute has visited
+    Returns the locations of the last known water source the tribute has visited
     """
 
     for r in range(len(tribute.arenaKnowledge)):
