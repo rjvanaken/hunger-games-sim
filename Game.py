@@ -1,3 +1,9 @@
+"""
+Game.py - Defines the Game class, which is the engine behind the simulator itself.
+
+"""
+
+
 from Arena import Arena
 from Gamemaker import Gamemaker
 from Intervention import Intervention
@@ -12,6 +18,9 @@ import numpy as np
 import gameplay_handler as gh
 
 class Game():
+    """
+    Represents the Game class
+    """
     
     def __init__(self, size, robot=False, train=False, test=False):    
 
@@ -49,6 +58,10 @@ class Game():
 
 
     def addTributes(self, pos, robot=False):
+        """
+        Creates all 24 BotPlayers and their Tributes and adds the tributes to the arena around the cornucopia
+        """
+
         center_row = pos[0]
         center_col = pos[1]
         id = 0
@@ -107,6 +120,12 @@ class Game():
             id += 1
         
     def setupArena(self, robot=False, train=False):
+        """
+        Sets up the arena, creates the gamemaker, provides the tributes with a canteen, adds in the cornucopia
+        and puts all required elements into the arena
+        
+        """
+
         self.arena = Arena(self.arena.size)
         self.gamemaker = Gamemaker(self.arena)
         self.arena.tributes = []
@@ -125,6 +144,9 @@ class Game():
 
 
     def print_results(self):
+        """
+        Prints the results of the executed games for training mode
+        """
         print("____________________")
         print("GAME OVER")
         print("____________________\n")
@@ -140,6 +162,9 @@ class Game():
 
 
     def print_action_table(self):
+        """
+        prints the action distribution table for the executed games
+        """
         action_names = {0: 'move', 1: 'attack', 2: 'pickup', 3: 'eat', 4: 'drink', 5: 'medical', 6: 'refill'}
         print(f"{'ACTION':<10} {'COUNT':<10}")
         print("-" * 30)
@@ -149,11 +174,12 @@ class Game():
 
 
     def run(self, show_arena=True, show_colors=False, print_moves=False, save_frames=False, progress=None):
-            
+        """
+        The main engine object around the game. Executes the full games loop
+        before printing the results
+        """
         frames = []
 
-        # AT THE START OF THE GAME LOOP FOR THE NEW DAY CALL THE FUNCTION FOR GAMEMAKERS TO EVALUATE AND REACT
-        # AND PASS IN THE CURRENT TURN, THEN CAN TRIGGER IF THE TURN VALUE IS NOT NONE WHEN TO DETONATE THE BOMB
 
         while len(self.arena.tributes) > 1:
             self.turn_count += 1
@@ -237,6 +263,9 @@ class Game():
         self.printGameResults()
 
     def printGameResults(self):
+        """
+        Prints the game results for the executed games
+        """
         print("-" * 30)
         print("VICTOR")
         print("-" * 30)
@@ -261,6 +290,13 @@ class Game():
 
 
     def setupArenaLayout(self, arena, train=False):
+        """
+        Adds all non-tribute and cornucopia objects to the arena:
+        - trees and obstacles
+        - scattered food
+        - scattered water sources
+        - hazards (disabled)
+        """
 
         # --- BORDER WALL ---
         border = (
