@@ -1,5 +1,8 @@
 """
 Player.py - defines the Player class and the children classes BotPlayer and HumanPlayer
+
+CITATIONS:
+    - stable-baselines3: used for PPO training and inference
 """
 
 import os

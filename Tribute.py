@@ -1,3 +1,8 @@
+"""
+Tribute.py - defines the Fighter, Mutt, and Tribute classes.
+Fighter is the parent class for Tribute and Mutt, both of which can engage in combat in the arena.
+"""
+
 import random
 import math
 from Resource import Resource
@@ -8,6 +13,10 @@ from config import *
 
 
 class Fighter:
+    """
+    Represents the Fighter class, the parent class for the Tributes and Mutts, both of whih 
+    can attack in the arena.
+    """
     def __init__(self, id, pos):
         self.id = id
         self.pos = pos
@@ -18,6 +27,8 @@ class Fighter:
 
     @property
     def health(self):
+        """Current health of the fighter (0-100). Setting to 0 or below marks the fighter as dead."""
+
         return self._health
 
     @health.setter
@@ -27,21 +38,24 @@ class Fighter:
             self._health = 0
             self.isAlive = False
 
-        # need to figure out a tribute success heuristic
-        # somehow need to figure out how strength will be impacted by low health and how that will change, etc.
 
     @property
     def pos(self):
+        """Current position of the fighter as a (row, col) tuple."""
+
         return self._pos
 
     @pos.setter
     def pos(self, value):
         self._pos = value
-        # clear old pos in grid
-        # add new pos to grid
-        # set new self.pos afterwards
+
 
     def attack(self, target, print_moves=False):
+        """
+        Executes an attack between this fighter and a target.
+        Uses relative strength to determine the probability of winning the exchange.
+        The loser takes damage based on the winner's strength. Increments kill count if target dies.
+        """
         difference = max(target.strength, self.strength) - min(target.strength, self.strength)
         if self.strength > target.strength:
             attacker = (50 + difference) / 100
@@ -70,6 +84,12 @@ class Fighter:
 
 
 class Mutt(Fighter):
+    """
+    Represents a Mutt, a gamemaker-deployed creature that can attack tributes.
+    Begins dormant and must be activated before it can engage in combat.
+
+    (currently disabled)
+    """
     def __init__(self, id, pos):
         super().__init__(id, pos)
         self.strength = MUTT_STRENGTH
@@ -81,6 +101,11 @@ class Mutt(Fighter):
 
 
 class Tribute(Fighter):
+    """
+    Represents a tribute competing in the Hunger Games arena.
+    Manages survival stats, inventory, movement, and combat actions.
+    Inherits combat logic from Fighter.
+    """
 
     def __init__(self, id, pos):
 
@@ -123,6 +148,7 @@ class Tribute(Fighter):
       
 
     def getRandomStrength(self):
+        """Returns a randomized strength value based on age, district, and gender."""
 
         min, max = STRENGTH_BY_AGE[self.age]
         raw_strength = random.randint(min, max)
@@ -131,26 +157,33 @@ class Tribute(Fighter):
             raw_strength += CAREER_BONUS
         if self.gender == 'male':
             raw_strength += MALE_BONUS
-
-        return raw_strength
     
 
     def getRandomSpeed(self):
+        """Returns a randomized speed value within the base speed range."""
         return random.randint(BASE_SPEED, BASE_SPEED + 2)
         
     def getHuntingSkill(self):
+        """Returns a randomized hunting skill value between 1 and 100."""
+
         return random.randint(1, 100)
         
 
     def getRandomAge(self):
+        """Returns a randomized age between 12 and 18."""
+
         return random.randint(12, 18)
 
 
     def updateStatsBeforeTurn(self): #atm does not handle mutt attack before turn
+        """Applies stat decay and recalculates strength before the tribute's turn."""
+
         self.updateDailyStats()
         self.strength = math.ceil((self.base_strength + self.weapon_value) * (self.health / 100))
 
     def updateDailyStats(self):
+        """Decrements hunger and thirst each turn and applies health penalties if below warning thresholds."""
+
         self.hunger -= HUNGER_DECAY
         self.thirst -= THIRST_DECAY
         self.hunger = max(0, self.hunger)
@@ -175,6 +208,8 @@ class Tribute(Fighter):
 
 
     def getFood(self):
+        """Returns the number of food items in the tribute's inventory."""
+
         food = 0
         for item in self.inventory:
             if item.type.value == 3:
@@ -182,6 +217,8 @@ class Tribute(Fighter):
         return food
     
     def getMedical(self):
+        """Returns the number of medical items in the tribute's inventory."""
+
         medical = 0
         for item in self.inventory:
             if item.type.value == 4:
@@ -191,8 +228,11 @@ class Tribute(Fighter):
 # GAME ACTIONS
 
     def pickUpResource(self, resource):
-    # need to have all pickups in case they get things from sponsors
-    # TODO factor in sponsor logic eventually
+        """
+        Attempts to add a resource to the tribute's inventory.
+        Handles backpacks, weapons, food, water containers, and medical items differently.
+        Returns True if successful, False if not.
+        """
 
 
         if resource.type == Resource.Type.BACKPACK_SMALL:
@@ -257,6 +297,8 @@ class Tribute(Fighter):
         
 
     def eatFood(self):
+        """Consumes one food item from inventory and restores hunger."""
+
         for item in self.inventory:
             if item.type.value == 3:
                 self.inventory.remove(item)
@@ -265,6 +307,8 @@ class Tribute(Fighter):
                 
 
     def drinkWater(self):
+        """Consumes one unit of water supply and restores thirst."""
+
         self.water_supply -= 1
         self.thirst = min(100, self.thirst + WATER_VALUE)
 
@@ -276,13 +320,21 @@ class Tribute(Fighter):
         self.health = min(100, self.health + MEDICAL_VALUE) 
 
     def refillWater(self):
+        """Consumes one medical item from inventory and restores health."""
+
         self.water_supply = self.max_water
     
     # debug quickmove
     def move(self, row, col):
+        """Debug utility to teleport the tribute directly to a given position."""
+
         self.pos = ((row, col))
 
     def singleMove(self, direction, arena):
+        """
+        Moves the tribute one cell in the given direction if the destination is valid.
+        Returns True if successful, False otherwise.
+        """
         # handle logic is here instead simply because otherwise we would be checking this twice
 
         if direction.lower() == 'u' or direction.lower() == 'up':
@@ -305,6 +357,9 @@ class Tribute(Fighter):
         
 
     def canMoveTo(self, pos):
+        """
+        Returns True if the given position is a valid, unobstructed cell the tribute can move to.
+        """
         if pos[0] < 0 or pos[0] >= len(self.arenaKnowledge) or pos[1] < 0 or pos[1] >= len(self.arenaKnowledge[0]):
                 return False
         cell = self.arenaKnowledge[pos[0]][pos[1]]
@@ -316,18 +371,15 @@ class Tribute(Fighter):
         
 
 
-
-    def sleep(self):
-        # handler handles the "tired enough" case
-        self.health += SLEEP_VALUE
-            
-        
-
     def countInInventory(self, resource_type):
+        """Returns the count of items of a given resource type in the tribute's inventory."""
+
         return len([item for item in self.inventory if item.type.value == resource_type])
     
 
     def updateKnowledge(self, arena, radius=2):
+        """Updates the tribute's arena knowledge within a given radius of their current position."""
+
         row, col = self.pos
         for r in range(row - radius, row + radius + 1):
             for c in range(col - radius, col + radius + 1):

@@ -1,6 +1,9 @@
 """
 GameEnv.py - defines the GameEnv class, a gymnasium environment wrapper
 around the Game class used for PPO training with stable-baselines3.
+
+CITATIONS:
+    - stable-baselines3: used for PPO training and inference
 """
 
 from Arena import Arena
