@@ -128,6 +128,11 @@ class Arena:
 
 
     def addTrees(self, density=0.3):
+        """
+        adds 8s to the arena to represent trees
+        Used in tests
+        """
+
         center_row = self.center[0]
         center_col = self.center[1]
         
@@ -149,7 +154,10 @@ class Arena:
 
 
     def addSources(self):
-        # body of water
+        """
+        Creates water sources and adds them to the arena
+        Used in tests
+        """
         Resource.addResource(self, (6, 6), Resource.Type(1), self.resources)
         Resource.addResource(self, (6, 7), Resource.Type(1), self.resources)
         Resource.addResource(self, (6, 8), Resource.Type(1), self.resources)
@@ -173,16 +181,22 @@ class Arena:
         for resource in self.resources:
             self.arena_grid[resource.pos[0]][resource.pos[1]] = resource.type.value
 
-    def addMutts():
-        pass
+
 
     def getResourceAt(self, pos):
+        """
+        Gets the resource at the provided position. If none, return None
+        """
         for resource in self.resources:
             if resource.pos == pos:
                 return resource
         return None
         
+
     def getSegmentFromPos(self, pos):
+        """
+        Gets the segment by the arena position
+        """
         for key, value in self.segments.items():
             if pos in value:
                 return key
@@ -190,6 +204,9 @@ class Arena:
         
 
     def clearDeadTributes(self, game, gamemaker_kill=False):
+        """
+        Clears all the tributes flagged as dead from the arena
+        """
         new_list = []
         for tribute in self.tributes:
             pos = tribute.pos 
@@ -337,6 +354,10 @@ class Arena:
 
 
     def getTarget(self, tribute, attack=False):
+        """
+        finds a target for the given tribute in adjacent cells
+        """
+
         target = None
 
         if attack:
@@ -353,6 +374,9 @@ class Arena:
         return target
 
     def getTributeAt(self, pos):
+        """
+        Retrieves the tribute at the given position.
+        """
         for tribute in self.tributes:
             if tribute.pos == pos:
                 return tribute
@@ -361,6 +385,10 @@ class Arena:
 
 
     def renderTurnFrames(self, turn_num, day_num):
+        """
+        captures the arena at the start of a turn and renders it into an image.
+        used to create the games gif.
+        """
         
         font = ImageFont.load_default()
         char_w, char_h = 6, 10
